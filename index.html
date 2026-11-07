@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aaron Adler · Software and Data Engineering</title>
+<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Data engineering projects: CDC streaming, lakehouses, and a live California wildfire risk feed.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="name" href="./">Aaron Adler</a>
+    <nav>
+      <a href="./" aria-current="page">Projects</a>
+      <a href="wildfire-map.html">Wildfire map</a>
+      <a href="https://github.com/AaronJAdler">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Senior software engineer building reliable data systems.</h1>
+    <p>Five-plus years delivering enterprise applications and microservices at Wells Fargo in .NET,
+      Angular and Kafka. These projects apply that to data engineering: change data capture,
+      lakehouses, streaming, and live geospatial pipelines, each tested, documented and running.</p>
+    <div class="links">
+      <a class="button primary" href="wildfire-map.html">See the live wildfire map</a>
+      <a class="button" href="https://github.com/AaronJAdler">GitHub</a>
+      <a class="button" href="mailto:aaronadlerjaden@gmail.com">Email</a>
+    </div>
+  </section>
+
+  <h2>Projects</h2>
+  <div class="grid">
+    <article class="card">
+      <div class="badge">Live · updates every 3 hours</div>
+      <h3>California Wildfire Risk Feed</h3>
+      <p>Combines NASA FIRMS satellite detections, CAL FIRE and NIFC interagency incidents and
+        perimeters, and NWS fire weather alerts into a scored H3 hexagon map. Flags satellite heat no
+        reported incident explains, and never clears an alert on missing data.</p>
+      <div class="tags"><span>Python</span><span>H3</span><span>DuckDB</span><span>GitHub Actions</span><span>ArcGIS Online</span></div>
+      <div class="actions">
+        <a href="wildfire-map.html">ArcGIS map</a>
+        <a href="https://aaronjadler.github.io/wildfire-risk-feed/">Live feed</a>
+        <a href="https://github.com/AaronJAdler/wildfire-risk-feed">Code</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>CDC Streaming Lakehouse</h3>
+      <p>Postgres changes captured from the write-ahead log with Debezium, streamed through Kafka and
+        Spark Structured Streaming into Delta Lake. Exactly-once merges, proven by killing Spark
+        mid-batch and reconciling every row against the source.</p>
+      <div class="tags"><span>Debezium</span><span>Kafka</span><span>Spark</span><span>Delta Lake</span></div>
+      <div class="actions"><a href="https://github.com/AaronJAdler/cdc-streaming-lakehouse">Code</a></div>
+    </article>
+
+    <article class="card">
+      <h3>Card Payments Lakehouse</h3>
+      <p>A medallion lakehouse for card transactions on Azure and Databricks: SCD Type 2 dimensions,
+        write-audit-publish quality gates, Terraform infrastructure and a Databricks Asset Bundle.</p>
+      <div class="tags"><span>Databricks</span><span>PySpark</span><span>Terraform</span><span>Azure</span></div>
+      <div class="actions"><a href="https://github.com/AaronJAdler/card-payments-lakehouse">Code</a></div>
+    </article>
+
+    <article class="card">
+      <h3>California Wildfire ELT</h3>
+      <p>A daily ELT pipeline over CAL FIRE's 2021 incident feed, orchestrated with Airflow and modelled
+        in a DuckDB warehouse, with a dashboard that is explicit about how far the data can be trusted.</p>
+      <div class="tags"><span>Airflow</span><span>DuckDB</span><span>SQL</span><span>Data quality</span></div>
+      <div class="actions">
+        <a href="wildfire-history.html">Dashboard</a>
+        <a href="https://github.com/AaronJAdler/ca-wildfire-elt">Code</a>
+      </div>
+    </article>
+  </div>
+
+  <h2>Experience</h2>
+  <div class="experience">
+    <div class="job">
+      <div class="role">Senior Software Engineer, Wells Fargo</div>
+      <div class="when">2026 – present · Remote</div>
+      <ul>
+        <li>Integrating microservices behind an API gateway and consolidating services into a modular monolith.</li>
+        <li>Expanding the team's use of AI-assisted development.</li>
+      </ul>
+    </div>
+    <div class="job">
+      <div class="role">Software Engineer, Wells Fargo</div>
+      <div class="when">2022 – 2026 · Remote</div>
+      <ul>
+        <li>Built a Kafka solution for lead creation that cut throughput time by 70%.</li>
+        <li>Designed toggling between legacy and modernized services for low-risk releases.</li>
+        <li>Upgraded Angular 7 to 17 and raised automation coverage to 80%.</li>
+      </ul>
+    </div>
+    <div class="job">
+      <div class="role">Engineering Associate, Wells Fargo</div>
+      <div class="when">2020 – 2022 · Richmond, VA</div>
+      <ul>
+        <li>Migrated a .NET Framework 4.8 backend to .NET 6 on Pivotal Cloud Foundry, and WCF services to REST.</li>
+        <li>Raised unit test coverage from 0% to 70% and cut downstream integration time by 50%.</li>
+      </ul>
+    </div>
+    <div class="job">
+      <div class="role">B.A. Mathematics (Statistics), CSU Sacramento</div>
+      <div class="when">2018</div>
+    </div>
+  </div>
+</main>
+
+<footer class="wrap">West Sacramento, California · <a href="mailto:aaronadlerjaden@gmail.com">aaronadlerjaden@gmail.com</a></footer>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>California Wildfire Risk Map · Aaron Adler</title>
+<meta name="description" content="Live California wildfire risk on ArcGIS Online: satellite detections, CAL FIRE and interagency incidents, and fire weather, over CAL FIRE's Fire Hazard Severity Zones.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="name" href="./">Aaron Adler</a>
+    <nav>
+      <a href="./">Projects</a>
+      <a href="wildfire-map.html" aria-current="page">Wildfire map</a>
+      <a href="https://github.com/AaronJAdler">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="map-intro">
+    <h1>California wildfire risk, live on ArcGIS</h1>
+    <p>Every 3 hours an open-source pipeline scores the state on a hexagon grid from NASA satellite
+      detections, CAL FIRE and NIFC interagency incidents and perimeters, and National Weather Service
+      fire weather alerts. This ArcGIS Online app reads the pipeline's published files directly and
+      lays them over CAL FIRE's Fire Hazard Severity Zones, so it always shows the latest run.</p>
+    <div class="links">
+      <a class="button primary" href="https://www.arcgis.com/apps/instant/basic/index.html?appid=0cfa3cabe6704c51976fff69a9414747">Open full screen</a>
+      <a class="button" href="https://github.com/AaronJAdler/wildfire-risk-feed">How it works</a>
+      <a class="button" href="https://aaronjadler.github.io/wildfire-risk-feed/">Pipeline's own map</a>
+    </div>
+  </section>
+
+  <div class="frame">
+    <iframe src="https://www.arcgis.com/apps/instant/basic/index.html?appid=0cfa3cabe6704c51976fff69a9414747"
+            title="California Wildfire Risk Feed on ArcGIS Online" loading="lazy" allowfullscreen></iframe>
+  </div>
+
+  <div class="layers">
+    <div><b>Risk hexagons</b><span>0–100 per 36 km² cell: satellite heat, nearby incidents, and fire weather.</span></div>
+    <div><b>Active incidents</b><span>CAL FIRE and NIFC WFIGS, merged so each fire appears once.</span></div>
+    <div><b>Fire perimeters</b><span>Mapped outlines from WFIGS, used to attribute heat to fires.</span></div>
+    <div><b>Fire Hazard Severity Zones</b><span>CAL FIRE's official long-term hazard map (moderate to very high).</span></div>
+    <div><b>Fire Responsibility Areas</b><span>Which agency is responsible: state, federal or local.</span></div>
+  </div>
+
+  <p class="note">A triage view built as a portfolio project, not an official warning service. For
+    emergencies, follow local authorities and <a href="https://www.fire.ca.gov/incidents">CAL FIRE</a>.</p>
+</main>
+
+<footer class="wrap"><a href="./">← All projects</a></footer>
+</body>
+</html>
