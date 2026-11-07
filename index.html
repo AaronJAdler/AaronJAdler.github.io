@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aaron Adler · Software and Data Engineering</title>
-<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Data engineering projects: CDC streaming, lakehouses, and a live California wildfire risk feed.">
+<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Data engineering projects: CDC streaming, lakehouses, a live California wildfire risk feed, and K-12 attendance reporting.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -45,6 +45,21 @@
         <a href="wildfire-map.html">ArcGIS map</a>
         <a href="https://aaronjadler.github.io/wildfire-risk-feed/">Live feed</a>
         <a href="https://github.com/AaronJAdler/wildfire-risk-feed">Code</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="badge">Live dashboard · synthetic data</div>
+      <h3>K-12 Attendance Reporting Pipeline</h3>
+      <p>Turns CALPADS-shaped enrollment and attendance files into validated chronic-absenteeism
+        reports for a fictional district. CALPADS-style Fatal and Warning rules quarantine bad rows,
+        a partial extract is rejected before it reaches the reports, and small groups are suppressed
+        the way CDE does it.</p>
+      <div class="tags"><span>Python</span><span>dbt</span><span>DuckDB</span><span>ArcGIS</span><span>WCAG 2.1 AA</span></div>
+      <div class="actions">
+        <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/">Dashboard</a>
+        <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/map.html">ArcGIS map</a>
+        <a href="https://github.com/AaronJAdler/K12AttendanceReportingPipeline">Code</a>
       </div>
     </article>
 
