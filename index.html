@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aaron Adler · Software and Data Engineering</title>
-<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Data engineering projects: CDC streaming, lakehouses, a live California wildfire risk feed, and K-12 attendance reporting.">
+<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Enterprise systems, integration and data engineering projects: CDC streaming, lakehouses, a live California wildfire risk feed, and K-12 attendance reporting.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,9 +22,11 @@
 <main class="wrap">
   <section class="hero">
     <h1>Senior software engineer building reliable data systems.</h1>
-    <p>Five-plus years delivering enterprise applications and microservices at Wells Fargo in .NET,
-      Angular and Kafka. These projects apply that to data engineering: change data capture,
-      lakehouses, streaming, and live geospatial pipelines, each tested, documented and running.</p>
+    <p>Six-plus years designing, modernizing and optimizing enterprise business applications at
+      Wells Fargo in .NET, Angular and Kafka: working with business units to turn requirements into
+      scalable solutions, leading legacy-to-modern migrations, and releasing without putting production
+      at risk. These projects apply that to data engineering: change data capture, lakehouses,
+      streaming, and live geospatial pipelines, each tested, documented and running.</p>
     <div class="links">
       <a class="button primary" href="wildfire-map.html">See the live wildfire map</a>
       <a class="button" href="https://github.com/AaronJAdler">GitHub</a>
@@ -98,30 +100,69 @@
       <div class="role">Senior Software Engineer, Wells Fargo</div>
       <div class="when">2026 – present · Remote</div>
       <ul>
-        <li>Integrating microservices behind an API gateway and consolidating services into a modular monolith.</li>
-        <li>Expanding the team's use of AI-assisted development.</li>
+        <li>Leading integration of enterprise microservices with an API gateway, coordinating with stakeholder teams to define integration points and reduce risk to production systems.</li>
+        <li>Consolidating existing microservices into a modular monolith to simplify the architecture and cut ongoing maintenance.</li>
+        <li>Expanding adoption of AI-assisted development tooling (GitHub Copilot) to improve engineering efficiency and code quality across the team.</li>
       </ul>
     </div>
     <div class="job">
       <div class="role">Software Engineer, Wells Fargo</div>
       <div class="when">2022 – 2026 · Remote</div>
       <ul>
-        <li>Built a Kafka solution for lead creation that cut throughput time by 70%.</li>
-        <li>Designed toggling between legacy and modernized services for low-risk releases.</li>
-        <li>Upgraded Angular 7 to 17 and raised automation coverage to 80%.</li>
+        <li>Designed and built a Kafka pipeline that splits spreadsheet-submitted lead files of up to 100,000 records into individual streaming messages, with handling for malformed or missing records, consumer-side delivery confirmation, UI status messaging, and an auto-generated errored-leads spreadsheet for review and reupload. Cut processing throughput time by 70%.</li>
+        <li>Designed a toggle between legacy and modernized services, allowing controlled switching and minimal business risk during non-concurrent production releases.</li>
+        <li>Found that API-level authorization was missing (enforced only in the UI) and implemented JWT authentication with the PKCE flow, PII masking for SSNs and TINs, and region-specific storage of sensitive data to meet data-residency requirements.</li>
+        <li>Directed a UI modernization from Angular 7 to Angular 17, consolidating 30,000+ lines across 30 files into a single maintainable codebase.</li>
+        <li>Supported cloud deployment, UI and API updates, and refactoring for Agent Desktop, an internal application serving thousands of agents supporting Wells Fargo Brokerage customers, including UI integration with MQTT.</li>
+        <li>Raised automated test coverage to 80%, and mentored developers on testing, code complexity, and DRY/SOLID principles, contributing to a company-wide "clean as you code" standard.</li>
+        <li>Established Git governance: peer review through pull requests, a branching strategy for parallel development, and branch protection with YAML-based CI/CD pipelines.</li>
       </ul>
     </div>
     <div class="job">
       <div class="role">Engineering Associate, Wells Fargo</div>
       <div class="when">2020 – 2022 · Richmond, VA</div>
       <ul>
-        <li>Migrated a .NET Framework 4.8 backend to .NET 6 on Pivotal Cloud Foundry, and WCF services to REST.</li>
-        <li>Raised unit test coverage from 0% to 70% and cut downstream integration time by 50%.</li>
+        <li>Engaged as a consultant to guide the team's move from Waterfall to Agile, facilitating workflow and process assessments.</li>
+        <li>Designed reusable, generic code structures that cut downstream service integration time by 50%.</li>
+        <li>Converted legacy WCF services to REST, modernizing service communication and expanding compatibility.</li>
+        <li>Raised unit test coverage (NUnit, Jasmine) from 0% to 70%, improving reliability and reducing production defects.</li>
+        <li>Migrated a .NET Framework 4.8 backend to .NET 6 and re-hosted it on Pivotal Cloud Foundry.</li>
       </ul>
     </div>
+  </div>
+
+  <h2>Skills</h2>
+  <div class="experience">
+    <div class="job">
+      <div class="role">Languages and frameworks</div>
+      <div class="tags" style="margin-top:8px"><span>C#</span><span>.NET Core</span><span>.NET 6</span><span>.NET Framework</span><span>JavaScript</span><span>TypeScript</span><span>Angular 7–17</span><span>REST</span><span>WCF</span></div>
+    </div>
+    <div class="job">
+      <div class="role">Data, streaming and security</div>
+      <div class="tags" style="margin-top:8px"><span>Kafka</span><span>SQL</span><span>NoSQL</span><span>JWT / PKCE</span><span>Tableau</span><span>Splunk</span><span>Prometheus</span></div>
+    </div>
+    <div class="job">
+      <div class="role">Testing</div>
+      <div class="tags" style="margin-top:8px"><span>xUnit</span><span>NUnit</span><span>Jasmine</span><span>Karma</span><span>Selenium</span><span>Playwright</span><span>Cypress</span></div>
+    </div>
+    <div class="job">
+      <div class="role">Delivery and platform</div>
+      <div class="tags" style="margin-top:8px"><span>Azure DevOps</span><span>YAML CI/CD pipelines</span><span>Git</span><span>Pivotal Cloud Foundry</span><span>GitHub Copilot</span><span>Agile / Scrum</span></div>
+    </div>
+  </div>
+
+  <h2>Education and training</h2>
+  <div class="experience">
     <div class="job">
       <div class="role">B.A. Mathematics (Statistics), CSU Sacramento</div>
       <div class="when">2018</div>
+    </div>
+    <div class="job">
+      <div class="role">Software Engineering Bootcamp, Revature</div>
+      <div class="when">2019 – 2020 · Glen Allen, VA</div>
+      <ul>
+        <li>Intensive 3-month program covering Angular, C#, .NET, DevOps, Agile methodology and test automation.</li>
+      </ul>
     </div>
   </div>
 </main>
