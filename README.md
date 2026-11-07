@@ -9,3 +9,7 @@ wildfire risk, and the CAL FIRE 2021 dashboard. Plain HTML and CSS, served by Gi
 - `wildfire-history.html`: the dashboard from [ca-wildfire-elt](https://github.com/AaronJAdler/ca-wildfire-elt)
 - The K-12 attendance card links to the dashboard and ArcGIS map that
   [K12AttendanceReportingPipeline](https://github.com/AaronJAdler/K12AttendanceReportingPipeline) deploys to its own Pages site
+- `ctf/`: the lobby for the capture-the-flag game from the private `cyberguard` repo. Players run
+  `ctf/docker-compose.yml` locally (images on GHCR) and this page connects to it on 127.0.0.1.
+  `ctf/config.js` holds the cloud API URL; empty means practice mode. Keep `ctf/docker-compose.yml`
+  in sync with `play/docker-compose.yml` in cyberguard.

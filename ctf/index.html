@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play the CTF · Aaron Adler</title>
+<meta name="description" content="A local-first capture-the-flag training game. Run the vulnerable target on your own machine, connect it here, find the flag, and land on the leaderboard.">
+<link rel="stylesheet" href="../style.css">
+<style>
+  .steps { display: grid; gap: 16px; }
+  .step { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .step h3 { margin: 0 0 6px; font-size: 18px; display: flex; gap: 10px; align-items: center; }
+  .step h3 .n { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px;
+    background: var(--chip); color: var(--muted); font-size: 13px; font-weight: 700; flex: none; }
+  .step.done h3 .n { background: var(--accent); color: var(--accent-ink); }
+  .step p { margin: 0 0 12px; color: var(--muted); }
+  pre { background: var(--chip); border-radius: 8px; padding: 12px 14px; overflow-x: auto; margin: 0 0 10px;
+    font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type=text] { font: inherit; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--bg); color: var(--ink); min-width: 0; flex: 1 1 220px; }
+  button.button { cursor: pointer; font-family: inherit; }
+  button.button:disabled { opacity: .5; cursor: not-allowed; }
+  .status { font-size: 14.5px; color: var(--muted); }
+  .status.ok { color: #2f7d32; } .status.err { color: #b3261e; }
+  @media (prefers-color-scheme: dark) { .status.ok { color: #7bc47f; } .status.err { color: #f2928a; } }
+  .challenge { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap;
+    padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .challenge:last-child { border-bottom: 0; }
+  .challenge .meta { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
+  td.num, th.num { text-align: right; }
+  .banner { background: var(--chip); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; color: var(--muted); margin-bottom: 16px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="name" href="../">Aaron Adler</a>
+    <nav>
+      <a href="../">Projects</a>
+      <a href="./" aria-current="page">Play the CTF</a>
+      <a href="https://github.com/AaronJAdler">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="map-intro">
+    <h1>Play the CTF</h1>
+    <p>A capture-the-flag training game you run on your own machine. Each challenge is a small,
+      deliberately vulnerable web app with synthetic data. Find the flag hidden in it, submit it here,
+      and the sensor in front of the app records which techniques you used to get there.</p>
+    <p class="note">The vulnerable app runs in Docker on an internal-only network with no route
+      anywhere, and only listens on <code>127.0.0.1</code>. This page talks to it from your browser;
+      nothing on your machine is reachable from outside.</p>
+  </section>
+
+  <div id="practice-banner" class="banner" hidden>
+    <b>Practice mode.</b> The leaderboard isn't live yet, so flags are checked by your local stack and
+    nothing is sent anywhere. Everything else works the same.
+  </div>
+
+  <div class="steps">
+    <section class="step" id="step-run">
+      <h3><span class="n">1</span>Start the game on your machine</h3>
+      <p>You need <a href="https://docs.docker.com/get-started/get-docker/">Docker</a> (Docker Desktop on
+        Mac or Windows). Then, in a terminal:</p>
+      <pre id="cmd">curl -fsSL https://aaronjadler.github.io/ctf/docker-compose.yml -o cyberguard-ctf.yml
+docker compose -f cyberguard-ctf.yml up</pre>
+      <div class="row">
+        <button class="button" type="button" id="copy-cmd">Copy commands</button>
+        <a class="button" href="docker-compose.yml" download="cyberguard-ctf.yml">Download the compose file</a>
+      </div>
+      <p class="note">Stop it with <code>Ctrl+C</code>, and remove everything with
+        <code>docker compose -f cyberguard-ctf.yml down -v</code>.</p>
+    </section>
+
+    <section class="step" id="step-connect">
+      <h3><span class="n">2</span>Connect this page to it</h3>
+      <p>Your browser may ask to let this site connect to apps on your device. Allow it: that's how
+        this page reaches the game running on <code>127.0.0.1</code>.</p>
+      <div class="row">
+        <button class="button primary" type="button" id="connect">Connect</button>
+        <span class="status" id="connect-status" role="status">Not connected.</span>
+      </div>
+    </section>
+
+    <section class="step" id="step-player">
+      <h3><span class="n">3</span>Pick a name for the leaderboard</h3>
+      <div id="player-form">
+        <p>3–20 letters, digits, <code>_</code> or <code>-</code>. Don't use your real name; the board is public.</p>
+        <div class="row">
+          <label for="handle" hidden>Handle</label>
+          <input type="text" id="handle" maxlength="20" autocomplete="nickname" placeholder="handle">
+          <button class="button" type="button" id="register">Join</button>
+        </div>
+      </div>
+      <p class="status" id="player-status" role="status"></p>
+    </section>
+
+    <section class="step" id="step-play">
+      <h3><span class="n">4</span>Choose a challenge</h3>
+      <div id="challenges"><p class="status">Loading challenges…</p></div>
+      <p class="status" id="play-status" role="status"></p>
+    </section>
+
+    <section class="step" id="step-flag">
+      <h3><span class="n">5</span>Submit your flag</h3>
+      <p>Flags look like <code>FLAG{…}</code> and are unique to you.</p>
+      <div class="row">
+        <label for="flag" hidden>Flag</label>
+        <input type="text" id="flag" autocomplete="off" spellcheck="false" placeholder="FLAG{...}">
+        <button class="button primary" type="button" id="submit-flag" disabled>Submit</button>
+      </div>
+      <p class="status" id="flag-status" role="status"></p>
+    </section>
+  </div>
+
+  <section id="board-section" hidden>
+    <h2>Leaderboard</h2>
+    <div class="experience" style="padding:8px 20px">
+      <table>
+        <thead><tr><th>#</th><th>Player</th><th class="num">Solved</th><th class="num">Points</th></tr></thead>
+        <tbody id="board"><tr><td colspan="4" class="status">No solves yet.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <h2>How it works</h2>
+  <div class="layers">
+    <div><b>Target</b><span>The vulnerable app. Internal network only, read-only, synthetic data.</span></div>
+    <div><b>Sensor</b><span>Detection rules tag each request with the technique it used (IDOR, SQLi, XSS…).</span></div>
+    <div><b>Agent</b><span>Bridges this page and the target on 127.0.0.1, and batches telemetry.</span></div>
+    <div><b>Cloud API</b><span>Receive-only. Issues your per-player flag and ranks validated solves.</span></div>
+  </div>
+</main>
+
+<footer class="wrap">For training only. Please don't expose the game to a network. ·
+  <a href="../">Back to projects</a></footer>
+
+<script src="config.js"></script>
+<script src="lobby.js"></script>
+</body>
+</html>
