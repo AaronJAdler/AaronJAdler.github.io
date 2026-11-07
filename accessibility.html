@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accessibility · Aaron Adler</title>
+<meta name="description" content="Accessibility statement for aaronjadler.github.io: the WCAG 2.1 AA target, how the site was tested, display settings, and known limitations.">
+<link rel="stylesheet" href="style.css">
+<script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
+<link rel="stylesheet" href="settings.css">
+<script src="settings.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="site">
+  <div class="wrap">
+    <a class="name" href="./">Aaron Adler</a>
+    <nav aria-label="Main">
+      <a href="./">Projects</a>
+      <a href="wildfire-map.html">Wildfire map</a>
+      <a href="wildfire-history.html">Fire season 2021</a>
+      <a href="https://github.com/AaronJAdler">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <article class="prose">
+    <h1>Accessibility</h1>
+    <p>This site aims to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at level AA. WCAG 2.1 AA is the
+      standard the U.S. Department of Justice adopted in 2024 for state and local government websites under
+      Title II of the ADA, and the usual benchmark for ADA accessibility on other sites.</p>
+
+    <h2>What this site does</h2>
+    <ul>
+      <li>A "Skip to main content" link on every page, and a link to skip past the embedded map.</li>
+      <li>Visible focus outlines on every link and control, with everything reachable by keyboard.</li>
+      <li>Text and chart colors that meet WCAG contrast ratios in both light and dark themes.</li>
+      <li>Every chart has a table with the same numbers. Chart values can also be read with the arrow keys,
+        and each day's values are exposed to screen readers as the control's value text.</li>
+      <li>Link text that names the project it belongs to, for screen reader users.</li>
+      <li>Pages that reflow at 320 pixels wide and at 400% zoom without sideways scrolling.</li>
+    </ul>
+
+    <h2>Display settings</h2>
+    <p>Use the <strong>Display settings</strong> button at the top of any page to choose:</p>
+    <ul>
+      <li><strong>Theme:</strong> match your system, light, or dark.</li>
+      <li><strong>Chart colors:</strong> a colorblind-safe palette, based on the Okabe-Ito colors, that also gives
+        each chart line its own dash pattern.</li>
+      <li><strong>Contrast:</strong> higher-contrast text and borders.</li>
+      <li><strong>Text size:</strong> larger text.</li>
+      <li><strong>Links:</strong> always underlined.</li>
+    </ul>
+    <p>Your choices are saved in this browser only. Without JavaScript, the site follows your system's light or
+      dark setting.</p>
+
+    <h2>How it was tested</h2>
+    <p>On November 7, 2026, every page was checked with axe-core 4.14 (WCAG 2.0, 2.1 and 2.2 A and AA rules, plus
+      best practices) in light and dark themes, at 1280 and 320 pixels wide, with no violations. Keyboard
+      access, focus order and contrast ratios were also checked by hand.</p>
+
+    <h2>Known limitations</h2>
+    <ul>
+      <li>The wildfire map embeds an ArcGIS Online app made by Esri. Its accessibility is outside this site's
+        control. The layer descriptions under the map and the project's own map give the same information.</li>
+      <li>The <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/">K-12 attendance dashboard</a>
+        is a separate site with its own checks, described in its repository.</li>
+      <li>The site has not yet been tested by hand with a screen reader. That is planned.</li>
+    </ul>
+
+    <h2>Report a problem</h2>
+    <p>If something on this site is hard to use, email
+      <a href="mailto:aaronadlerjaden@gmail.com?subject=Accessibility%20on%20aaronjadler.github.io">aaronadlerjaden@gmail.com</a>
+      with the page and what happened. I aim to reply within five business days.</p>
+  </article>
+</main>
+
+<footer class="wrap"><a href="./">All projects</a> · <a href="accessibility.html" aria-current="page">Accessibility</a></footer>
+</body>
+</html>

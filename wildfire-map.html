@@ -6,20 +6,25 @@
 <title>California Wildfire Risk Map · Aaron Adler</title>
 <meta name="description" content="Live California wildfire risk on ArcGIS Online: satellite detections, CAL FIRE and interagency incidents, and fire weather, over CAL FIRE's Fire Hazard Severity Zones.">
 <link rel="stylesheet" href="style.css">
+<script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
+<link rel="stylesheet" href="settings.css">
+<script src="settings.js" defer></script>
 </head>
 <body>
+<a class="skip" href="#main">Skip to main content</a>
 <header class="site">
   <div class="wrap">
     <a class="name" href="./">Aaron Adler</a>
-    <nav>
+    <nav aria-label="Main">
       <a href="./">Projects</a>
       <a href="wildfire-map.html" aria-current="page">Wildfire map</a>
+      <a href="wildfire-history.html">Fire season 2021</a>
       <a href="https://github.com/AaronJAdler">GitHub</a>
     </nav>
   </div>
 </header>
 
-<main class="wrap">
+<main id="main" class="wrap">
   <section class="map-intro">
     <h1>California wildfire risk, live on ArcGIS</h1>
     <p>Every 3 hours an open-source pipeline scores the state on a hexagon grid from NASA satellite
@@ -33,11 +38,13 @@
     </div>
   </section>
 
+  <a class="skip-inline" href="#after-map">Skip past the embedded map</a>
   <div class="frame">
     <iframe src="https://www.arcgis.com/apps/instant/basic/index.html?appid=0cfa3cabe6704c51976fff69a9414747&center=-119.4,37.2&level=6"
             title="California Wildfire Risk Feed on ArcGIS Online" loading="lazy" allowfullscreen></iframe>
   </div>
 
+  <h2 id="after-map" tabindex="-1">What the map shows</h2>
   <div class="layers">
     <div><b>Risk hexagons</b><span>0–100 per 36 km² cell: satellite heat, nearby incidents, and fire weather.</span></div>
     <div><b>Active incidents</b><span>CAL FIRE and NIFC WFIGS, merged so each fire appears once.</span></div>
@@ -50,6 +57,6 @@
     emergencies, follow local authorities and <a href="https://www.fire.ca.gov/incidents">CAL FIRE</a>.</p>
 </main>
 
-<footer class="wrap"><a href="./">← All projects</a></footer>
+<footer class="wrap"><a href="./"><span aria-hidden="true">← </span>All projects</a> · <a href="accessibility.html">Accessibility</a></footer>
 </body>
 </html>

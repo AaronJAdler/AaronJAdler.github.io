@@ -1,0 +1,42 @@
+/* Display settings panel, plus the contrast, text-size and link options it controls.
+   Theme and colorblind colors are defined in each page's own stylesheet, because the
+   palettes differ between pages. */
+.settings-toggle {
+  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line, var(--axis)); border-radius: 8px; padding: 6px 12px;
+}
+.settings-toggle:hover { border-color: var(--ink); }
+.settings-toggle:focus-visible, .settings-panel button:focus-visible, .settings-panel input:focus-visible {
+  outline: 3px solid var(--ink); outline-offset: 2px;
+}
+.settings-panel { border-bottom: 1px solid var(--line, var(--axis)); background: var(--surface); }
+.settings-inner { max-width: 1040px; margin: 0 auto; padding: 16px 20px 20px; }
+.settings-panel h2 { font-size: 18px; margin: 0; color: var(--ink); text-transform: none; letter-spacing: 0; }
+.settings-note { margin: 2px 0 12px; color: var(--muted); font-size: 14px; }
+.settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.settings-panel fieldset { border: 1px solid var(--line, var(--axis)); border-radius: 10px; padding: 8px 12px 10px; margin: 0; }
+.settings-panel legend { font-weight: 700; padding: 0 4px; color: var(--ink); }
+.settings-panel label { display: flex; gap: 8px; align-items: flex-start; padding: 4px 0; font-size: 14.5px;
+  color: var(--ink); cursor: pointer; }
+.settings-panel input { margin-top: 4px; accent-color: var(--ink); }
+.settings-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.settings-actions button { font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 6px 12px;
+  border-radius: 8px; border: 1px solid var(--line, var(--axis)); background: var(--surface); color: var(--ink); }
+
+/* Always underline links */
+:root[data-links="underline"] a { text-decoration: underline !important; text-decoration-thickness: 1.5px !important; }
+
+/* Larger text: about 20% larger across both page styles */
+:root[data-text="large"] body { font-size: 19px; }
+:root[data-text="large"] .hero p, :root[data-text="large"] .card p, :root[data-text="large"] .job ul,
+:root[data-text="large"] .layers div, :root[data-text="large"] .note, :root[data-text="large"] .sub,
+:root[data-text="large"] .lead, :root[data-text="large"] .panel-note, :root[data-text="large"] table,
+:root[data-text="large"] details, :root[data-text="large"] .legend, :root[data-text="large"] footer,
+:root[data-text="large"] .prose p, :root[data-text="large"] .prose li { font-size: 1.05em; }
+:root[data-text="large"] nav a, :root[data-text="large"] .button, :root[data-text="large"] .tags span,
+:root[data-text="large"] .card .actions, :root[data-text="large"] .label, :root[data-text="large"] .badge,
+:root[data-text="large"] .job .when, :root[data-text="large"] .panel-title { font-size: 1em; }
+:root[data-text="large"] .card h3 { font-size: 22px; }
+:root[data-text="large"] svg text { font-size: 14px; }
+:root[data-text="large"] .settings-panel label { font-size: 17px; }

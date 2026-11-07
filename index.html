@@ -6,20 +6,25 @@
 <title>Aaron Adler · Software and Data Engineering</title>
 <meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Enterprise systems, integration and data engineering projects: CDC streaming, lakehouses, a live California wildfire risk feed, and K-12 attendance reporting.">
 <link rel="stylesheet" href="style.css">
+<script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
+<link rel="stylesheet" href="settings.css">
+<script src="settings.js" defer></script>
 </head>
 <body>
+<a class="skip" href="#main">Skip to main content</a>
 <header class="site">
   <div class="wrap">
     <a class="name" href="./">Aaron Adler</a>
-    <nav>
+    <nav aria-label="Main">
       <a href="./" aria-current="page">Projects</a>
       <a href="wildfire-map.html">Wildfire map</a>
+      <a href="wildfire-history.html">Fire season 2021</a>
       <a href="https://github.com/AaronJAdler">GitHub</a>
     </nav>
   </div>
 </header>
 
-<main class="wrap">
+<main id="main" class="wrap">
   <section class="hero">
     <h1>Senior software engineer building reliable data systems.</h1>
     <p>Six-plus years designing, modernizing and optimizing enterprise business applications at
@@ -44,9 +49,9 @@
         reported incident explains, and never clears an alert on missing data.</p>
       <div class="tags"><span>Python</span><span>H3</span><span>DuckDB</span><span>GitHub Actions</span><span>ArcGIS Online</span></div>
       <div class="actions">
-        <a href="wildfire-map.html">ArcGIS map</a>
-        <a href="https://aaronjadler.github.io/wildfire-risk-feed/">Live feed</a>
-        <a href="https://github.com/AaronJAdler/wildfire-risk-feed">Code</a>
+        <a href="wildfire-map.html">ArcGIS map<span class="sr-only"> for California Wildfire Risk Feed</span></a>
+        <a href="https://aaronjadler.github.io/wildfire-risk-feed/">Live feed<span class="sr-only"> for California Wildfire Risk Feed</span></a>
+        <a href="https://github.com/AaronJAdler/wildfire-risk-feed">Code<span class="sr-only"> for California Wildfire Risk Feed</span></a>
       </div>
     </article>
 
@@ -59,9 +64,9 @@
         the way CDE does it.</p>
       <div class="tags"><span>Python</span><span>dbt</span><span>DuckDB</span><span>ArcGIS</span><span>WCAG 2.1 AA</span></div>
       <div class="actions">
-        <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/">Dashboard</a>
-        <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/map.html">ArcGIS map</a>
-        <a href="https://github.com/AaronJAdler/K12AttendanceReportingPipeline">Code</a>
+        <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/">Dashboard<span class="sr-only"> for K-12 Attendance Reporting Pipeline</span></a>
+        <a href="https://aaronjadler.github.io/K12AttendanceReportingPipeline/map.html">ArcGIS map<span class="sr-only"> for K-12 Attendance Reporting Pipeline</span></a>
+        <a href="https://github.com/AaronJAdler/K12AttendanceReportingPipeline">Code<span class="sr-only"> for K-12 Attendance Reporting Pipeline</span></a>
       </div>
     </article>
 
@@ -71,7 +76,7 @@
         Spark Structured Streaming into Delta Lake. Exactly-once merges, proven by killing Spark
         mid-batch and reconciling every row against the source.</p>
       <div class="tags"><span>Debezium</span><span>Kafka</span><span>Spark</span><span>Delta Lake</span></div>
-      <div class="actions"><a href="https://github.com/AaronJAdler/cdc-streaming-lakehouse">Code</a></div>
+      <div class="actions"><a href="https://github.com/AaronJAdler/cdc-streaming-lakehouse">Code<span class="sr-only"> for CDC Streaming Lakehouse</span></a></div>
     </article>
 
     <article class="card">
@@ -79,7 +84,7 @@
       <p>A medallion lakehouse for card transactions on Azure and Databricks: SCD Type 2 dimensions,
         write-audit-publish quality gates, Terraform infrastructure and a Databricks Asset Bundle.</p>
       <div class="tags"><span>Databricks</span><span>PySpark</span><span>Terraform</span><span>Azure</span></div>
-      <div class="actions"><a href="https://github.com/AaronJAdler/card-payments-lakehouse">Code</a></div>
+      <div class="actions"><a href="https://github.com/AaronJAdler/card-payments-lakehouse">Code<span class="sr-only"> for Card Payments Lakehouse</span></a></div>
     </article>
 
     <article class="card">
@@ -88,8 +93,8 @@
         in a DuckDB warehouse, with a dashboard that is explicit about how far the data can be trusted.</p>
       <div class="tags"><span>Airflow</span><span>DuckDB</span><span>SQL</span><span>Data quality</span></div>
       <div class="actions">
-        <a href="wildfire-history.html">Dashboard</a>
-        <a href="https://github.com/AaronJAdler/ca-wildfire-elt">Code</a>
+        <a href="wildfire-history.html">Dashboard<span class="sr-only"> for California Wildfire ELT</span></a>
+        <a href="https://github.com/AaronJAdler/ca-wildfire-elt">Code<span class="sr-only"> for California Wildfire ELT</span></a>
       </div>
     </article>
   </div>
@@ -167,6 +172,6 @@
   </div>
 </main>
 
-<footer class="wrap">West Sacramento, California · <a href="mailto:aaronadlerjaden@gmail.com">aaronadlerjaden@gmail.com</a></footer>
+<footer class="wrap">West Sacramento, California · <a href="mailto:aaronadlerjaden@gmail.com">aaronadlerjaden@gmail.com</a> · <a href="accessibility.html">Accessibility</a></footer>
 </body>
 </html>
