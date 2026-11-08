@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document Pipeline Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a field guide. Picker on top answers "which pipeline?", then a filterable catalog whose cards open a detail sheet with the stage flow, then reference tables. */
+:root{
+  --paper:#f4f6f8;
+  --surface:#ffffff;
+  --ink:#16202b;
+  --muted:#5a6878;
+  --line:#d7dee6;
+  --accent:#0f6e74;
+  --accent-soft:#e1f1f1;
+  --signal:#b4531d;
+  --good:#2f7d3e; --warn:#a66a00; --bad:#b0362c;
+  --display:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f151c; --surface:#17202a; --ink:#e6edf3; --muted:#9aa9b8; --line:#2a3644;
+    --accent:#4cc3c4; --accent-soft:#163236; --signal:#f08a4b;
+    --good:#6cc37c; --warn:#e0a83a; --bad:#ef7468; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f151c; --surface:#17202a; --ink:#e6edf3; --muted:#9aa9b8; --line:#2a3644;
+  --accent:#4cc3c4; --accent-soft:#163236; --signal:#f08a4b;
+  --good:#6cc37c; --warn:#e0a83a; --bad:#ef7468; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--body)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 64px;display:grid;gap:40px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:24px;font-weight:700}
+h3{font-size:18px;font-weight:700}
+p{margin:0;max-width:68ch}
+.lede{color:var(--muted);font-size:17px;margin-top:10px}
+.kicker{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+header{display:grid;gap:6px}
+section{display:grid;gap:16px}
+.sec-head{display:grid;gap:6px}
+.sec-head p{color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Picker */
+.picker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px}
+@media (max-width:820px){.picker{grid-template-columns:1fr}}
+.qs{display:grid;gap:18px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:8px}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.opt label{display:inline-block;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:14px;cursor:pointer;background:var(--paper);color:var(--ink)}
+.opt input:checked + label{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.opt input:focus-visible + label{outline:2px solid var(--accent);outline-offset:2px}
+.result{background:var(--accent-soft);border-radius:10px;padding:18px;display:grid;gap:14px;align-content:start}
+.result h3{font-size:20px}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain button{font:600 14px var(--body);padding:6px 10px;border-radius:6px;border:1px solid var(--accent);background:var(--surface);color:var(--ink);cursor:pointer}
+.chain .arrow{color:var(--muted);font-family:var(--mono)}
+.rlist{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.rlist li{display:grid;grid-template-columns:96px 1fr;gap:10px;font-size:14.5px}
+.rlist b{font:500 12px/1.6 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+
+/* Filters + catalog */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:500 14px var(--body);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{text-align:left;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c,var(--accent));border-radius:8px;padding:14px 14px 12px;cursor:pointer;display:grid;gap:8px;color:var(--ink);font:inherit}
+.card:hover{border-color:var(--accent)}
+.card[aria-current="true"]{box-shadow:0 0 0 2px var(--accent)}
+.card .cat{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.card h3{font-size:16.5px}
+.card p{font-size:14px;color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font:500 11.5px var(--mono);padding:2px 7px;border-radius:4px;background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+.pill.core{color:var(--signal);border-color:var(--signal)}
+
+/* Detail */
+.detail{display:grid;gap:18px}
+.detail-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:baseline}
+.flow{display:flex;gap:0;overflow-x:auto;padding-bottom:6px}
+.step{flex:0 0 auto;min-width:128px;max-width:170px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;position:relative;margin-right:22px;font-size:13.5px}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-18px;top:50%;transform:translateY(-50%);color:var(--accent);font-family:var(--mono)}
+.step .n{font:500 11px var(--mono);color:var(--accent);display:block}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+.box{border-top:2px solid var(--line);padding-top:10px;display:grid;gap:6px}
+.box h4{margin:0;font:600 13px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.box ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14.5px}
+.box.good{border-color:var(--good)} .box.bad{border-color:var(--bad)} .box.warn{border-color:var(--warn)}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.tools{grid-template-columns:1fr}}
+.tool{background:var(--paper);border-radius:6px;padding:10px 12px;font-size:14px}
+.tool b{display:block;font:500 11.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:4px}
+.meter{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px}
+.meter span b{font-family:var(--mono);font-weight:500;color:var(--muted);margin-right:4px}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:720px}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--paper);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.lv3{background:var(--signal)} .lv2{background:var(--warn)} .lv1{background:var(--good)} .lv0{background:var(--line)}
+
+/* Blueprints */
+.bps{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.bp{display:grid;gap:10px}
+.bp .chain span{font:500 13px var(--body);padding:4px 8px;border-radius:5px;background:var(--accent-soft);color:var(--ink)}
+.bp p{font-size:14.5px;color:var(--muted)}
+.rules{counter-reset:r;display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rules li{counter-increment:r;display:grid;grid-template-columns:34px 1fr;gap:10px;font-size:15px}
+.rules li::before{content:counter(r,decimal-leading-zero);font:500 14px var(--mono);color:var(--accent)}
+footer{color:var(--muted);font-size:13px;display:grid;gap:6px}
+@media (prefers-reduced-motion:no-preference){.card,.chain button{transition:border-color .15s, box-shadow .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">Field guide · Nov 2026</span>
+  <h1>Document pipelines: what works best where</h1>
+  <p class="lede">Nineteen pipeline types grouped by what they produce, with the stage flow, the right tools for each kind of document, and how to chain them. Start with the picker if you have a problem in mind, or browse the catalog.</p>
+</header>
+
+<!-- PICKER -->
+<section id="picker" aria-labelledby="picker-h">
+  <div class="sec-head">
+    <span class="kicker">01 · Picker</span>
+    <h2 id="picker-h">Which pipeline do I need?</h2>
+  </div>
+  <div class="panel picker">
+    <form class="qs" id="qform">
+      <fieldset>
+        <legend>What should come out the other end?</legend>
+        <div class="opts" data-q="goal"></div>
+      </fieldset>
+      <fieldset>
+        <legend>What do the documents look like?</legend>
+        <div class="opts" data-q="input"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Constraints (pick any)</legend>
+        <div class="opts" data-q="cons" data-multi="1"></div>
+      </fieldset>
+    </form>
+    <div class="result" id="result" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section id="catalog" aria-labelledby="cat-h">
+  <div class="sec-head">
+    <span class="kicker">02 · Catalog</span>
+    <h2 id="cat-h">The pipeline types</h2>
+    <p>Pick a card to see its stages, where it works, where it fails, and the tools that fit it.</p>
+  </div>
+  <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+  <div class="grid" id="grid"></div>
+  <div class="panel detail" id="detail" aria-live="polite"></div>
+</section>
+
+<!-- MATRIX -->
+<section id="matrix" aria-labelledby="mx-h">
+  <div class="sec-head">
+    <span class="kicker">03 · Compare</span>
+    <h2 id="mx-h">Side by side</h2>
+    <p>How each pipeline behaves in production. LLM reliance: <span class="dot lv0"></span>none <span class="dot lv1"></span>optional <span class="dot lv2"></span>helps a lot <span class="dot lv3"></span>core.</p>
+  </div>
+  <div class="tbl-wrap"><table id="mx"></table></div>
+</section>
+
+<!-- PARSERS -->
+<section id="parsers" aria-labelledby="ps-h">
+  <div class="sec-head">
+    <span class="kicker">04 · Parsing layer</span>
+    <h2 id="ps-h">Which parser for which documents</h2>
+    <p>Nearly every pipeline starts with parsing, and that's where quality is usually won or lost. You will often need more than one parser and a router that picks per document.</p>
+  </div>
+  <div class="tbl-wrap"><table id="ps"></table></div>
+</section>
+
+<!-- BLUEPRINTS -->
+<section id="blueprints" aria-labelledby="bp-h">
+  <div class="sec-head">
+    <span class="kicker">05 · Blueprints</span>
+    <h2 id="bp-h">Real systems chain several pipelines</h2>
+    <p>Production systems combine these. Shared ingestion runs once and feeds several consumers.</p>
+  </div>
+  <div class="bps" id="bps"></div>
+</section>
+
+<!-- RULES -->
+<section id="rules" aria-labelledby="rl-h">
+  <div class="sec-head">
+    <span class="kicker">06 · Rules of thumb</span>
+    <h2 id="rl-h">Decisions that hold across every pipeline</h2>
+  </div>
+  <ol class="panel rules">
+    <li>Use deterministic tools where the format is fixed and LLMs where it isn't. Prebuilt invoice models are cheaper and more consistent than a prompt; an LLM wins on long-tail layouts.</li>
+    <li>Parse once, store a canonical form (Markdown or JSON with layout and page coordinates), and let every downstream pipeline read from it.</li>
+    <li>Keep provenance: page, bounding box, source version. Citations, audits and human review all depend on it.</li>
+    <li>Gate on confidence. High-confidence results flow straight through; low-confidence ones go to a human queue, and those corrections become your eval set.</li>
+    <li>Make every stage idempotent and keyed by content hash, so reprocessing after a model or schema change is safe and cheap.</li>
+    <li>Carry permissions and sensitivity labels from ingestion all the way to output. Redact before anything leaves the trust boundary.</li>
+    <li>Measure per stage (parse accuracy, extraction F1, retrieval recall), not just end-to-end, or you won't know which stage broke.</li>
+    <li>Budget by page. OCR and layout run roughly $1–15 per 1,000 pages, vision-LLM extraction often costs more, so route easy pages to cheap paths.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Tool and price notes were checked against vendor and comparison pages in late 2026 and change often, so confirm current pricing before you commit.</p>
+</footer>
+</div>
+
+<script>
+const CATS = {
+  understand:{name:"Extract & understand", c:"#0f6e74"},
+  transform:{name:"Transform", c:"#5b5fc7"},
+  review:{name:"Analyze & review", c:"#b4531d"},
+  generate:{name:"Generate", c:"#2f7d3e"},
+  infra:{name:"Data & search infra", c:"#6b7785"}
+};
+
+const P = [
+ {id:"rag",name:"Retrieval-augmented generation (RAG)",cat:"understand",job:"Answer natural-language questions grounded in your documents, with citations.",
+  stages:["Parse","Chunk + metadata/ACL","Embed","Index (vector + BM25)","Query rewrite","Hybrid retrieve + filter","Rerank","Generate + cite","Eval & monitor"],
+  best:["Q&A over policies, manuals, wikis, tickets","Corpus changes often (cheaper than fine-tuning)","Answers must cite sources"],
+  avoid:["You need exact aggregates (\"total spend in Q3\"), so use SQL or ETL","Every query needs the whole corpus, so use summarization or long context","Data is tiny and static, so just put it in the prompt"],
+  tools:{oss:"Docling / Unstructured, pgvector, Qdrant, LlamaIndex, LangGraph, bge-reranker",cloud:"Azure AI Search + Foundry, Bedrock Knowledge Bases, Vertex AI Search",llm:"Any frontier LLM; Cohere / Voyage embeddings + rerankers"},
+  metrics:"Recall@k, MRR, faithfulness, answer relevance, citation accuracy",
+  pitfall:"Stale ACLs leak data; bad chunking silently tanks recall.",
+  mode:"Real-time",llm:3,hitl:1,cost:"$$"},
+ {id:"idp",name:"Intelligent document processing (IDP)",cat:"understand",job:"Turn forms, invoices, claims and IDs into validated structured records.",
+  stages:["Ingest (email/scan/upload)","Pre-process (deskew, split)","Classify","OCR + layout","Extract fields to schema","Validate (rules, lookups)","Confidence gate → human review","Export to ERP/DB"],
+  best:["High-volume, repeatable doc types (AP, lending, claims)","Fields have business rules you can check","Downstream system needs rows, not prose"],
+  avoid:["Free-form narrative documents with no fixed fields","Very low volume, where manual entry is cheaper than integration"],
+  tools:{oss:"Docling, PaddleOCR, Tesseract + LLM extraction, Camunda / Temporal for flow",cloud:"Azure Document Intelligence (prebuilt + custom), AWS Textract + A2I, Google Document AI",llm:"Vision LLM with JSON-schema output for long-tail layouts; Mistral OCR for cheap volume"},
+  metrics:"Field-level precision/recall, straight-through-processing rate, review time per doc",
+  pitfall:"No confidence gate means bad numbers flow straight into finance systems.",
+  mode:"Batch / near real-time",llm:2,hitl:3,cost:"$$"},
+ {id:"classify",name:"Classification & routing",cat:"understand",job:"Label incoming documents by type, intent, urgency or owner and send each to the right queue.",
+  stages:["Ingest","Normalize text","Features / embed","Classify (rules → model → LLM)","Confidence threshold","Route to queue/workflow","Feedback loop"],
+  best:["Shared inboxes, mailrooms, support tickets","Front door for IDP (each doc type has its own extractor)","Triage by priority or SLA"],
+  avoid:["Classes are fuzzy and change weekly (fix the taxonomy first)"],
+  tools:{oss:"scikit-learn, SetFit, fine-tuned small BERT, embeddings + kNN",cloud:"Azure DI custom classifier, Comprehend custom classification, Vertex AI",llm:"Small/fast LLM zero-shot for cold start, then distill to a cheap classifier"},
+  metrics:"Macro-F1, misroute rate, time-to-queue",
+  pitfall:"Paying for an LLM on every email when a tiny model hits 98%.",
+  mode:"Real-time",llm:1,hitl:1,cost:"$"},
+ {id:"ocr",name:"Digitization & OCR",cat:"understand",job:"Convert paper and image archives into searchable, accessible text with layout.",
+  stages:["Scan / capture","Image cleanup","OCR (print + handwriting)","Layout + reading order","Table recovery","Searchable PDF/A + text","QA sampling"],
+  best:["Back-file conversion of paper archives","Accessibility (tagged PDFs)","Feeding everything else"],
+  avoid:["Born-digital PDFs, where you should extract the text layer directly"],
+  tools:{oss:"Tesseract, PaddleOCR, docTR, OCRmyPDF, Surya",cloud:"Azure DI Read/Layout, Textract, Google Document AI OCR",llm:"Vision LLMs for degraded scans, handwriting, faxes"},
+  metrics:"Character/word error rate, table cell accuracy, pages/hour",
+  pitfall:"OCRing born-digital PDFs wastes money and adds errors.",
+  mode:"Batch",llm:1,hitl:1,cost:"$"},
+ {id:"kg",name:"Knowledge graph construction",cat:"understand",job:"Extract entities and relationships into a graph for reasoning about connections.",
+  stages:["Parse","Entity extraction","Relation extraction","Entity resolution / dedupe","Ontology mapping","Load graph","Community summaries (GraphRAG)"],
+  best:["\"How is X connected to Y\" questions","Investigations, supply chains, org/ownership structures","Multi-hop questions that RAG misses"],
+  avoid:["Simple lookup Q&A, where plain RAG is cheaper","No one will maintain the ontology"],
+  tools:{oss:"Neo4j, spaCy, Microsoft GraphRAG, LightRAG",cloud:"Neptune, Cosmos DB Gremlin, Spanner Graph",llm:"LLM extraction with a fixed schema of entity and relation types"},
+  metrics:"Entity/relation precision, duplicate rate, multi-hop QA accuracy",
+  pitfall:"Entity resolution is the hard part; skip it and the graph is noise.",
+  mode:"Batch",llm:3,hitl:2,cost:"$$$"},
+
+ {id:"summ",name:"Summarization",cat:"transform",job:"Produce shorter versions: digests, briefs, meeting notes, case summaries.",
+  stages:["Parse","Segment by section","Map: summarize sections","Reduce: combine","Format to template","Faithfulness check","Distribute"],
+  best:["Recurring digests (daily, weekly)","Long reports and transcripts","Whole-document understanding RAG can't give"],
+  avoid:["Users need the exact wording (legal, regulatory)"],
+  tools:{oss:"LangChain map-reduce, LlamaIndex tree summarize",cloud:"Azure Language summarization, Bedrock, Vertex",llm:"Long-context LLMs can often skip map-reduce entirely"},
+  metrics:"Faithfulness (claims supported), coverage of key points, reader rating",
+  pitfall:"Confident summaries that drop the one caveat that mattered.",
+  mode:"Batch / on demand",llm:3,hitl:1,cost:"$$"},
+ {id:"translate",name:"Translation & localization",cat:"transform",job:"Translate documents while keeping terminology and layout intact.",
+  stages:["Extract text + layout","Segment","Apply glossary / TM","Machine translate","Post-edit / QA","Rebuild format","Locale review"],
+  best:["Product docs, contracts, support content across markets"],
+  avoid:["Marketing creative that needs transcreation by a human"],
+  tools:{oss:"NLLB, MarianMT, Okapi framework",cloud:"Azure Translator (document), Amazon Translate, Google Translation",llm:"LLM translation with glossary in prompt; strong for tone"},
+  metrics:"COMET/BLEU, terminology adherence, post-edit distance",
+  pitfall:"Breaking layout on rebuild, such as tables and RTL scripts.",
+  mode:"Batch",llm:2,hitl:2,cost:"$$"},
+ {id:"redact",name:"Redaction & anonymization",cat:"transform",job:"Find and remove PII, PHI or secrets before documents are shared, released or trained on.",
+  stages:["Parse (text + images)","Detect entities (NER + regex)","Policy decision (mask / pseudonymize / drop)","Apply redaction (burn-in)","Verify (re-scan)","Audit log"],
+  best:["FOIA / public records, legal production","Before sending data to external LLMs","Building training data"],
+  avoid:["Relying only on an overlay: black boxes over a live text layer don't redact"],
+  tools:{oss:"Microsoft Presidio, spaCy, regex packs",cloud:"Azure Language PII, Comprehend (Medical) PII, Google Sensitive Data Protection",llm:"LLM second pass for context-dependent PII"},
+  metrics:"PII recall (a miss is a leak), over-redaction rate",
+  pitfall:"Text layer still present under the black box.",
+  mode:"Batch / inline",llm:1,hitl:2,cost:"$"},
+ {id:"convert",name:"Format conversion & normalization",cat:"transform",job:"Turn DOCX, PDF, HTML, PPTX and XLSX into one clean canonical format.",
+  stages:["Detect type","Extract (text layer or OCR)","Structure (headings, lists, tables)","Normalize (Markdown / JSON)","Attach metadata","Store canonical"],
+  best:["Step 0 of RAG, IDP, search and training"],
+  avoid:["Throwing away layout coordinates you'll later need for citations"],
+  tools:{oss:"Docling, MarkItDown, Marker, PyMuPDF4LLM, Pandoc, Unstructured",cloud:"Azure DI Layout (to Markdown), Textract Layout",llm:"LlamaParse, Reducto for complex tables and charts"},
+  metrics:"Table cell accuracy, heading recall, throughput",
+  pitfall:"Lighter tools silently drop table cells.",
+  mode:"Batch",llm:1,hitl:0,cost:"$"},
+
+ {id:"compliance",name:"Compliance & policy review",cat:"review",job:"Check contracts or filings against rules or a playbook, and flag gaps and risks.",
+  stages:["Parse","Clause segmentation","Clause classification","Compare to playbook / rules","Risk score + explanation","Reviewer queue","Report"],
+  best:["Vendor contracts, NDAs, lease review","Regulatory filings, policy attestations"],
+  avoid:["Final legal judgment with no human sign-off"],
+  tools:{oss:"LLM + rules engine, CUAD-style clause models",cloud:"Azure DI contract model, Bedrock / Vertex with guardrails",llm:"LLM-as-reviewer with the playbook in context; cite clause locations"},
+  metrics:"Issue recall, false-flag rate, reviewer minutes saved",
+  pitfall:"Unexplained flags that reviewers learn to ignore.",
+  mode:"On demand",llm:3,hitl:3,cost:"$$"},
+ {id:"diff",name:"Comparison & diffing",cat:"review",job:"Detect what changed between versions: redlines, regulatory updates, revisions.",
+  stages:["Parse both versions","Align sections","Text diff","Semantic diff (meaning changed?)","Summarize material changes","Notify owners"],
+  best:["Contract negotiation rounds","Tracking regulation or policy updates"],
+  avoid:["Pure character diffs on reflowed PDFs (align structure first)"],
+  tools:{oss:"diff-match-patch, Docling for structure, embeddings for alignment",cloud:"Word Compare APIs, custom",llm:"LLM to judge whether a change is material"},
+  metrics:"Material-change recall, noise rate",
+  pitfall:"Formatting noise burying the one real change.",
+  mode:"On demand",llm:2,hitl:2,cost:"$"},
+ {id:"ediscovery",name:"E-discovery & legal review",cat:"review",job:"Collect, cull and code large document sets for litigation or investigations.",
+  stages:["Collect + legal hold","Process (dedupe, thread email)","Cull (date, custodian, terms)","Predictive coding / LLM review","Privilege review","Redact","Produce (load files)"],
+  best:["Litigation, regulatory investigations, internal audits"],
+  avoid:["Skipping chain-of-custody logging"],
+  tools:{oss:"Apache Tika, custom TAR",cloud:"Relativity, Everlaw, Microsoft Purview eDiscovery",llm:"GenAI first-pass relevance with validated recall sampling"},
+  metrics:"Recall at review cutoff (defensibility), cost per doc",
+  pitfall:"No statistical validation of recall, so the process isn't defensible.",
+  mode:"Batch",llm:2,hitl:3,cost:"$$$"},
+ {id:"analytics",name:"Sentiment & text analytics",cat:"review",job:"Mine reviews, surveys and tickets for themes, sentiment and trends.",
+  stages:["Ingest","Clean / dedupe","Embed","Cluster topics","Label clusters","Sentiment / aspect","Dashboard + trend alerts"],
+  best:["Voice-of-customer, NPS verbatims, support drivers"],
+  avoid:["Small samples where reading them is faster"],
+  tools:{oss:"BERTopic, HDBSCAN, sentence-transformers",cloud:"Azure Language, Comprehend, Natural Language API",llm:"LLM to name clusters and pull representative quotes"},
+  metrics:"Cluster coherence, sentiment accuracy, trend lead time",
+  pitfall:"Topic labels nobody can act on.",
+  mode:"Batch",llm:2,hitl:1,cost:"$"},
+
+ {id:"gen",name:"Document generation & assembly",cat:"generate",job:"Fill templates from data to produce contracts, letters, proposals, statements.",
+  stages:["Select template","Gather data (DB / API)","Business rules / clause logic","Render (DOCX / PDF)","Optional LLM narrative","Review / approve","Sign + deliver","Archive"],
+  best:["High-volume, regulated output (statements, notices, policies)","Proposals with reusable clauses"],
+  avoid:["Letting an LLM write legally binding text without templates"],
+  tools:{oss:"docxtemplater, Carbone, WeasyPrint, Typst",cloud:"Word/Graph, DocuSign Gen, Adobe Document Generation",llm:"LLM for narrative sections only; templates own the facts"},
+  metrics:"Error rate, turnaround time, template reuse",
+  pitfall:"Hallucinated numbers in generated prose.",
+  mode:"On demand / batch",llm:1,hitl:2,cost:"$"},
+ {id:"report",name:"Report automation",cat:"generate",job:"Pull data, write narrative, add charts and distribute on a schedule.",
+  stages:["Scheduled trigger","Query data","Compute metrics","Charts","LLM narrative (from computed numbers)","Assemble","Distribute"],
+  best:["Weekly ops/finance reports, client reporting"],
+  avoid:["Letting the LLM do the arithmetic; compute in code"],
+  tools:{oss:"dbt, Python, Quarto, Airflow",cloud:"Power BI paginated, Fabric, Looker",llm:"LLM writes commentary from a numbers JSON"},
+  metrics:"Numerical accuracy, on-time delivery",
+  pitfall:"Narrative contradicts the chart.",
+  mode:"Scheduled",llm:2,hitl:1,cost:"$"},
+
+ {id:"search",name:"Classic search indexing",cat:"infra",job:"Keyword, faceted and filtered search, with no generation involved.",
+  stages:["Parse","Extract fields + facets","Analyze (tokenize, stem, synonyms)","Index","Query + rank","Click analytics + tuning"],
+  best:["Users know what they're looking for","Exact codes, part numbers, names","Cheap, fast and predictable"],
+  avoid:["Conceptual questions phrased differently from the docs (add vectors)"],
+  tools:{oss:"OpenSearch, Elasticsearch, Typesense, Meilisearch",cloud:"Azure AI Search, Amazon OpenSearch, Vertex AI Search",llm:"Optional: query expansion, semantic re-rank"},
+  metrics:"NDCG, zero-result rate, click-through",
+  pitfall:"Skipping synonyms and analyzers, then blaming search.",
+  mode:"Real-time",llm:0,hitl:0,cost:"$"},
+ {id:"etl",name:"Document ETL / ELT",cat:"infra",job:"Land extracted document content in a lake or warehouse for BI and analytics.",
+  stages:["Ingest (CDC / batch)","Parse + extract","Land raw (bronze)","Clean + conform (silver)","Model marts (gold)","Data quality tests","Serve BI / ML"],
+  best:["Aggregates across thousands of documents","Joining doc data with transactional data"],
+  avoid:["Q&A use cases (pair it with RAG instead)"],
+  tools:{oss:"Airflow / Dagster, Spark, dbt, Delta / Iceberg",cloud:"Fabric / Synapse + ADF, Glue + Redshift, BigQuery",llm:"LLM extraction as one transform step, with schema validation"},
+  metrics:"Freshness, row-level DQ pass rate, cost per run",
+  pitfall:"No schema contract, so a model change breaks downstream marts.",
+  mode:"Batch / streaming",llm:1,hitl:0,cost:"$$"},
+ {id:"train",name:"Training-data pipelines",cat:"infra",job:"Turn documents into clean datasets for fine-tuning, evals or classifiers.",
+  stages:["Collect + license check","Parse","Dedupe (exact + near)","Quality filter","PII redact","Label / synthesize","Split + version","Datasheet"],
+  best:["Fine-tuning, eval sets, distilling classifiers"],
+  avoid:["Training on data whose license or consent you can't prove"],
+  tools:{oss:"datatrove, MinHash LSH, Argilla, Label Studio, DVC",cloud:"SageMaker Ground Truth, Azure ML data labeling, Vertex",llm:"LLM-as-labeler with human spot checks"},
+  metrics:"Duplicate rate, label agreement, downstream eval lift",
+  pitfall:"Eval data leaking into training data.",
+  mode:"Batch",llm:2,hitl:2,cost:"$$"},
+ {id:"records",name:"Records management & archival",cat:"infra",job:"Apply retention, legal holds and defensible deletion across the document lifecycle.",
+  stages:["Classify record type","Apply retention label","Hold management","Lifecycle transitions (hot → archive)","Disposition review","Defensible delete","Audit"],
+  best:["Regulated industries (banking, health, public sector)","Reducing storage and legal risk"],
+  avoid:["Deleting the source while copies live on in embeddings and caches"],
+  tools:{oss:"Alfresco, Nuxeo",cloud:"Microsoft Purview, S3 Object Lock + lifecycle, Google Vault",llm:"LLM-assisted auto-classification into the retention schedule"},
+  metrics:"Classification coverage, overdue dispositions, hold compliance",
+  pitfall:"Derived copies (chunks, vectors) ignored by retention.",
+  mode:"Scheduled",llm:1,hitl:2,cost:"$"}
+];
+
+const PARSERS = [
+ ["Clean born-digital PDFs, DOCX","Extract the text layer directly","PyMuPDF4LLM, MarkItDown, Docling","Fast and nearly free. Don't OCR these."],
+ ["Complex layouts, multi-page tables, charts","AI-native / vision parsing","LlamaParse, Reducto, Unstructured (hi-res), Azure DI Layout","Lighter tools tend to drop table cells here."],
+ ["Scans, faxes, handwriting","OCR plus a layout model, with a vision LLM fallback","Azure DI Read, Textract, Google Document AI, Mistral OCR","Route low-confidence pages to a vision LLM or a human."],
+ ["Fixed business forms (invoices, receipts, IDs, tax forms)","Prebuilt extraction models","Azure DI prebuilt (~$10 per 1,000 pages), Textract AnalyzeExpense/ID","Cheaper and more consistent than prompting."],
+ ["Your own recurring form types","Custom-trained extractor","Azure DI custom neural, Google Document AI custom","Takes about 5–50 labeled samples per type."],
+ ["Long-tail, never-seen layouts","Vision LLM with a JSON schema","Claude / GPT / Gemini with structured output","Best flexibility, highest cost per page. Validate the output."],
+ ["Air-gapped, on-prem, strict residency","Self-hosted open source","Docling, PaddleOCR, Surya, or Azure DI disconnected containers","Textract is cloud-only."],
+ ["Email, HTML, Office mix from many connectors","Connector-heavy ingestion","Unstructured, Apache Tika","Broadest format and connector coverage."]
+];
+
+const BPS = [
+ {name:"Accounts payable automation",chain:["Classify","IDP","Validate vs PO/ERP","Human review","ETL to warehouse"],note:"Classifier picks the extractor, and three-way match catches errors. The warehouse powers spend analytics."},
+ {name:"Enterprise knowledge assistant",chain:["Convert","Redact","RAG (ACL-filtered)","Records mgmt"],note:"One canonical store feeds the assistant, and retention deletes chunks and vectors along with their source."},
+ {name:"Contract lifecycle",chain:["Generate","Diff","Compliance review","KG of obligations","Records mgmt"],note:"Templates draft, diffs track each negotiation round, and the graph answers questions like which contracts renew next quarter."},
+ {name:"Regulated records digitization",chain:["OCR","Classify","Redact","Search index","Records mgmt"],note:"The paper back-file becomes searchable with PII removed and retention applied from day one."},
+ {name:"Customer voice program",chain:["Classify (tickets)","Text analytics","Summarization","Report automation"],note:"Tickets are routed live, and weekly themes and a written digest go to product leads."},
+ {name:"Model fine-tuning",chain:["Convert","Redact","Training-data pipeline","Eval set"],note:"Corrections from IDP human review become high-quality labeled data."}
+];
+
+const GOALS = [
+ ["answers","Answers to questions"],["fields","Fields / records"],["routed","Sorted & routed docs"],
+ ["shorter","Summaries"],["clean","Clean / translated / redacted docs"],["flags","Risks, changes, review decisions"],
+ ["newdocs","New documents / reports"],["numbers","Analytics & aggregates"],["connections","Relationships between things"],["governed","Retention & governance"]
+];
+const INPUTS = [["digital","Born-digital PDFs & Office"],["complex","Complex tables & layouts"],["scans","Scans / handwriting"],["forms","Standard business forms"],["mixed","Email, HTML, mixed sources"]];
+const CONS = [["onprem","On-prem / air-gapped"],["pii","PII / regulated"],["volume","High volume"],["realtime","Real-time"],["cheap","Tight budget"]];
+
+const GOALMAP = {
+ answers:{chain:["convert","rag"],why:"RAG answers questions with citations. Add classic search if users mostly look up exact codes or names."},
+ fields:{chain:["classify","idp","etl"],why:"Classify first so each document type gets its own extractor, then gate on confidence before data reaches your systems."},
+ routed:{chain:["classify"],why:"Start with a small LLM zero-shot classifier, then distill it into a cheap model once you have labels."},
+ shorter:{chain:["convert","summ"],why:"Long-context models can summarize whole documents. Use map-reduce only when a document exceeds the context window."},
+ clean:{chain:["convert","redact","translate"],why:"Normalize once, then redact and translate from the canonical form so the layout survives the rebuild."},
+ flags:{chain:["convert","diff","compliance"],why:"Diff finds what changed, compliance review judges it against the playbook, and a human signs off."},
+ newdocs:{chain:["gen","report"],why:"Templates own the facts and the LLM writes only the narrative. Do all math in code."},
+ numbers:{chain:["convert","idp","etl","analytics"],why:"RAG can't total numbers reliably. Extract fields into a warehouse and query them."},
+ connections:{chain:["convert","kg","rag"],why:"A knowledge graph handles multi-hop questions about how things connect. Pair it with RAG for the text."},
+ governed:{chain:["classify","records"],why:"Classification drives retention labels. Make sure derived copies like chunks and vectors follow the source's lifecycle."}
+};
+const INPUTMAP = {
+ digital:"Extract the text layer directly with PyMuPDF4LLM, MarkItDown or Docling. Skip OCR.",
+ complex:"Use AI-native parsing like LlamaParse, Reducto, Unstructured hi-res or Azure DI Layout, and check table cells on a sample.",
+ scans:"Use OCR with layout (Azure DI, Textract, Document AI or Mistral OCR), with a vision LLM for low-confidence pages.",
+ forms:"Use prebuilt models (Azure DI prebuilt, Textract AnalyzeExpense/ID). They're cheaper and more consistent than prompts.",
+ mixed:"Use connector-heavy ingestion (Unstructured, Apache Tika) and route each format to the right parser."
+};
+const CONSMAP = {
+ onprem:"Self-host Docling, PaddleOCR and an open-weight LLM, or use Azure DI disconnected containers. Textract is cloud-only.",
+ pii:"Add redaction before any external call, carry ACLs and sensitivity labels, and keep an audit log. Add records management for retention.",
+ volume:"Route easy pages to cheap deterministic paths and send only hard ones to vision LLMs. Make stages idempotent and keyed by content hash.",
+ realtime:"Precompute parsing and indexing offline, keep the online path short, and cache per user or role.",
+ cheap:"Use open-source parsers plus a small model. Mistral OCR is about $2 per 1,000 pages at volume, and Azure DI gives 500 free pages a month."
+};
+
+const byId = Object.fromEntries(P.map(p=>[p.id,p]));
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Picker */
+function buildOpts(q, list, multi, defaults){
+  const el = document.querySelector(`[data-q="${q}"]`);
+  el.innerHTML = list.map(([v,l])=>`<span class="opt"><input type="${multi?"checkbox":"radio"}" name="${q}" id="${q}-${v}" value="${v}" ${defaults.includes(v)?"checked":""}><label for="${q}-${v}">${esc(l)}</label></span>`).join("");
+}
+buildOpts("goal",GOALS,false,["fields"]);
+buildOpts("input",INPUTS,false,["forms"]);
+buildOpts("cons",CONS,true,["pii"]);
+
+function renderResult(){
+  const f = new FormData($("#qform"));
+  const goal = f.get("goal"), input = f.get("input"), cons = f.getAll("cons");
+  const g = GOALMAP[goal];
+  let chain = [...g.chain];
+  if(cons.includes("pii") && !chain.includes("redact")) chain.splice(Math.min(1,chain.length),0,"redact");
+  if(cons.includes("pii") && !chain.includes("records")) chain.push("records");
+  if(input==="scans" && !chain.includes("ocr")) chain.unshift("ocr");
+  if(goal==="answers" && input!=="scans" && !chain.includes("search")) {}
+  const label = GOALS.find(x=>x[0]===goal)[1];
+  $("#result").innerHTML = `
+    <span class="kicker">Recommended chain</span>
+    <h3>For: ${esc(label.toLowerCase())}</h3>
+    <div class="chain">${chain.map((id,i)=>`${i?'<span class="arrow" aria-hidden="true">→</span>':""}<button type="button" data-open="${id}">${esc(shortName(byId[id].name))}</button>`).join("")}</div>
+    <ul class="rlist">
+      <li><b>Why</b><span>${esc(g.why)}</span></li>
+      <li><b>Parsing</b><span>${esc(INPUTMAP[input])}</span></li>
+      ${cons.map(c=>`<li><b>${esc(CONS.find(x=>x[0]===c)[1])}</b><span>${esc(CONSMAP[c])}</span></li>`).join("")}
+    </ul>
+    <p style="font-size:13.5px;color:var(--muted)">Select any step to open its full breakdown below.</p>`;
+}
+function shortName(n){return n.replace(/\s*\(.*?\)/,"").replace(" & legal review","").replace("Knowledge graph construction","Knowledge graph").replace("Retrieval-augmented generation","RAG").replace("Intelligent document processing","IDP")}
+$("#qform").addEventListener("change",renderResult);
+$("#result").addEventListener("click",e=>{const b=e.target.closest("[data-open]"); if(b){openDetail(b.dataset.open,true)}});
+
+/* Catalog */
+let filter = "all", current = "rag";
+function renderFilters(){
+  const all = [["all","All "+P.length]].concat(Object.entries(CATS).map(([k,v])=>[k,v.name]));
+  $("#filters").innerHTML = all.map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${filter===k}">${esc(l)}</button>`).join("");
+}
+const LLM = ["No LLM","LLM optional","LLM helps","LLM core"];
+function renderGrid(){
+  const list = P.filter(p=>filter==="all"||p.cat===filter);
+  $("#grid").innerHTML = list.map(p=>`<button type="button" class="card" style="--c:${CATS[p.cat].c}" data-id="${p.id}" aria-current="${p.id===current}">
+    <span class="cat">${esc(CATS[p.cat].name)}</span>
+    <h3>${esc(p.name)}</h3>
+    <p>${esc(p.job)}</p>
+    <span class="pills"><span class="pill">${esc(p.mode)}</span><span class="pill ${p.llm===3?"core":""}">${LLM[p.llm]}</span><span class="pill">${p.cost}</span></span>
+  </button>`).join("");
+}
+function openDetail(id, scroll){
+  current = id; const p = byId[id];
+  if(filter!=="all" && p.cat!==filter){filter="all";renderFilters();}
+  renderGrid();
+  const HITL = ["None","Low","Medium","High"];
+  $("#detail").innerHTML = `
+    <div class="detail-top"><div style="display:grid;gap:4px"><span class="kicker" style="color:${CATS[p.cat].c}">${esc(CATS[p.cat].name)}</span><h2>${esc(p.name)}</h2></div>
+      <div class="meter"><span><b>Mode</b>${esc(p.mode)}</span><span><b>LLM</b>${LLM[p.llm]}</span><span><b>Human review</b>${HITL[p.hitl]}</span><span><b>Cost</b>${p.cost}</span></div></div>
+    <p>${esc(p.job)}</p>
+    <div class="flow" role="list" aria-label="Pipeline stages">${p.stages.map((s,i)=>`<div class="step" role="listitem"><span class="n">${String(i+1).padStart(2,"0")}</span>${esc(s)}</div>`).join("")}</div>
+    <div class="cols">
+      <div class="box good"><h4>Works best when</h4><ul>${p.best.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+      <div class="box bad"><h4>Wrong tool when</h4><ul>${p.avoid.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    </div>
+    <div class="tools">
+      <div class="tool"><b>Open source</b>${esc(p.tools.oss)}</div>
+      <div class="tool"><b>Cloud managed</b>${esc(p.tools.cloud)}</div>
+      <div class="tool"><b>LLM-native</b>${esc(p.tools.llm)}</div>
+    </div>
+    <div class="cols">
+      <div class="box"><h4>Measure</h4><ul><li>${esc(p.metrics)}</li></ul></div>
+      <div class="box warn"><h4>Classic failure</h4><ul><li>${esc(p.pitfall)}</li></ul></div>
+    </div>`;
+  if(scroll) $("#detail").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth", block:"start"});
+}
+$("#filters").addEventListener("click",e=>{const b=e.target.closest("[data-f]"); if(!b)return; filter=b.dataset.f; renderFilters(); renderGrid();});
+$("#grid").addEventListener("click",e=>{const b=e.target.closest("[data-id]"); if(b) openDetail(b.dataset.id,true);});
+
+/* Matrix */
+function renderMatrix(){
+  const HITL = ["—","Low","Med","High"];
+  $("#mx").innerHTML = `<thead><tr><th>Pipeline</th><th>Group</th><th>Output</th><th>Mode</th><th>LLM reliance</th><th>Human review</th><th>Cost</th></tr></thead><tbody>${
+    P.map(p=>`<tr><td><a href="#catalog" data-open="${p.id}">${esc(shortName(p.name))}</a></td><td>${esc(CATS[p.cat].name)}</td><td>${esc(p.job.split(/[,.:]/)[0])}</td><td>${esc(p.mode)}</td><td><span class="dot lv${p.llm}"></span>${LLM[p.llm]}</td><td>${HITL[p.hitl]}</td><td>${p.cost}</td></tr>`).join("")
+  }</tbody>`;
+}
+$("#mx").addEventListener("click",e=>{const a=e.target.closest("[data-open]"); if(a){e.preventDefault(); openDetail(a.dataset.open,true);}});
+
+function renderParsers(){
+  $("#ps").innerHTML = `<thead><tr><th>Document type</th><th>Approach</th><th>Tools that fit</th><th>Note</th></tr></thead><tbody>${
+    PARSERS.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+}
+function renderBps(){
+  $("#bps").innerHTML = BPS.map(b=>`<div class="panel bp"><h3>${esc(b.name)}</h3><div class="chain">${b.chain.map((c,i)=>`${i?'<span class="arrow" aria-hidden="true">→</span>':""}<span>${esc(c)}</span>`).join("")}</div><p>${esc(b.note)}</p></div>`).join("");
+}
+
+renderResult(); renderFilters(); renderGrid(); openDetail("rag",false); renderMatrix(); renderParsers(); renderBps();
+</script>
+</body>
+</html>
