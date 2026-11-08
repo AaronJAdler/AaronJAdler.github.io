@@ -6,7 +6,11 @@ wildfire risk, and the CAL FIRE 2021 dashboard. Plain HTML and CSS, served by Gi
 - `index.html`: projects and experience
 - `wildfire-map.html`: the [wildfire-risk-feed](https://github.com/AaronJAdler/wildfire-risk-feed)
   ArcGIS Online Instant App, embedded
-- `wildfire-history.html`: the dashboard from [ca-wildfire-elt](https://github.com/AaronJAdler/ca-wildfire-elt)
+- `pipeline-status.js`: reads `/wildfire-risk-feed/status.json` (same origin, published by that repo's `live.yml` every 3 hours)
+  and shows the last run, source health, quarantined records, cell counts and open alerts on `wildfire-map.html` and the
+  Projects card. Marks the feed "Behind schedule" if the last run is over 7 hours old.
+- `wildfire-history.html`: the dashboard from [ca-wildfire-elt](https://github.com/AaronJAdler/ca-wildfire-elt), a static
+  snapshot of the 2021 season, with that pipeline's failure-scenario test results (`#proof`)
 - `study-guide.html` (+ `study-guide.css`): the Data Engineering Study Guide, including a 26-week plan, in the site's layout
 - `study-tracker.js` + `study-tracker-data.json`: the progress tracker and resume gap check shown in both guides. It reads progress from `localStorage`, matches pasted resume text to guide parts by keyword in the browser (nothing is uploaded or stored), and copies a prompt the reader can use in any AI chat to build a study session
 - `study-guide-phone.html`: the same guide as a standalone phone study app (progress and flashcards saved in `localStorage`, with a Start my plan button that dates the 26 weeks from the reader's own start date, and save and load of a progress file)

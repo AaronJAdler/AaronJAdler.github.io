@@ -173,6 +173,36 @@ footer a { color: inherit; }
     <ul class="findings" id="findings"></ul>
   </section>
 
+  <section class="card" id="proof" aria-labelledby="proof-title">
+    <h2 id="proof-title">How the pipeline was proven</h2>
+    <p class="sub">This page is built from the <a href="https://github.com/AaronJAdler/ca-wildfire-elt">ca-wildfire-elt</a> warehouse:
+      90 daily snapshots from July 15 to October 15, 2021, run through a Python extractor, dbt models in DuckDB and an Airflow 3 DAG.
+      Each scenario below was run on the full season, and every table was compared by row count and MD5 hash.</p>
+    <div class="scroll" tabindex="0" role="region" aria-label="Pipeline test results">
+      <table>
+        <caption class="sr-only">Failure scenarios tested on the full 2021 season</caption>
+        <thead><tr><th scope="col">Scenario</th><th scope="col">Expected</th><th scope="col">Result</th></tr></thead>
+        <tbody>
+          <tr><td>Rerun a past day, including the day before an attribute change</td><td>All 8 tables hash-identical</td><td>Passed</td></tr>
+          <tr><td>Delete a bronze partition, then restore and reprocess it</td><td>All 8 tables hash-identical</td><td>Passed</td></tr>
+          <tr><td>Rebuild the incremental fact table from scratch</td><td>Matches the day-by-day build</td><td>Passed</td></tr>
+          <tr><td>Backfill all 93 days through a real Airflow 3.3.2 scheduler</td><td>Same warehouse as a direct replay</td><td>Passed: 93 of 93 runs, 0 retries, 8 of 8 tables matched</td></tr>
+          <tr><td>Source publishes nothing (October 4 to 6)</td><td>Run is skipped, not failed, and the gap stays visible</td><td>Passed</td></tr>
+          <tr><td>Skip a day before an attribute change</td><td>The build fails</td><td>Passed</td></tr>
+          <tr><td>Duplicate rows in a dimension</td><td>The tests fail</td><td>Passed</td></tr>
+          <tr><td>Empty feed arrives for a day that already has data</td><td>Existing data is kept and the run fails</td><td>Passed</td></tr>
+          <tr><td>Over 20% of a day's records are invalid</td><td>Nothing is published</td><td>Passed</td></tr>
+          <tr><td>A few records are invalid</td><td>Those are quarantined and the rest load</td><td>Passed</td></tr>
+          <tr><td>Crash during publish</td><td>The previous partition stays readable, and a rerun succeeds</td><td>Passed</td></tr>
+          <tr><td>Source adds a new field</td><td>The field is kept and reported in the manifest</td><td>Passed</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Evidence: <a href="https://github.com/AaronJAdler/ca-wildfire-elt/blob/main/docs/proof/idempotency.json">idempotency.json</a> ·
+      <a href="https://github.com/AaronJAdler/ca-wildfire-elt/blob/main/docs/proof/airflow_backfill.json">airflow_backfill.json</a> ·
+      <a href="https://github.com/AaronJAdler/ca-wildfire-elt/blob/main/scripts/prove_idempotency.py">prove_idempotency.py</a></p>
+  </section>
+
   <footer>
     Source: CAL FIRE incident feed, as recorded by
     <a href="https://github.com/simonw/ca-fires-history">simonw/ca-fires-history</a>.
