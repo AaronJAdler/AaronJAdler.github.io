@@ -9,6 +9,7 @@
 <script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
 <link rel="stylesheet" href="settings.css">
 <script src="settings.js" defer></script>
+<script src="pipeline-status.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
@@ -45,6 +46,7 @@
     <article class="card">
       <div class="badge">Live · updates every 3 hours</div>
       <h3>California Wildfire Risk Feed</h3>
+      <p class="feed-line" data-feed-status="line" aria-live="polite">Checking the latest run…</p>
       <p>Combines NASA FIRMS satellite detections, CAL FIRE and NIFC interagency incidents and
         perimeters, and NWS fire weather alerts into a scored H3 hexagon map. Flags satellite heat no
         reported incident explains, and never clears an alert on missing data.</p>
@@ -95,6 +97,7 @@
       <div class="tags"><span>Airflow</span><span>DuckDB</span><span>SQL</span><span>Data quality</span></div>
       <div class="actions">
         <a href="wildfire-history.html">Dashboard<span class="sr-only"> for California Wildfire ELT</span></a>
+        <a href="wildfire-history.html#proof">Test results<span class="sr-only"> for California Wildfire ELT</span></a>
         <a href="https://github.com/AaronJAdler/ca-wildfire-elt">Code<span class="sr-only"> for California Wildfire ELT</span></a>
       </div>
     </article>

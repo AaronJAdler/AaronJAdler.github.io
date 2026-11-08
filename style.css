@@ -93,3 +93,39 @@ footer.wrap { color: var(--muted); font-size: 14px; padding-top: 40px; padding-b
   .hero { padding-top: 36px; }
   .frame iframe { height: 70vh; }
 }
+
+/* Pipeline status (pipeline-status.js) and pipeline flow. Status is always spelled out, never color alone. */
+:root { --ok-ink: #1f6b3a; --ok-bg: #e3f1e7; --warn-ink: #7a4b00; --warn-bg: #f8ecd3; --bad-ink: #a12626; --bad-bg: #f8e1e1; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --ok-ink: #8fd6a6; --ok-bg: #1f3326; --warn-ink: #f0c070; --warn-bg: #3a2e17; --bad-ink: #f19a9a; --bad-bg: #3d1f1f; }
+}
+:root[data-theme="dark"] { --ok-ink: #8fd6a6; --ok-bg: #1f3326; --warn-ink: #f0c070; --warn-bg: #3a2e17; --bad-ink: #f19a9a; --bad-bg: #3d1f1f; }
+.pill { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 12.5px; font-weight: 700;
+  border: 1px solid currentColor; white-space: nowrap; }
+.pill.ok { color: var(--ok-ink); background: var(--ok-bg); }
+.pill.warn { color: var(--warn-ink); background: var(--warn-bg); }
+.pill.bad { color: var(--bad-ink); background: var(--bad-bg); }
+.status { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; margin: 0 0 16px; }
+.status h2 { margin: 0 0 8px; }
+.status-head { margin: 0 0 12px; }
+.status-head code { font-size: 13px; color: var(--muted); }
+.status .scroll { overflow-x: auto; }
+.status table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.status th, .status td { text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.status thead th { color: var(--muted); font-weight: 600; font-size: 13px; }
+.status .detail { display: block; color: var(--muted); font-weight: 400; font-size: 13.5px; }
+.status .n { text-align: right; font-variant-numeric: tabular-nums; }
+.status-stats { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 12px 0 0; }
+.status-stats div { display: flex; gap: 6px; align-items: baseline; }
+.status-stats dt { color: var(--muted); font-size: 14px; }
+.status-stats dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.status-links { font-size: 14px; margin: 12px 0 0; }
+.card .feed-line { flex: none; font-size: 14px; color: var(--muted); margin: -2px 0 12px; }
+.flow { list-style: none; counter-reset: step; padding: 0; margin: 0; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.flow li { counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; font-size: 14.5px; }
+.flow li::before { content: counter(step); display: inline-grid; place-items: center; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--chip); color: var(--ink); font-size: 12.5px; font-weight: 700; margin-right: 6px; }
+.flow b { display: inline; }
+.flow span { display: block; color: var(--muted); margin-top: 4px; }

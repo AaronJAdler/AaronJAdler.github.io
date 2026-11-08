@@ -9,6 +9,7 @@
 <script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
 <link rel="stylesheet" href="settings.css">
 <script src="settings.js" defer></script>
+<script src="pipeline-status.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
@@ -39,13 +40,33 @@
     </div>
   </section>
 
+  <section class="status" aria-labelledby="status-title">
+    <h2 id="status-title">Pipeline status</h2>
+    <div data-feed-status="full" aria-live="polite" aria-busy="true">Loading the latest run…</div>
+    <p class="status-links">
+      Read live from the pipeline's <a href="/wildfire-risk-feed/status.json">status.json</a> ·
+      <a href="https://github.com/AaronJAdler/wildfire-risk-feed/actions/workflows/live.yml">Run history on GitHub Actions</a> ·
+      <a href="https://github.com/AaronJAdler/wildfire-risk-feed/blob/main/.github/workflows/live.yml">Workflow file</a> ·
+      <a href="/wildfire-risk-feed/feed.geojson">Raw GeoJSON</a>
+    </p>
+  </section>
+
   <a class="skip-inline" href="#after-map">Skip past the embedded map</a>
   <div class="frame">
     <iframe src="https://www.arcgis.com/apps/instant/basic/index.html?appid=0cfa3cabe6704c51976fff69a9414747&center=-119.4,37.2&level=6"
             title="California Wildfire Risk Feed on ArcGIS Online" loading="lazy" allowfullscreen></iframe>
   </div>
 
-  <h2 id="after-map" tabindex="-1">What the map shows</h2>
+  <h2 id="after-map" tabindex="-1">How a run works</h2>
+  <ol class="flow">
+    <li><b>Schedule</b><span>GitHub Actions starts a run at 17 minutes past every third hour.</span></li>
+    <li><b>Fetch</b><span>CAL FIRE, NIFC WFIGS, NASA FIRMS and NWS, with an HTTP cache and retries.</span></li>
+    <li><b>Validate</b><span>Bad records are quarantined, and a source that fails is marked stale or down rather than read as "no fires".</span></li>
+    <li><b>Score</b><span>Each H3 hexagon gets 0–100 from satellite heat, incidents and fire weather. Alert state is kept in DuckDB between runs.</span></li>
+    <li><b>Publish</b><span>GeoJSON and status files are deployed to GitHub Pages. ArcGIS Online reads them directly.</span></li>
+  </ol>
+
+  <h2>What the map shows</h2>
   <div class="layers">
     <div><b>Risk hexagons</b><span>0–100 per 36 km² cell: satellite heat, nearby incidents, and fire weather.</span></div>
     <div><b>Active incidents</b><span>CAL FIRE and NIFC WFIGS, merged so each fire appears once.</span></div>
