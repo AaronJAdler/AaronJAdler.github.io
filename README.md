@@ -7,8 +7,8 @@ wildfire risk, and the CAL FIRE 2021 dashboard. Plain HTML and CSS, served by Gi
 - `wildfire-map.html`: the [wildfire-risk-feed](https://github.com/AaronJAdler/wildfire-risk-feed)
   ArcGIS Online Instant App, embedded
 - `wildfire-history.html`: the dashboard from [ca-wildfire-elt](https://github.com/AaronJAdler/ca-wildfire-elt)
-- `study-guide.html` (+ `study-guide.css`): the Data Engineering Study Guide in the site's layout
-- `study-guide-phone.html`: the same guide as a standalone phone study app (progress and flashcards saved in `localStorage`, with save and load of a progress file)
+- `study-guide.html` (+ `study-guide.css`): the Data Engineering Study Guide, including a 26-week plan, in the site's layout
+- `study-guide-phone.html`: the same guide as a standalone phone study app (progress and flashcards saved in `localStorage`, with a Start my plan button that dates the 26 weeks from the reader's own start date, and save and load of a progress file)
 - The K-12 attendance card links to the dashboard and ArcGIS map that
   [K12AttendanceReportingPipeline](https://github.com/AaronJAdler/K12AttendanceReportingPipeline) deploys to its own Pages site
 
