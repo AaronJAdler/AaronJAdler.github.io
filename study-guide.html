@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Engineering Study Guide · Aaron Adler</title>
+<meta name="description" content="A 26-week study guide for moving from senior software engineer to data and platform engineer, tied to the portfolio projects that demonstrate each topic.">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="study-guide.css">
+<script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
+<link rel="stylesheet" href="settings.css">
+<script src="settings.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="site">
+  <div class="wrap">
+    <a class="name" href="./">Aaron Adler</a>
+    <nav aria-label="Main">
+      <a href="./">Projects</a>
+      <a href="wildfire-map.html">Wildfire map</a>
+      <a href="wildfire-history.html">Fire season 2021</a>
+      <a href="study-guide.html" aria-current="page">Study guide</a>
+      <a href="https://github.com/AaronJAdler">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <article class="prose guide">
+    <p class="guide-alt"><a href="study-guide-phone.html">Phone version</a>: the same guide as a study app with progress tracking.</p>
+<h1 id="the-data-engineering-study-guide">The Data Engineering Study Guide</h1>
+<p><time data-atom="date" datetime="2026-11-05">2026-11-05</time></p>
+<p>This guide takes you from senior software engineer to interview-ready data or platform engineer in 26 weeks at about 10 hours a week. It starts Monday, November 9, 2026 and ends May 9, 2027. Your backend, Kafka, and reliability experience lets you skip much of what a beginner must learn, so the plan concentrates on modeling, Spark, the lakehouse, and orchestration.</p>
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>Work through the parts in the order set by the 26-week plan in Part 22, not necessarily top to bottom. Each part gives the concepts, working examples, drills, and a &quot;you know this part when&quot; test. Move on when you pass the test, not when you finish reading.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 1 (scrolls sideways)"><table><thead><tr><th>Priority</th><th>Parts</th><th>Depth needed</th></tr></thead><tbody><tr><td>1. Gets you hired</td><td>SQL (2), Python (3), Data modeling (4), Spark (7), Warehouses and lakehouses (9), dbt (10), Orchestration (11), System design (18), Interviews (19), Portfolio (20)</td><td>Be able to do it unaided and explain the trade-offs</td></tr><tr><td>2. Makes you senior</td><td>Storage internals (5), Distributed systems (6), Streaming (8), Data quality (12), Cloud (14), Platform (15), Cost (16)</td><td>Be able to design with it and debug it</td></tr><tr><td>3. Differentiates you</td><td>Governance (13), AI data (17), Certifications (21)</td><td>Know the landscape and one deep example</td></tr></tbody></table></div>
+<h3 id="your-head-start">Your head start</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 2 (scrolls sideways)"><table><thead><tr><th>What you already have</th><th>Where it transfers</th><th>What is still new</th></tr></thead><tbody><tr><td>SQL Server and ACID knowledge</td><td>Parts 2, 4, 5</td><td>Columnar engines, analytical windows, dimensional modeling</td></tr><tr><td>Kafka lead-creation work (70% faster throughput)</td><td>Part 8</td><td>Partition design, Flink, stateful processing, event-time semantics</td></tr><tr><td>Solace at-least-once incident and replay fix</td><td>Parts 6, 8, 12, 19</td><td>Applying the same reasoning to pipelines. This is one of your best interview stories</td></tr><tr><td>Idempotency keys, retries, circuit breakers, Redis</td><td>Parts 6, 11</td><td>Idempotent batch writes, backfills</td></tr><tr><td>Python, FastAPI, LangChain and RAG work</td><td>Parts 3, 17</td><td>Packaging, PySpark, Arrow, data-focused testing</td></tr><tr><td>Azure DevOps YAML, branch policy, CI/CD</td><td>Parts 10, 15</td><td>Testing data, not only code. Slim CI for dbt</td></tr><tr><td>OpenShift and Pivotal Cloud Foundry</td><td>Part 15</td><td>Spark and Airflow on Kubernetes, Terraform</td></tr><tr><td>Splunk, Prometheus, ServiceNow incident work</td><td>Parts 12, 15</td><td>Freshness and volume monitoring, lineage</td></tr><tr><td>Statistics degree</td><td>Parts 12, 17</td><td>Anomaly detection, experiment data, sampling at scale</td></tr><tr><td>Regulated banking environment</td><td>Part 13</td><td>Naming the controls explicitly: lineage, retention, audit</td></tr><tr><td>AZ-104 and AZ-305 study</td><td>Parts 14, 21</td><td>Fabric, Databricks, Event Hubs</td></tr></tbody></table></div>
+<p>The main gap is mindset. Application work optimizes for one request at a time, while data work optimizes for correctness across billions of rows and years of history.</p>
+<h3 id="what-the-field-looks-like">What the field looks like</h3>
+<p>The <a href="https://joereis.github.io/practical_data_data_eng_survey">2026 State of Data Engineering Survey</a> of 1,101 practitioners shows where to aim. Its authors caution that it leans toward engaged, senior respondents, so treat the figures as directional.</p>
+<ul><li><p><strong>Modeling is the widest gap.</strong> About 90% report modeling pain, and 17.4% still add tables ad hoc. Strong modeling skills stand out.</p></li><li><p><strong>Warehouses and lakehouses dominate.</strong> 43.8% use a cloud warehouse as their primary environment and 26.8% a lakehouse. Learn both.</p></li><li><p><strong>Fundamentals outlast tools.</strong> 25.4% name legacy systems and tech debt as their top bottleneck, more than any tool problem.</p></li><li><p><strong>Teams are stable to growing.</strong> 42.0% expect growth in 2026 and 7.1% expect shrinkage.</p></li></ul>
+<p>Tool versions in this guide were checked on November 5, 2026 and change often. Confirm them on the official pages before relying on them.</p>
+<h2 id="part-1-foundations">Part 1: Foundations</h2>
+<p>Data engineering builds the reliable systems that move raw data from where it is created to where people and models can trust and use it. The job is less about any one tool than about correctness, recoverability, and cost at scale.</p>
+<h3 id="the-lifecycle">The lifecycle</h3>
+<p>Every pipeline passes through five stages, whatever the stack. This framing comes from <em>Fundamentals of Data Engineering</em> (Reis and Housley).</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 3 (scrolls sideways)"><table><thead><tr><th>Stage</th><th>The question it answers</th><th>Typical tools</th><th>Main failure mode</th></tr></thead><tbody><tr><td>Generation</td><td>Where does the data come from, and who owns it?</td><td>App databases, SaaS APIs, event streams, files, sensors</td><td>Upstream schema changes with no warning</td></tr><tr><td>Ingestion</td><td>How does it get here, and how often?</td><td>Fivetran, Airbyte, dlt, Debezium, Kafka Connect, Azure Data Factory</td><td>Duplicates, gaps, API rate limits</td></tr><tr><td>Storage</td><td>Where does it live, and in what format?</td><td>S3, ADLS, GCS, Parquet, Iceberg, Delta, Snowflake, BigQuery</td><td>Small files, poor partitioning, runaway cost</td></tr><tr><td>Transformation</td><td>How does raw data become useful?</td><td>SQL, dbt, Spark, Flink</td><td>Wrong joins, silent logic bugs, fan-out</td></tr><tr><td>Serving</td><td>Who consumes it, and how?</td><td>BI tools, semantic layers, reverse ETL, feature stores, vector stores, APIs</td><td>Conflicting metric definitions, stale data</td></tr></tbody></table></div>
+<p>Six concerns run under all five stages: security, data management, DataOps, architecture, orchestration, and software engineering.</p>
+<h3 id="role-tracks-inside-data-engineering">Role tracks inside &quot;data engineering&quot;</h3>
+<p>The title covers several different jobs. Read each posting closely, because the interview loop changes with the track.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 4 (scrolls sideways)"><table><thead><tr><th>Track</th><th>What you build</th><th>Emphasis</th><th>Fit for you</th></tr></thead><tbody><tr><td>Analytics engineer</td><td>Warehouse models, metrics, dbt projects</td><td>SQL, modeling, stakeholder work</td><td>Moderate; less software depth used</td></tr><tr><td>Data engineer (product or pipeline)</td><td>Batch and streaming pipelines for a domain</td><td>SQL, Python, Spark, orchestration</td><td>Strong; the most common entry</td></tr><tr><td>Data platform engineer</td><td>Internal platform, self-service tooling, infrastructure</td><td>Kubernetes, Terraform, APIs, reliability</td><td>Strongest; uses your microservices background</td></tr><tr><td>Streaming engineer</td><td>Low-latency event systems</td><td>Kafka, Flink, distributed systems</td><td>Later specialization</td></tr><tr><td>ML or AI data engineer</td><td>Feature pipelines, embeddings, training data</td><td>Spark, feature and vector stores, evaluation data</td><td>Later; keeps your AI interest alive</td></tr></tbody></table></div>
+<h3 id="core-vocabulary">Core vocabulary</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 5 (scrolls sideways)"><table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td>OLTP vs OLAP</td><td>Many small transactional reads and writes vs few large analytical scans</td></tr><tr><td>ETL vs ELT</td><td>Transform before loading vs load raw first and transform inside the warehouse</td></tr><tr><td>Idempotency</td><td>Running a job twice gives the same result as running it once</td></tr><tr><td>Backfill</td><td>Reprocessing historical periods, usually after a bug fix or new logic</td></tr><tr><td>Late-arriving data</td><td>Records that show up after their logical time window has closed</td></tr><tr><td>Event time vs processing time</td><td>When something happened vs when the system saw it</td></tr><tr><td>Watermark</td><td>The system&#39;s estimate that all events before a time have arrived</td></tr><tr><td>Schema evolution</td><td>Changing a dataset&#39;s structure without breaking readers</td></tr><tr><td>Data contract</td><td>An enforced agreement on schema and semantics between producer and consumer</td></tr><tr><td>Lineage</td><td>The record of which inputs and jobs produced a dataset</td></tr><tr><td>Freshness</td><td>How old the newest usable data is</td></tr><tr><td>SLI, SLO, SLA</td><td>The measure, the internal target, and the external promise</td></tr><tr><td>Partitioning</td><td>Physically grouping data by a key so queries can skip the rest</td></tr><tr><td>Medallion architecture</td><td>Bronze (raw), silver (cleaned, conformed), gold (business-ready) layers</td></tr></tbody></table></div>
+<h3 id="ten-principles-to-carry-through-every-part">Ten principles to carry through every part</h3>
+<ol><li><p>Keep raw data immutable, so any downstream result can be rebuilt.</p></li><li><p>Make every job idempotent. Retries and backfills then become safe and routine.</p></li><li><p>Assume duplicates, late data, and out-of-order data will happen.</p></li><li><p>Separate logical time from wall-clock time. A job for 2026-11-05 must behave the same whenever it runs.</p></li><li><p>Prefer boring technology until requirements prove otherwise. Batch beats streaming unless latency pays for it.</p></li><li><p>Treat data as a product, with owners, documentation, and SLOs.</p></li><li><p>Test data as well as code. Valid code can still produce wrong numbers.</p></li><li><p>Know the grain of every table before you join it.</p></li><li><p>Make cost visible. Every design choice has a compute and storage bill.</p></li><li><p>Design for failure: alert on it, make it easy to diagnose, and make recovery a single command.</p></li></ol>
+<p><strong>You know this part when</strong> you can explain the difference between ETL and ELT, and why a non-idempotent pipeline makes backfills dangerous.</p>
+<h2 id="part-2-sql-mastery">Part 2: SQL mastery</h2>
+<p>SQL is the language of the job and the first interview screen, so aim for fluent analytical SQL, not just working queries. You know transactional T-SQL already; the new skills are window functions, grain control, and thinking in sets over huge tables.</p>
+<h3 id="logical-execution-order">Logical execution order</h3>
+<p>The engine evaluates clauses in a different order from how you write them. This explains most confusing errors, such as why <code>WHERE</code> cannot see a window function.</p>
+<ol><li><p><code>FROM</code> and <code>JOIN</code></p></li><li><p><code>WHERE</code></p></li><li><p><code>GROUP BY</code></p></li><li><p><code>HAVING</code></p></li><li><p>Window functions</p></li><li><p><code>SELECT</code></p></li><li><p><code>DISTINCT</code></p></li><li><p><code>ORDER BY</code></p></li><li><p><code>LIMIT</code> or <code>TOP</code></p></li></ol>
+<h3 id="topics-to-master">Topics to master</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 6 (scrolls sideways)"><table><thead><tr><th>Topic</th><th>What to know</th><th>Common trap</th></tr></thead><tbody><tr><td>Joins</td><td>Inner, left, full, cross, semi, anti, self</td><td>Fan-out: joining to a non-unique key silently multiplies rows and inflates sums</td></tr><tr><td>NULLs</td><td>Three-valued logic, <code>COALESCE</code>, <code>IS DISTINCT FROM</code></td><td><code>NOT IN</code> returns nothing if the subquery contains a NULL. Use <code>NOT EXISTS</code></td></tr><tr><td>Aggregation</td><td><code>GROUP BY</code>, <code>FILTER</code>, conditional <code>SUM(CASE ...)</code>, <code>GROUPING SETS</code>, <code>ROLLUP</code></td><td><code>COUNT(col)</code> skips NULLs while <code>COUNT(*)</code> does not</td></tr><tr><td>Window functions</td><td><code>ROW_NUMBER</code>, <code>RANK</code>, <code>DENSE_RANK</code>, <code>LAG</code>, <code>LEAD</code>, <code>FIRST_VALUE</code>, <code>NTILE</code>, running aggregates</td><td><code>RANGE</code> is the default frame when <code>ORDER BY</code> is present. Ties then behave unexpectedly, so write <code>ROWS</code> explicitly</td></tr><tr><td>CTEs</td><td>Readable pipelines, recursive hierarchies</td><td>Some engines recompute a CTE each time it is referenced</td></tr><tr><td>Set operations</td><td><code>UNION ALL</code>, <code>INTERSECT</code>, <code>EXCEPT</code></td><td><code>UNION</code> deduplicates, which costs a sort or hash. Default to <code>UNION ALL</code></td></tr><tr><td>Dates</td><td>Truncation, generated date spines, time zones</td><td>Store UTC. Convert at the edges. Daylight saving days are not 24 hours</td></tr><tr><td>Semi-structured</td><td><code>JSON</code> extraction, <code>UNNEST</code>, <code>EXPLODE</code>, <code>VARIANT</code></td><td>Exploding an array changes the grain</td></tr><tr><td>Upserts</td><td><code>MERGE</code>, <code>INSERT OVERWRITE</code> by partition</td><td>A non-unique source key makes <code>MERGE</code> fail or produce wrong rows</td></tr></tbody></table></div>
+<h3 id="eight-patterns-to-memorize">Eight patterns to memorize</h3>
+<p><strong>1. Deduplicate to the latest record.</strong> This is the most common pattern in pipelines.</p>
+<pre tabindex="0"><code class="language-sql">WITH ranked AS (
+  SELECT *,
+         ROW_NUMBER() OVER (
+           PARTITION BY customer_id
+           ORDER BY updated_at DESC, ingested_at DESC
+         ) AS rn
+  FROM raw_customers
+)
+SELECT * FROM ranked WHERE rn = 1;
+-- Snowflake, BigQuery, and Databricks can shorten this with QUALIFY rn = 1</code></pre>
+<p><strong>2. Running total and 7-day moving average.</strong></p>
+<pre tabindex="0"><code class="language-sql">SELECT order_date,
+       revenue,
+       SUM(revenue) OVER (ORDER BY order_date
+         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total,
+       AVG(revenue) OVER (ORDER BY order_date
+         ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS avg_7d
+FROM daily_revenue;</code></pre>
+<p><strong>3. Gaps and islands: find consecutive active days.</strong></p>
+<pre tabindex="0"><code class="language-sql">WITH numbered AS (
+  SELECT user_id, activity_date,
+         DATEADD(day,
+           -ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY activity_date),
+           activity_date) AS island
+  FROM (SELECT DISTINCT user_id, activity_date FROM events) d
+)
+SELECT user_id, MIN(activity_date) AS start_date,
+       MAX(activity_date) AS end_date, COUNT(*) AS streak_days
+FROM numbered
+GROUP BY user_id, island;</code></pre>
+<p><strong>4. Sessionization: a new session after 30 idle minutes.</strong></p>
+<pre tabindex="0"><code class="language-sql">WITH flagged AS (
+  SELECT user_id, event_ts,
+         CASE WHEN LAG(event_ts) OVER (PARTITION BY user_id ORDER BY event_ts)
+                   &gt;= event_ts - INTERVAL &#39;30&#39; MINUTE
+              THEN 0 ELSE 1 END AS is_new_session
+  FROM events
+)
+SELECT user_id, event_ts,
+       SUM(is_new_session) OVER (PARTITION BY user_id ORDER BY event_ts
+         ROWS UNBOUNDED PRECEDING) AS session_id
+FROM flagged;</code></pre>
+<p><strong>5. Anti-join: customers with no orders.</strong></p>
+<pre tabindex="0"><code class="language-sql">SELECT c.customer_id
+FROM customers c
+WHERE NOT EXISTS (
+  SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id
+);</code></pre>
+<p><strong>6. Date spine: show zero for days with no sales.</strong></p>
+<pre tabindex="0"><code class="language-sql">SELECT d.calendar_date, COALESCE(SUM(s.amount), 0) AS revenue
+FROM dim_date d
+LEFT JOIN sales s ON s.sale_date = d.calendar_date
+WHERE d.calendar_date BETWEEN &#39;2026-01-01&#39; AND &#39;2026-12-31&#39;
+GROUP BY d.calendar_date;</code></pre>
+<p><strong>7. Grain test: run this before you trust any table or join.</strong></p>
+<pre tabindex="0"><code class="language-sql">SELECT order_id, COUNT(*)
+FROM fct_orders
+GROUP BY order_id
+HAVING COUNT(*) &gt; 1;   -- any row returned means the grain is not what you assumed</code></pre>
+<p><strong>8. Idempotent upsert.</strong></p>
+<pre tabindex="0"><code class="language-sql">MERGE INTO dim_customer t
+USING staged_customer s ON t.customer_id = s.customer_id
+WHEN MATCHED AND s.updated_at &gt; t.updated_at THEN
+  UPDATE SET email = s.email, updated_at = s.updated_at
+WHEN NOT MATCHED THEN
+  INSERT (customer_id, email, updated_at)
+  VALUES (s.customer_id, s.email, s.updated_at);</code></pre>
+<h3 id="from-t-sql-to-analytical-dialects">From T-SQL to analytical dialects</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 7 (scrolls sideways)"><table><thead><tr><th>Task</th><th>T-SQL</th><th>Postgres, DuckDB, Spark, Snowflake</th></tr></thead><tbody><tr><td>First N rows</td><td><code>SELECT TOP 10</code></td><td><code>LIMIT 10</code></td></tr><tr><td>Filter on a window</td><td>Requires a subquery</td><td><code>QUALIFY</code> (not in Postgres)</td></tr><tr><td>Null handling</td><td><code>ISNULL(a, b)</code></td><td><code>COALESCE(a, b)</code> (use it in T-SQL too)</td></tr><tr><td>String concatenation</td><td><code>+</code></td><td><code>||</code> or <code>CONCAT</code></td></tr><tr><td>Explode an array</td><td><code>CROSS APPLY</code> with <code>OPENJSON</code></td><td><code>UNNEST</code>, or <code>LATERAL VIEW EXPLODE</code> in Spark</td></tr><tr><td>Temporary working set</td><td><code>#temp</code> tables</td><td>CTEs, or <code>CREATE TEMP TABLE</code></td></tr><tr><td>Indexes</td><td>Central to performance</td><td>Rare. Partitioning, clustering, and column pruning do that job</td></tr></tbody></table></div>
+<h3 id="reading-query-plans">Reading query plans</h3>
+<p>Columnar engines have no B-tree indexes to save you, so performance comes from reading less data.</p>
+<ul><li><p>Select only the columns you need. Column stores pay for each column scanned.</p></li><li><p>Filter on the partition or cluster key, and keep it sargable. <code>WHERE order_date &gt;= &#39;2026-01-01&#39;</code> prunes files, while <code>WHERE YEAR(order_date) = 2026</code> may not.</p></li><li><p>Learn the join types in <code>EXPLAIN</code>: hash, merge, nested loop, and broadcast versus shuffle.</p></li><li><p>Look at bytes scanned, partitions pruned, and any exploding row counts.</p></li><li><p>Filter before you join, and aggregate before you join when the grain allows it.</p></li></ul>
+<h3 id="drills">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Complete 50 medium and 15 hard problems on DataLemur or StrataScratch, speaking your reasoning aloud</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Write patterns 1 to 8 from memory on a blank page</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Load a public dataset into DuckDB and compare <code>EXPLAIN ANALYZE</code> with and without a filter on the sort column</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Deliberately cause a fan-out, then detect it with a grain test</p></li></ul>
+<p><strong>You know this part when</strong> you can solve a medium window-function problem in 10 minutes while explaining your grain and NULL handling.</p>
+<h2 id="part-3-python-for-data-engineering">Part 3: Python for data engineering</h2>
+<p>Python is the connective tissue of data systems, so write it like production software while learning its data libraries. You have the engineering habits already. Focus on idiomatic Python, memory-efficient iteration, and the Arrow-based data stack.</p>
+<h3 id="set-up-your-windows-machine-first">Set up your Windows machine first</h3>
+<p>Spark, Airflow, and most open-source data tools assume Linux. Do hands-on work in WSL2 with Docker Desktop and keep your code inside the Linux file system. Run this in PowerShell as administrator:</p>
+<pre tabindex="0"><code class="language-powershell">wsl --install -d Ubuntu</code></pre>
+<p>Then, inside the Ubuntu terminal:</p>
+<pre tabindex="0"><code class="language-bash">curl -LsSf https://astral.sh/uv/install.sh | sh
+uv init de-playground &amp;&amp; cd de-playground
+uv add duckdb polars pyarrow httpx tenacity pydantic
+uv add --dev pytest ruff mypy</code></pre>
+<p>Use VS Code&#39;s WSL extension to edit from Windows.</p>
+<h3 id="from-c-to-python">From C# to Python</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 8 (scrolls sideways)"><table><thead><tr><th>C#</th><th>Python</th><th>Note</th></tr></thead><tbody><tr><td><code>IEnumerable&lt;T&gt;</code> with <code>yield return</code></td><td>Generator with <code>yield</code></td><td>The key tool for streaming large data through limited memory</td></tr><tr><td>LINQ</td><td>Comprehensions, <code>itertools</code>, Polars expressions</td><td>Do not loop row by row in pandas or Polars</td></tr><tr><td><code>using</code> block</td><td><code>with</code> context manager</td><td>Write your own with <code>contextlib.contextmanager</code></td></tr><tr><td><code>record</code></td><td><code>@dataclass(frozen=True)</code> or Pydantic model</td><td>Use Pydantic at system boundaries to validate input</td></tr><tr><td>Interfaces</td><td><code>typing.Protocol</code></td><td>Structural typing, checked by mypy</td></tr><tr><td><code>async/await</code></td><td><code>asyncio</code></td><td>Good for many API calls, not for CPU work</td></tr><tr><td>Attributes</td><td>Decorators</td><td>They wrap functions at runtime</td></tr><tr><td>NuGet and <code>.csproj</code></td><td><code>uv</code> and <code>pyproject.toml</code></td><td>Commit <code>uv.lock</code> for reproducible builds</td></tr><tr><td>xUnit</td><td><code>pytest</code></td><td>Fixtures and <code>parametrize</code> replace most setup code</td></tr><tr><td>Multi-threading</td><td>Threads for I/O, processes for CPU</td><td>The GIL limits parallel CPU work in standard builds</td></tr></tbody></table></div>
+<h3 id="language-topics-to-know-cold">Language topics to know cold</h3>
+<ul><li><p>Generators, iterators, and lazy evaluation</p></li><li><p>Context managers and resource cleanup</p></li><li><p>Decorators, including retries and timing wrappers</p></li><li><p>Dataclasses, type hints, and Pydantic validation</p></li><li><p>Exceptions: catch narrowly, and add context when re-raising</p></li><li><p><code>logging</code> with structured output, never <code>print</code> in production</p></li><li><p><code>pathlib</code>, <code>datetime</code> with explicit UTC zones, and <code>decimal</code> for money</p></li><li><p><code>concurrent.futures</code>, <code>asyncio</code>, and <code>multiprocessing</code></p></li><li><p>Dictionaries, sets, <code>collections</code>, and <code>heapq</code> for coding interviews</p></li><li><p>Memory profiling and big-O reasoning for large inputs</p></li></ul>
+<h3 id="the-data-stack">The data stack</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 9 (scrolls sideways)"><table><thead><tr><th>Library</th><th>Use it for</th><th>Notes</th></tr></thead><tbody><tr><td>PySpark</td><td>Data beyond one machine</td><td>See Part 7</td></tr><tr><td>DuckDB</td><td>Fast SQL on local Parquet, CSV, and object storage</td><td>Often replaces a small cluster, and it is ideal for tests</td></tr><tr><td>Polars</td><td>Fast dataframes with lazy execution</td><td>Prefer it for new single-node work</td></tr><tr><td>pandas</td><td>Existing code, small data, plotting</td><td>Still everywhere, so you must read it fluently</td></tr><tr><td>PyArrow</td><td>In-memory columnar data, Parquet reads and writes</td><td>The shared format between these tools</td></tr><tr><td>httpx, requests, tenacity</td><td>API extraction with retries and backoff</td><td>Respect rate limits and <code>Retry-After</code></td></tr><tr><td>SQLAlchemy</td><td>Database connections and metadata</td><td>Core is more useful here than the ORM</td></tr><tr><td>dlt</td><td>Declarative Python ingestion</td><td>Handles schema inference and incremental state</td></tr><tr><td>pytest, chispa</td><td>Testing pipelines and dataframes</td><td>chispa compares Spark dataframes</td></tr></tbody></table></div>
+<h3 id="a-production-shaped-extractor">A production-shaped extractor</h3>
+<p>This example shows the habits interviewers look for: streaming pagination, bounded retries, a deterministic output path, and an atomic write.</p>
+<pre tabindex="0"><code class="language-python">import logging
+import os
+from collections.abc import Iterator
+from datetime import date
+from pathlib import Path
+
+import httpx
+import polars as pl
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+
+log = logging.getLogger(__name__)
+
+@retry(
+    retry=retry_if_exception_type(httpx.TransportError),
+    stop=stop_after_attempt(5),
+    wait=wait_exponential(multiplier=1, max=60),
+)
+def fetch_page(client: httpx.Client, url: str, params: dict) -&gt; dict:
+    resp = client.get(url, params=params, timeout=30)
+    resp.raise_for_status()
+    return resp.json()
+
+def iter_orders(client: httpx.Client, url: str, day: date) -&gt; Iterator[list[dict]]:
+    params = {&#39;updated_date&#39;: day.isoformat(), &#39;limit&#39;: 1000}
+    while True:
+        page = fetch_page(client, url, params)
+        yield page[&#39;results&#39;]
+        if not page.get(&#39;next_cursor&#39;):
+            return
+        params[&#39;cursor&#39;] = page[&#39;next_cursor&#39;]
+
+def load_day(url: str, day: date, root: Path) -&gt; Path:
+    # The path depends only on the logical date, so a rerun replaces the same output.
+    target = root / f&#39;orders/dt={day:%Y-%m-%d}/data.parquet&#39;
+    target.parent.mkdir(parents=True, exist_ok=True)
+    tmp = target.with_suffix(&#39;.tmp&#39;)
+    with httpx.Client() as client:
+        pages = [pl.DataFrame(p) for p in iter_orders(client, url, day) if p]
+    if not pages:
+        log.warning(&#39;no rows&#39;, extra={&#39;day&#39;: str(day)})
+    frame = pl.concat(pages, how=&#39;diagonal_relaxed&#39;) if pages else pl.DataFrame()
+    frame.write_parquet(tmp)
+    os.replace(tmp, target)   # atomic on a local file system
+    log.info(&#39;loaded&#39;, extra={&#39;day&#39;: str(day), &#39;rows&#39;: frame.height})
+    return target</code></pre>
+<p>This version still holds one day in memory. In an interview, say so, then explain how you would write one file per page instead. On object storage, <code>os.replace</code> does not apply, so use a write-then-commit pattern or a table format.</p>
+<h3 id="project-structure">Project structure</h3>
+<pre tabindex="0"><code class="language-text">de-playground/
+  pyproject.toml
+  uv.lock
+  src/pipeline/
+    extract.py
+    transform.py     # pure functions: dataframe in, dataframe out
+    load.py
+  tests/
+    test_transform.py
+  .github/workflows/ci.yml   # or azure-pipelines.yml</code></pre>
+<p>Keep transformations pure and I/O at the edges. Pure functions can be tested in milliseconds, and that testability is the biggest quality gain available to you.</p>
+<h3 id="coding-interview-prep">Coding interview prep</h3>
+<p>Data engineering coding rounds favor practical problems over hard dynamic programming. Expect dictionaries, sorting, merging intervals, sliding windows, heaps, and file parsing.</p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Solve 40 easy and medium problems in arrays, hash maps, intervals, and heaps</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Parse a 10 GB file with a generator without exceeding 500 MB of memory</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Implement a small LRU cache and a rate limiter from scratch</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Rewrite a pandas script in Polars and in DuckDB SQL, then compare the runtime and memory</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Add type hints, a <code>ruff</code> and <code>mypy</code> CI step, and <code>pytest</code> coverage to one pipeline</p></li></ul>
+<p><strong>You know this part when</strong> you can write a tested, typed, and retry-safe extractor without looking anything up.</p>
+<h2 id="part-4-data-modeling">Part 4: Data modeling</h2>
+<p>Data modeling is the highest-return skill to learn, because tools change while grain, keys, and history do not. In the <a href="https://joereis.github.io/practical_data_data_eng_survey">2026 survey</a>, Kimball was the most common named method at 27.8%, and data modeling was the second most requested training topic.</p>
+<h3 id="the-four-step-dimensional-design">The four-step dimensional design</h3>
+<ol><li><p><strong>Choose the business process.</strong> Example: answering a phone call.</p></li><li><p><strong>Declare the grain.</strong> One row per what, exactly? Example: one row per completed call.</p></li><li><p><strong>Choose the dimensions.</strong> The context around the event: who, what, where, when.</p></li><li><p><strong>Identify the facts.</strong> The numeric measures at that grain: duration, cost, sentiment score.</p></li></ol>
+<p>Get the grain wrong and everything built on it is wrong. State it in one sentence at the top of every model.</p>
+<h3 id="worked-example-a-call-center-star-schema">Worked example: a call center star schema</h3>
+<pre tabindex="0"><code class="language-sql">CREATE TABLE dim_customer (
+  customer_sk    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,  -- surrogate key
+  customer_id    VARCHAR NOT NULL,        -- natural key from the source
+  segment        VARCHAR,
+  state          VARCHAR,
+  valid_from     TIMESTAMP NOT NULL,      -- SCD type 2 columns
+  valid_to       TIMESTAMP,
+  is_current     BOOLEAN NOT NULL
+);
+
+CREATE TABLE dim_date (
+  date_sk        INT PRIMARY KEY,         -- 20261105
+  calendar_date  DATE NOT NULL,
+  fiscal_quarter VARCHAR,
+  is_holiday     BOOLEAN
+);
+
+-- Grain: one row per completed inbound call.
+CREATE TABLE fct_call (
+  call_id        VARCHAR NOT NULL,        -- degenerate dimension
+  date_sk        INT NOT NULL REFERENCES dim_date,
+  customer_sk    BIGINT NOT NULL REFERENCES dim_customer,
+  agent_sk       BIGINT NOT NULL,
+  queue_sk       BIGINT NOT NULL,
+  duration_sec   INT,                     -- additive
+  hold_sec       INT,                     -- additive
+  was_resolved   SMALLINT                 -- additive 0 or 1 flag
+);</code></pre>
+<p>Joining <code>fct_call</code> to <code>dim_customer</code> on the surrogate key returns the customer&#39;s attributes as they were at the time of the call. That is the point of the surrogate key.</p>
+<h3 id="fact-table-types">Fact table types</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 10 (scrolls sideways)"><table><thead><tr><th>Type</th><th>Grain</th><th>Example</th><th>Additive?</th></tr></thead><tbody><tr><td>Transaction</td><td>One row per event</td><td>Each call, each payment</td><td>Yes</td></tr><tr><td>Periodic snapshot</td><td>One row per entity per period</td><td>Account balance at month end</td><td>Not across time</td></tr><tr><td>Accumulating snapshot</td><td>One row per process, updated as it advances</td><td>Loan application from submission to funding</td><td>Duration measures, with care</td></tr><tr><td>Factless</td><td>One row per event, with no measures</td><td>Student attended class</td><td>Count only</td></tr></tbody></table></div>
+<p>Measures can be additive (revenue), semi-additive (balances sum across accounts, not across days), or non-additive (ratios). Store the numerator and denominator rather than a ratio, so anyone can recompute it correctly at any level.</p>
+<h3 id="dimension-patterns">Dimension patterns</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 11 (scrolls sideways)"><table><thead><tr><th>Pattern</th><th>Use it when</th></tr></thead><tbody><tr><td>Conformed dimension</td><td>Several fact tables share one definition, such as <code>dim_customer</code></td></tr><tr><td>Role-playing dimension</td><td>One dimension serves several meanings, such as order date and ship date</td></tr><tr><td>Degenerate dimension</td><td>An ID has no attributes of its own, such as <code>call_id</code></td></tr><tr><td>Junk dimension</td><td>Low-cardinality flags are grouped to keep the fact table clean</td></tr><tr><td>Bridge table</td><td>A many-to-many relationship exists, such as accounts with several owners</td></tr><tr><td>Outrigger</td><td>One dimension references another. Use sparingly</td></tr></tbody></table></div>
+<h3 id="slowly-changing-dimensions">Slowly changing dimensions</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 12 (scrolls sideways)"><table><thead><tr><th>SCD type</th><th>Behavior</th><th>Keeps history?</th><th>Use it for</th></tr></thead><tbody><tr><td>0</td><td>Never changes</td><td>Not needed</td><td>Date of birth, original signup source</td></tr><tr><td>1</td><td>Overwrite</td><td>No</td><td>Correcting typos</td></tr><tr><td>2</td><td>New row with validity dates</td><td>Full</td><td>Attributes reported as they were, such as customer segment</td></tr><tr><td>3</td><td>Adds a <code>previous_value</code> column</td><td>One prior value</td><td>Comparing a planned reorganization</td></tr><tr><td>4</td><td>Separate history table</td><td>Full</td><td>Rapidly changing attributes</td></tr><tr><td>6</td><td>Combines types 1, 2, and 3</td><td>Full, plus current value</td><td>Reporting both as-was and as-is</td></tr></tbody></table></div>
+<p>Type 2 is the interview favorite. Here is the merge logic, which closes old rows and inserts new versions:</p>
+<pre tabindex="0"><code class="language-sql">MERGE INTO dim_customer t
+USING (
+  -- Rows with a NULL key always insert. Changed customers appear twice:
+  -- once to close the old row and once to insert the new one.
+  SELECT s.customer_id AS merge_key, s.* FROM staged s
+  UNION ALL
+  SELECT NULL AS merge_key, s.*
+  FROM staged s
+  JOIN dim_customer d
+    ON d.customer_id = s.customer_id AND d.is_current
+  WHERE d.segment IS DISTINCT FROM s.segment
+) src
+ON t.customer_id = src.merge_key AND t.is_current
+WHEN MATCHED AND t.segment IS DISTINCT FROM src.segment THEN
+  UPDATE SET valid_to = src.updated_at, is_current = FALSE
+WHEN NOT MATCHED THEN
+  INSERT (customer_id, segment, valid_from, valid_to, is_current)
+  VALUES (src.customer_id, src.segment, src.updated_at, NULL, TRUE);</code></pre>
+<h3 id="modeling-approaches-compared">Modeling approaches compared</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 13 (scrolls sideways)"><table><thead><tr><th>Approach</th><th>Core idea</th><th>Best for</th><th>Weakness</th></tr></thead><tbody><tr><td>Normalized (3NF, Inmon)</td><td>Remove redundancy, integrate centrally</td><td>Enterprise integration layers, OLTP</td><td>Many joins, slower to deliver</td></tr><tr><td>Star schema (Kimball)</td><td>Facts surrounded by dimensions</td><td>BI and self-service analytics</td><td>Needs conformance discipline</td></tr><tr><td>Data Vault 2.0</td><td>Hubs, links, satellites; insert-only</td><td>Auditable history across many changing sources</td><td>Verbose, needs automation, needs a serving layer on top</td></tr><tr><td>One Big Table</td><td>Pre-joined, wide, denormalized</td><td>Columnar engines, a single known use case</td><td>Duplicated logic, awkward history</td></tr><tr><td>Activity schema</td><td>One time-series table of entity actions</td><td>Product analytics, customer journeys</td><td>Less common, less tooling</td></tr><tr><td>Semantic layer</td><td>Metrics defined once, above tables</td><td>Consistent metrics, AI agents querying data</td><td>Another system to govern</td></tr></tbody></table></div>
+<p>Data Vault deserves attention in banking because of its audit strengths. In practice, many teams combine methods: raw history in bronze, conformed models in silver, stars and wide tables in gold.</p>
+<h3 id="common-modeling-mistakes">Common modeling mistakes</h3>
+<ul><li><p>Mixing grains in one table, such as order lines and order totals</p></li><li><p>Using natural keys that change or get reused</p></li><li><p>Storing only current state when the business will ask about the past</p></li><li><p>Averaging averages, or summing a snapshot across time</p></li><li><p>Building for one dashboard instead of the business process</p></li><li><p>Leaving ownership and metric definitions undocumented</p></li></ul>
+<h3 id="drills-1">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Read chapters 1 to 6 of <em>The Data Warehouse Toolkit</em></p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Model ride-hailing, e-commerce returns, and bank transfers, each with its grain stated in one sentence</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Implement SCD type 2 twice: once by hand with <code>MERGE</code> and once with a dbt snapshot</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain aloud when you would denormalize into One Big Table and when you would not</p></li></ul>
+<p><strong>You know this part when</strong> someone can name a business process and you can sketch its star schema, state the grain, and defend your SCD choices in 15 minutes.</p>
+<h2 id="part-5-storage-engines-file-formats-and-database-internals">Part 5: Storage engines, file formats, and database internals</h2>
+<p>Physical layout decides most query speed and cost, because the fastest data to process is the data you never read. Understanding why columnar storage works lets you predict performance without running a benchmark.</p>
+<h3 id="row-stores-and-column-stores">Row stores and column stores</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 14 (scrolls sideways)"><table><thead><tr><th>Property</th><th>Row store (SQL Server, Postgres)</th><th>Column store (Snowflake, BigQuery, Parquet)</th></tr></thead><tbody><tr><td>Layout</td><td>All columns of a row kept together</td><td>Each column kept together</td></tr><tr><td>Best at</td><td>Fetching or updating a few whole rows</td><td>Scanning a few columns over many rows</td></tr><tr><td>Compression</td><td>Moderate</td><td>High, because similar values sit side by side</td></tr><tr><td>Execution</td><td>Row at a time</td><td>Vectorized batches using CPU SIMD</td></tr><tr><td>Updates</td><td>Cheap</td><td>Expensive; usually file rewrites or delete markers</td></tr><tr><td>Performance tool</td><td>B-tree indexes</td><td>Partitioning, clustering, statistics, pruning</td></tr></tbody></table></div>
+<h3 id="storage-engine-structures">Storage engine structures</h3>
+<ul><li><p><strong>B-tree:</strong> updates pages in place and reads fast. It suits OLTP databases.</p></li><li><p><strong>LSM tree:</strong> buffers writes in memory, flushes sorted files, and compacts them later. It suits heavy writes (RocksDB, Cassandra, Kafka Streams state).</p></li><li><p><strong>Write-ahead log:</strong> records each change before applying it. It enables crash recovery, replication, and log-based CDC.</p></li><li><p><strong>MVCC:</strong> keeps multiple row versions so readers do not block writers. Table formats apply a similar idea at the file level through snapshots.</p></li></ul>
+<p>Learn the isolation levels: read committed, repeatable read, snapshot, and serializable. Be ready to explain write skew and lost updates.</p>
+<h3 id="file-formats">File formats</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 15 (scrolls sideways)"><table><thead><tr><th>Format</th><th>Layout</th><th>Schema</th><th>Splittable</th><th>Use it for</th></tr></thead><tbody><tr><td>CSV</td><td>Row, text</td><td>None</td><td>When uncompressed</td><td>Interchange only. Types and quoting cause endless bugs</td></tr><tr><td>JSON, JSONL</td><td>Row, text</td><td>Self-describing but loose</td><td>JSONL, when uncompressed</td><td>API landing zones</td></tr><tr><td>Avro</td><td>Row, binary</td><td>Embedded, with strong evolution rules</td><td>Yes</td><td>Kafka messages, write-heavy landing</td></tr><tr><td>Protobuf</td><td>Row, binary</td><td>External</td><td>Message-level</td><td>Service events</td></tr><tr><td>Parquet</td><td>Columnar, binary</td><td>Embedded</td><td>Yes</td><td>The default for analytics</td></tr><tr><td>ORC</td><td>Columnar, binary</td><td>Embedded</td><td>Yes</td><td>Older Hive estates</td></tr><tr><td>Arrow</td><td>Columnar, in memory</td><td>Embedded</td><td>In memory only</td><td>Moving data between processes without conversion</td></tr></tbody></table></div>
+<h3 id="inside-a-parquet-file">Inside a Parquet file</h3>
+<p>Parquet&#39;s structure explains why it is fast. A file holds row groups, each row group holds one column chunk per column, and each chunk holds pages. The footer stores the schema and per-column minimum and maximum statistics.</p>
+<ol><li><p>The reader opens the footer first.</p></li><li><p><strong>Column pruning</strong> reads only the requested columns.</p></li><li><p><strong>Predicate pushdown</strong> skips row groups whose statistics rule out the filter.</p></li><li><p><strong>Dictionary and run-length encoding</strong> shrink repeated values, then a codec compresses the result.</p></li></ol>
+<p>Sorting data before writing makes the statistics tight, so more data is skipped. Try it yourself:</p>
+<pre tabindex="0"><code class="language-sql">-- DuckDB
+COPY (SELECT * FROM read_csv(&#39;trips.csv&#39;) ORDER BY pickup_date)
+  TO &#39;trips.parquet&#39; (FORMAT parquet, COMPRESSION zstd, ROW_GROUP_SIZE 1000000);
+
+SELECT row_group_id, path_in_schema, stats_min, stats_max,
+       total_compressed_size, encodings
+FROM parquet_metadata(&#39;trips.parquet&#39;);</code></pre>
+<h3 id="compression-codecs">Compression codecs</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 16 (scrolls sideways)"><table><thead><tr><th>Codec</th><th>Ratio</th><th>Speed</th><th>Notes</th></tr></thead><tbody><tr><td>Snappy</td><td>Lower</td><td>Very fast</td><td>A long-standing default</td></tr><tr><td>ZSTD</td><td>High</td><td>Fast</td><td>A strong general choice today</td></tr><tr><td>GZIP</td><td>High</td><td>Slow</td><td>A gzipped CSV or JSON file cannot be split for parallel reads</td></tr><tr><td>LZ4</td><td>Lower</td><td>Fastest</td><td>Good for shuffle and hot data</td></tr></tbody></table></div>
+<h3 id="physical-layout-techniques">Physical layout techniques</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 17 (scrolls sideways)"><table><thead><tr><th>Technique</th><th>How it works</th><th>Choose it when</th><th>Risk</th></tr></thead><tbody><tr><td>Partitioning</td><td>One directory or logical group per key value</td><td>Queries nearly always filter on a low-cardinality column, such as date</td><td>Too many small partitions</td></tr><tr><td>Bucketing</td><td>Hash rows into a fixed number of files</td><td>Frequent joins on a high-cardinality key</td><td>Bucket count is hard to change</td></tr><tr><td>Sorting, clustering</td><td>Orders data within files</td><td>Filters on one or two columns</td><td>Maintenance cost</td></tr><tr><td>Z-ordering, Hilbert</td><td>Sorts across several columns at once</td><td>Filters on varied columns</td><td>Each column benefits less as more are added</td></tr><tr><td>Liquid clustering</td><td>Engine-managed incremental clustering</td><td>Databricks tables with evolving query patterns</td><td>Platform-specific</td></tr><tr><td>Materialized views</td><td>Precomputed results</td><td>Repeated expensive aggregates</td><td>Refresh cost and staleness</td></tr></tbody></table></div>
+<h3 id="the-small-file-problem">The small-file problem</h3>
+<p>Thousands of tiny files slow every query, because the engine pays to list and open each one. Streaming and frequent micro-batches are the usual cause. Compact regularly, aiming for roughly 128 MB to 1 GB per file depending on the engine.</p>
+<h3 id="object-storage-behavior">Object storage behavior</h3>
+<ul><li><p>It is cheap and very durable, and it scales almost without limit.</p></li><li><p>It is a key-value store and not a file system. Directory renames are not atomic, which is one reason table formats exist.</p></li><li><p>S3, ADLS, and GCS all charge for requests, and many small reads add up.</p></li><li><p>ADLS Gen2 with a hierarchical namespace does offer atomic directory renames. Check this for your platform rather than assuming.</p></li><li><p>Egress between regions or clouds can cost more than the compute.</p></li></ul>
+<h3 id="drills-2">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Convert a 5 GB CSV to Parquet with Snappy and with ZSTD, sorted and unsorted, and compare size and query time</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Inspect a file&#39;s row groups using <code>parquet_metadata</code></p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Partition the same data by day and by customer ID, then explain why the second is a mistake</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain how a write-ahead log makes change data capture possible</p></li></ul>
+<p><strong>You know this part when</strong> you can predict which of two table layouts will scan fewer bytes for a given query, and explain why.</p>
+<h2 id="part-6-distributed-systems-concepts">Part 6: Distributed systems concepts</h2>
+<p>Every data tool is a set of trade-offs among the same few distributed systems problems, so learning them once makes each new tool easier. Your microservices and messaging work already covers failure handling; here you apply it to stateful data at scale.</p>
+<h3 id="core-concepts">Core concepts</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 18 (scrolls sideways)"><table><thead><tr><th>Concept</th><th>What it means</th><th>Where you will see it</th></tr></thead><tbody><tr><td>Replication</td><td>Keeping copies for durability and read scale</td><td>Kafka in-sync replicas, database read replicas</td></tr><tr><td>Leader and follower</td><td>One node takes writes, the others copy</td><td>Kafka partitions, Postgres</td></tr><tr><td>Partitioning</td><td>Splitting data across nodes</td><td>Kafka partitions, Spark partitions</td></tr><tr><td>Hash vs range partitioning</td><td>Even spread vs efficient range scans</td><td>Hash spreads writes, range orders data</td></tr><tr><td>Consistent hashing</td><td>Moving few keys when nodes change</td><td>Cassandra, caches</td></tr><tr><td>Consensus (Raft, Paxos)</td><td>Nodes agree despite failures</td><td>KRaft in Kafka, etcd in Kubernetes</td></tr><tr><td>CAP and PACELC</td><td>During a partition, choose consistency or availability; otherwise, latency or consistency</td><td>Choosing a data store</td></tr><tr><td>Quorums</td><td>R + W &gt; N gives overlapping reads and writes</td><td>Dynamo-style stores</td></tr><tr><td>Two-phase commit</td><td>Atomic commit across participants</td><td>Flink exactly-once sinks, Kafka transactions</td></tr><tr><td>Clocks</td><td>Physical clocks drift, so order must come from elsewhere</td><td>Watermarks, Lamport timestamps</td></tr><tr><td>Backpressure</td><td>Slowing producers when consumers fall behind</td><td>Flink, reactive systems</td></tr><tr><td>Shuffle</td><td>Redistributing data across workers by key</td><td>Spark and Flink joins and aggregates</td></tr><tr><td>Data skew</td><td>A few keys hold most of the data</td><td>Stragglers in Spark, hot Kafka partitions</td></tr></tbody></table></div>
+<h3 id="delivery-guarantees">Delivery guarantees</h3>
+<p>This is a favorite interview topic and one where you have real stories.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 19 (scrolls sideways)"><table><thead><tr><th>Guarantee</th><th>Failure behavior</th><th>How it is achieved</th></tr></thead><tbody><tr><td>At most once</td><td>May lose messages</td><td>Commit before processing</td></tr><tr><td>At least once</td><td>May duplicate messages</td><td>Process, then commit, and retry on failure</td></tr><tr><td>Effectively once</td><td>Duplicates occur, but the result is as if they did not</td><td>At-least-once delivery plus an idempotent or transactional sink</td></tr></tbody></table></div>
+<p>True exactly-once delivery across arbitrary systems is not achievable. What people call exactly once is effectively-once processing. Say this in interviews and then explain the mechanism.</p>
+<p>Your Solace incident is a direct illustration: at-least-once delivery does not mean the consumer was ready to receive it, and recovery required replay. Practice telling that story using these terms.</p>
+<h3 id="idempotency-patterns-for-data">Idempotency patterns for data</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 20 (scrolls sideways)"><table><thead><tr><th>Pattern</th><th>How it works</th><th>Good for</th></tr></thead><tbody><tr><td>Partition overwrite</td><td>Delete and replace the whole logical partition</td><td>Daily batch</td></tr><tr><td>Merge on key</td><td>Upsert on a natural or hash key with a version check</td><td>CDC, late data</td></tr><tr><td>Deterministic IDs</td><td>Hash the event&#39;s natural fields to make its ID</td><td>Deduplicating events</td></tr><tr><td>Deduplication window</td><td>Track seen IDs for a bounded period</td><td>Streaming</td></tr><tr><td>Transactional sink</td><td>Commit data and offsets together</td><td>Spark or Flink to a table format</td></tr><tr><td>Write-audit-publish</td><td>Write to a hidden branch, test it, then expose it</td><td>High-trust tables</td></tr></tbody></table></div>
+<p>A plain <code>INSERT</code> into a table is the non-idempotent trap: every retry adds duplicates. Compare the two:</p>
+<pre tabindex="0"><code class="language-sql">-- Wrong: a rerun doubles the day&#39;s rows
+INSERT INTO fct_sales
+SELECT * FROM stg_sales WHERE sale_date = &#39;2026-11-05&#39;;
+
+-- Right: a rerun replaces the day atomically (Spark SQL)
+INSERT OVERWRITE fct_sales PARTITION (sale_date = &#39;2026-11-05&#39;)
+SELECT order_id, amount FROM stg_sales WHERE sale_date = &#39;2026-11-05&#39;;</code></pre>
+<p>In Spark, set <code>spark.sql.sources.partitionOverwriteMode=dynamic</code> when you overwrite without naming a partition. Otherwise, a path-based overwrite can wipe the whole table.</p>
+<h3 id="failure-modes-to-design-for">Failure modes to design for</h3>
+<ul><li><p>A worker dies mid-job and its task reruns, so outputs must tolerate retries.</p></li><li><p>A job partly commits, leaving half-written files. Use atomic commits or table formats.</p></li><li><p>A zombie task finishes after being replaced. Use fencing tokens or epochs.</p></li><li><p>A rebalance reassigns a partition while a consumer is still processing it.</p></li><li><p>A slow node drags the whole stage. Speculative execution may help.</p></li><li><p>An upstream API silently returns partial data with a 200 status. Validate row counts.</p></li><li><p>The orchestrator retries a job whose first attempt actually succeeded.</p></li><li><p>A clock skew misorders events if you trust wall-clock timestamps.</p></li></ul>
+<h3 id="drills-3">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Read the replication, partitioning, faults, and consistency chapters of <em>Designing Data-Intensive Applications</em></p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Rewrite your Solace and Kafka stories using the terms in this section</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Kill a Spark executor or Kafka broker in a Docker Compose setup and observe the recovery</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain, without notes, how a consumer can achieve effectively-once writes to a table</p></li></ul>
+<p><strong>You know this part when</strong> you can look at any pipeline diagram and name what happens if each arrow fails halfway.</p>
+<h2 id="part-7-batch-processing-and-spark">Part 7: Batch processing and Spark</h2>
+<p>Spark remains the standard engine for large-scale batch work, and senior interviews test how it behaves under the hood, not just its API. Most Spark problems are shuffle, skew, or memory problems, so learn to diagnose those three.</p>
+<h3 id="where-spark-stands-now">Where Spark stands now</h3>
+<p><a href="https://spark.apache.org/releases/spark-release-4-2-0.html">Apache Spark 4.2.0</a> is the third release of the 4.x line and adds change data capture queries, Auto CDC in Declarative Pipelines, and Arrow-optimized Python UDFs by default. The <a href="https://spark.apache.org/versioning-policy.md">versioning policy</a> moves feature releases to a quarterly cadence from 4.3.0, with 4.5.0 planned as the 4.x long-term support release.</p>
+<p>Managed platforms often lag the newest release, so check your runtime&#39;s Spark version. Concepts in this part apply across versions.</p>
+<h3 id="architecture">Architecture</h3>
+<ul><li><p><strong>Driver:</strong> builds the plan, schedules tasks, and holds results you collect.</p></li><li><p><strong>Executors:</strong> run tasks and hold cached data. Each has a set number of cores and amount of memory.</p></li><li><p><strong>Cluster manager:</strong> provides resources through Kubernetes, YARN, or a managed platform.</p></li><li><p><strong>Hierarchy:</strong> an action triggers a <em>job</em>, a job splits into <em>stages</em> at shuffle boundaries, and a stage runs many <em>tasks</em>, one per partition.</p></li><li><p><strong>Spark Connect:</strong> a client-server protocol that separates your application from the cluster.</p></li></ul>
+<h3 id="lazy-evaluation-and-the-optimizer">Lazy evaluation and the optimizer</h3>
+<p>Transformations only build a plan. An action, such as <code>count</code> or <code>write</code>, runs it. This lets the Catalyst optimizer push filters down, prune columns, and reorder joins. Tungsten then generates efficient code and manages memory compactly. Adaptive Query Execution (AQE) adjusts the plan at runtime using real statistics.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 21 (scrolls sideways)"><table><thead><tr><th>Transformation type</th><th>Data movement</th><th>Examples</th></tr></thead><tbody><tr><td>Narrow</td><td>None; each input partition makes one output</td><td><code>select</code>, <code>filter</code>, <code>withColumn</code></td></tr><tr><td>Wide</td><td>Shuffle across the network</td><td><code>groupBy</code>, <code>join</code>, <code>distinct</code>, <code>repartition</code></td></tr></tbody></table></div>
+<p>Read a plan with <code>df.explain(&#39;formatted&#39;)</code>. Each <code>Exchange</code> node is a shuffle, and shuffles are the main cost.</p>
+<h3 id="join-strategies">Join strategies</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 22 (scrolls sideways)"><table><thead><tr><th>Strategy</th><th>When Spark uses it</th><th>Cost</th></tr></thead><tbody><tr><td>Broadcast hash join</td><td>One side is small, below <code>spark.sql.autoBroadcastJoinThreshold</code></td><td>Cheap, no shuffle, but can overwhelm the driver if the table is too large</td></tr><tr><td>Sort-merge join</td><td>Default for two large tables</td><td>Shuffles and sorts both sides</td></tr><tr><td>Shuffle hash join</td><td>One side is moderately smaller</td><td>Shuffles both sides, no sort</td></tr><tr><td>Bucketed join</td><td>Both tables share bucketing on the join key</td><td>Avoids the shuffle</td></tr></tbody></table></div>
+<h3 id="a-representative-job">A representative job</h3>
+<pre tabindex="0"><code class="language-python">from pyspark.sql import SparkSession, Window
+from pyspark.sql import functions as F
+
+spark = (
+    SparkSession.builder.appName(&#39;orders_silver&#39;)
+    .config(&#39;spark.sql.adaptive.enabled&#39;, &#39;true&#39;)
+    .config(&#39;spark.sql.sources.partitionOverwriteMode&#39;, &#39;dynamic&#39;)
+    .getOrCreate()
+)
+
+run_date = &#39;2026-11-05&#39;
+
+orders = (
+    spark.read.parquet(&#39;abfss://bronze@lake.dfs.core.windows.net/orders/&#39;)
+    .filter(F.col(&#39;dt&#39;) == run_date)           # partition pruning
+    .select(&#39;order_id&#39;, &#39;customer_id&#39;, &#39;amount&#39;, &#39;updated_at&#39;, &#39;dt&#39;)
+)
+customers = spark.read.table(&#39;silver.dim_customer&#39;).filter(&#39;is_current&#39;)
+
+latest = Window.partitionBy(&#39;order_id&#39;).orderBy(F.col(&#39;updated_at&#39;).desc())
+
+result = (
+    orders.withColumn(&#39;rn&#39;, F.row_number().over(latest))
+    .filter(&#39;rn = 1&#39;).drop(&#39;rn&#39;)
+    .join(F.broadcast(customers.select(&#39;customer_id&#39;, &#39;segment&#39;)),
+          on=&#39;customer_id&#39;, how=&#39;left&#39;)
+)
+
+row_count = result.count()
+if row_count == 0:
+    raise ValueError(f&#39;no rows for {run_date}&#39;)
+
+result.write.mode(&#39;overwrite&#39;).partitionBy(&#39;dt&#39;).parquet(
+    &#39;abfss://silver@lake.dfs.core.windows.net/orders/&#39;
+)</code></pre>
+<p>The <code>count</code> above runs the whole plan and the <code>write</code> runs it again. Cache the frame or write first and validate the output, then explain that choice in an interview.</p>
+<h3 id="diagnosing-with-the-spark-ui">Diagnosing with the Spark UI</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 23 (scrolls sideways)"><table><thead><tr><th>Symptom</th><th>Where you see it</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>A few tasks far slower than the rest</td><td>Stage task-duration quantiles</td><td>Data skew</td><td>AQE skew join, salting, filter or split the hot keys</td></tr><tr><td>Large shuffle read and write</td><td>Stages tab</td><td>Unnecessary wide operations</td><td>Broadcast, prefilter, avoid <code>distinct</code></td></tr><tr><td>Spill to disk</td><td>Stage metrics</td><td>Partitions too large for memory</td><td>More partitions, more memory, smaller inputs</td></tr><tr><td>Executor out of memory</td><td>Executors tab, logs</td><td>Skew, oversized cache, Python memory</td><td>Repartition, unpersist, tune memory overhead</td></tr><tr><td>Driver out of memory</td><td>Driver logs</td><td><code>collect</code>, huge broadcast, millions of files</td><td>Write rather than collect, compact files</td></tr><tr><td>Long gap before tasks start</td><td>Jobs timeline</td><td>Listing many small files</td><td>Compact; use a table format</td></tr><tr><td>Many empty or tiny tasks</td><td>Stage summary</td><td>Too many partitions</td><td>Let AQE coalesce, or use <code>coalesce</code></td></tr></tbody></table></div>
+<h3 id="key-settings-and-heuristics">Key settings and heuristics</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 24 (scrolls sideways)"><table><thead><tr><th>Setting</th><th>Why it matters</th></tr></thead><tbody><tr><td><code>spark.sql.shuffle.partitions</code></td><td>The partition count after a shuffle. Aim for about 100 to 200 MB per partition, and let AQE adjust</td></tr><tr><td><code>spark.sql.adaptive.enabled</code></td><td>Enables coalescing, join switching, and skew handling</td></tr><tr><td><code>spark.sql.autoBroadcastJoinThreshold</code></td><td>The size limit for automatic broadcast</td></tr><tr><td><code>spark.executor.memory</code>, <code>spark.executor.memoryOverhead</code></td><td>The heap and off-heap memory. PySpark workers use the overhead</td></tr><tr><td><code>spark.executor.cores</code></td><td>About 4 to 5 is a common balance</td></tr><tr><td><code>spark.dynamicAllocation.enabled</code></td><td>Scales executors with demand</td></tr></tbody></table></div>
+<h3 id="practices-that-separate-seniors">Practices that separate seniors</h3>
+<ul><li><p>Avoid row-level Python UDFs. Prefer built-in functions, then Pandas or Arrow UDFs.</p></li><li><p>Avoid <code>collect()</code> and <code>toPandas()</code> on anything large.</p></li><li><p>Declare schemas explicitly, because inference is slow and unstable.</p></li><li><p><code>repartition</code> shuffles for an even spread; <code>coalesce</code> merges without a full shuffle.</p></li><li><p>Cache only when a frame is reused and expensive, and unpersist it afterward.</p></li><li><p>Write unit tests against small in-memory frames.</p></li><li><p>Filter and project as early as possible.</p></li></ul>
+<p><strong>Salting a skewed join:</strong></p>
+<pre tabindex="0"><code class="language-python">SALTS = 10
+big = big.withColumn(&#39;salt&#39;, (F.rand() * SALTS).cast(&#39;int&#39;))
+small = small.crossJoin(spark.range(SALTS).withColumnRenamed(&#39;id&#39;, &#39;salt&#39;))
+joined = big.join(small, [&#39;key&#39;, &#39;salt&#39;]).drop(&#39;salt&#39;)</code></pre>
+<p>Try AQE&#39;s skew handling first. Salting multiplies the small side, so it adds cost.</p>
+<h3 id="when-not-to-use-spark">When not to use Spark</h3>
+<p>Start with the simplest engine that handles your data. DuckDB and Polars handle many tens or hundreds of gigabytes on one machine. A warehouse&#39;s SQL engine is often simpler if the data already lives there.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 25 (scrolls sideways)"><table><thead><tr><th>Engine</th><th>Best fit</th></tr></thead><tbody><tr><td>DuckDB, Polars</td><td>Single-node jobs, tests, and local analysis</td></tr><tr><td>Warehouse SQL with dbt</td><td>Transformations on data already in the warehouse</td></tr><tr><td>Spark</td><td>Very large data, complex multi-step jobs, heavy Python logic</td></tr><tr><td>Trino</td><td>Interactive federated SQL across sources</td></tr><tr><td>Ray, Daft</td><td>Python-native, ML, and multimodal workloads</td></tr></tbody></table></div>
+<h3 id="drills-4">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Run Spark locally with Docker and process 100 million rows of NYC Taxi data</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Force a skewed join, find it in the UI, and fix it two ways</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Compare broadcast and sort-merge plans with <code>explain(&#39;formatted&#39;)</code></p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Rewrite a Python UDF using built-in functions and measure the difference</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Read <em>Learning Spark</em> (2nd edition), chapters 1 to 7</p></li></ul>
+<p><strong>You know this part when</strong> you can open the Spark UI on a slow job and identify the cause within minutes.</p>
+<h2 id="part-8-streaming-kafka-and-flink">Part 8: Streaming, Kafka, and Flink</h2>
+<p>Choose streaming only when the business truly pays for lower latency, because it costs far more to run and debug than batch. Your production Kafka experience is a real advantage here. The new material is stateful processing and event-time correctness.</p>
+<h3 id="choosing-a-latency">Choosing a latency</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 26 (scrolls sideways)"><table><thead><tr><th>Tier</th><th>Latency</th><th>Typical approach</th><th>Example use</th></tr></thead><tbody><tr><td>Batch</td><td>Hours to a day</td><td>Orchestrated SQL or Spark</td><td>Finance reporting</td></tr><tr><td>Micro-batch</td><td>Minutes</td><td>Scheduled incremental jobs, Spark Structured Streaming</td><td>Operational dashboards</td></tr><tr><td>Streaming</td><td>Seconds</td><td>Kafka with Flink or Spark</td><td>Alerts, live metrics</td></tr><tr><td>Real time</td><td>Milliseconds</td><td>Purpose-built services with in-memory state</td><td>Fraud decisions</td></tr></tbody></table></div>
+<p>Ask &quot;what decision changes if this data arrives sooner?&quot; If nobody can answer, use batch.</p>
+<h3 id="kafka-internals">Kafka internals</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 27 (scrolls sideways)"><table><thead><tr><th>Concept</th><th>What to know</th></tr></thead><tbody><tr><td>Topic and partition</td><td>A partition is an ordered, append-only log. Ordering holds only within a partition</td></tr><tr><td>Key</td><td>Decides the partition. Choose it for ordering needs and even spread</td></tr><tr><td>Offset</td><td>A consumer&#39;s position in a partition</td></tr><tr><td>Consumer group</td><td>Each partition goes to one member of a group. Partition count caps parallelism</td></tr><tr><td>Replication and ISR</td><td>Followers copy the leader. The in-sync replica set defines who can safely take over</td></tr><tr><td><code>acks=all</code> with <code>min.insync.replicas=2</code></td><td>The standard durability setting with replication factor 3</td></tr><tr><td>Idempotent producer</td><td>Broker deduplicates retries using producer ID and sequence numbers</td></tr><tr><td>Transactions</td><td>Atomic writes across partitions and offsets, read with <code>isolation.level=read_committed</code></td></tr><tr><td>Retention vs compaction</td><td>Keep by time or size, or keep the latest value per key</td></tr><tr><td>Tiered storage</td><td>Moves older segments to object storage</td></tr><tr><td>Schema Registry</td><td>Enforces Avro, Protobuf, or JSON Schema compatibility</td></tr><tr><td>Kafka Connect</td><td>Runs source and sink connectors without custom code</td></tr></tbody></table></div>
+<h3 id="what-has-changed-in-kafka">What has changed in Kafka</h3>
+<p>Older study material may be wrong on these points. <a href="https://axonops.com/docs/data-platforms/kafka/">Kafka 4.0 removed ZooKeeper</a> in March 2025, leaving KRaft as the only metadata mode, and the KIP-848 consumer protocol made rebalances much faster. <a href="https://mungomash.com/software/kafka/versions/">Share groups</a> (&quot;queues for Kafka&quot;) reached production readiness in 4.2 in February 2026, and 4.3 was released in May 2026. <a href="https://aiven.io/docs/products/kafka/diskless/get-started">Diskless topics</a> that store data in object storage are an emerging option, with some feature limits.</p>
+<h3 id="a-safe-consumer">A safe consumer</h3>
+<p>Commit offsets only after a durable write. If the process crashes between the two, you reprocess, so the sink must tolerate duplicates.</p>
+<pre tabindex="0"><code class="language-python">from confluent_kafka import Consumer, KafkaError
+
+consumer = Consumer({
+    &#39;bootstrap.servers&#39;: &#39;localhost:9092&#39;,
+    &#39;group.id&#39;: &#39;orders-sink&#39;,
+    &#39;enable.auto.commit&#39;: False,
+    &#39;auto.offset.reset&#39;: &#39;earliest&#39;,
+    &#39;isolation.level&#39;: &#39;read_committed&#39;,
+})
+consumer.subscribe([&#39;orders&#39;])
+
+try:
+    while True:
+        batch = consumer.consume(num_messages=500, timeout=1.0)
+        rows = []
+        for msg in batch:
+            if msg.error():
+                if msg.error().code() != KafkaError._PARTITION_EOF:
+                    raise RuntimeError(msg.error())
+                continue
+            rows.append(parse(msg.value()))
+        if rows:
+            upsert_on_event_id(rows)              # idempotent sink
+            consumer.commit(asynchronous=False)   # commit after the write
+finally:
+    consumer.close()</code></pre>
+<p>The same concepts apply in .NET through <code>Confluent.Kafka</code>, so you can compare this directly with your existing code.</p>
+<h3 id="stream-processing-concepts">Stream processing concepts</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 28 (scrolls sideways)"><table><thead><tr><th>Concept</th><th>What it means</th></tr></thead><tbody><tr><td>Event time vs processing time</td><td>Compute on when it happened, not when it arrived</td></tr><tr><td>Watermark</td><td>A moving estimate that says &quot;events older than this are probably all here&quot;</td></tr><tr><td>Allowed lateness</td><td>How long a window stays updatable after the watermark passes</td></tr><tr><td>Tumbling window</td><td>Fixed and non-overlapping, such as every 5 minutes</td></tr><tr><td>Sliding (hopping) window</td><td>Fixed and overlapping</td></tr><tr><td>Session window</td><td>Grouped by gaps of inactivity</td></tr><tr><td>Keyed state</td><td>Per-key memory kept across events, often in RocksDB</td></tr><tr><td>Checkpoint</td><td>A consistent snapshot of state and input offsets, used for recovery</td></tr><tr><td>Savepoint</td><td>A manual snapshot, used for upgrades</td></tr><tr><td>Stream-table join</td><td>Enrich events with the latest reference data</td></tr><tr><td>Interval join</td><td>Join two streams within a time bound</td></tr></tbody></table></div>
+<h3 id="engines-compared">Engines compared</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 29 (scrolls sideways)"><table><thead><tr><th>Engine</th><th>Model</th><th>Strength</th><th>Trade-off</th></tr></thead><tbody><tr><td>Apache Flink</td><td>True streaming</td><td>Rich state, event time, very low latency</td><td>Steeper operations and learning curve</td></tr><tr><td>Spark Structured Streaming</td><td>Micro-batch, plus a continuous mode</td><td>Shares code and skills with batch</td><td>Higher latency, less flexible state</td></tr><tr><td>Kafka Streams</td><td>Library inside your service</td><td>No separate cluster</td><td>JVM only, Kafka only</td></tr><tr><td>Managed streaming SQL</td><td>Declarative SQL on streams</td><td>Quick to adopt</td><td>Vendor limits</td></tr></tbody></table></div>
+<h3 id="event-time-aggregation-in-flink-sql">Event-time aggregation in Flink SQL</h3>
+<pre tabindex="0"><code class="language-sql">CREATE TABLE orders (
+  order_id STRING,
+  amount   DECIMAL(10, 2),
+  order_ts TIMESTAMP(3),
+  WATERMARK FOR order_ts AS order_ts - INTERVAL &#39;30&#39; SECOND
+) WITH (
+  &#39;connector&#39; = &#39;kafka&#39;,
+  &#39;topic&#39; = &#39;orders&#39;,
+  &#39;properties.bootstrap.servers&#39; = &#39;localhost:9092&#39;,
+  &#39;scan.startup.mode&#39; = &#39;earliest-offset&#39;,
+  &#39;format&#39; = &#39;json&#39;
+);
+
+SELECT window_start, window_end, SUM(amount) AS revenue
+FROM TABLE(TUMBLE(TABLE orders, DESCRIPTOR(order_ts), INTERVAL &#39;5&#39; MINUTE))
+GROUP BY window_start, window_end;</code></pre>
+<h3 id="architecture-patterns">Architecture patterns</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 30 (scrolls sideways)"><table><thead><tr><th>Pattern</th><th>What it does</th><th>Watch out for</th></tr></thead><tbody><tr><td>Transactional outbox</td><td>Writes the business row and event in one database transaction</td><td>Fixes the dual-write problem. You likely know this from microservices</td></tr><tr><td>Log-based CDC</td><td>Streams database changes from the transaction log</td><td>Schema changes, initial snapshots</td></tr><tr><td>Dead letter queue</td><td>Parks poison messages</td><td>Someone must own and replay it</td></tr><tr><td>Replay</td><td>Reprocesses history from the log</td><td>Retention limits, side effects on sinks</td></tr><tr><td>Lambda</td><td>Separate batch and speed layers</td><td>Two code paths that drift apart</td></tr><tr><td>Kappa</td><td>One streaming path, with replay for history</td><td>Replay can be slow and costly</td></tr><tr><td>Streaming to Iceberg</td><td>Commits streaming output to an open table</td><td>Small files, so compaction is required</td></tr></tbody></table></div>
+<h3 id="drills-5">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Run Kafka in KRaft mode with Docker and write Python producers and consumers</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Force a crash between processing and committing, then prove your sink has no duplicates</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Produce a late event and watch how the watermark and window treat it</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Choose partition keys for three scenarios and explain how each handles a hot key</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Read <em>Streaming Systems</em> chapters 1 to 3 and <em>Kafka: The Definitive Guide</em> chapters 3 to 6</p></li></ul>
+<p><strong>You know this part when</strong> you can explain end-to-end effectively-once processing from producer to sink, including what each failure does.</p>
+<h2 id="part-9-warehouses-lakes-lakehouses-and-open-table-formats">Part 9: Warehouses, lakes, lakehouses, and open table formats</h2>
+<p>Learn one warehouse and one lakehouse platform well; the concepts transfer easily. The lakehouse puts warehouse-style transactions on cheap object storage, and open formats now let several engines share the same tables.</p>
+<h3 id="the-evolution">The evolution</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 31 (scrolls sideways)"><table><thead><tr><th>Architecture</th><th>Storage</th><th>Strength</th><th>Weakness</th></tr></thead><tbody><tr><td>Data warehouse</td><td>Managed, proprietary</td><td>Fast SQL, governance, ease of use</td><td>Cost, weaker for ML and raw files</td></tr><tr><td>Data lake</td><td>Files on object storage</td><td>Cheap, any format</td><td>No transactions; easily becomes a swamp</td></tr><tr><td>Two-tier</td><td>Lake plus warehouse copy</td><td>Best of each</td><td>Duplicate data, stale copies, two systems</td></tr><tr><td>Lakehouse</td><td>Open table format on object storage</td><td>Transactions, one copy, many engines</td><td>More design and maintenance work</td></tr></tbody></table></div>
+<h3 id="warehouse-platforms">Warehouse platforms</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 32 (scrolls sideways)"><table><thead><tr><th>Platform</th><th>Architecture</th><th>Scaling and pricing idea</th><th>Key features</th></tr></thead><tbody><tr><td>Snowflake</td><td>Separate storage and virtual warehouses</td><td>Pay per second for warehouse size</td><td>Zero-copy clones, time travel, micro-partitions, data sharing</td></tr><tr><td>BigQuery</td><td>Serverless, slot-based</td><td>Per bytes scanned or reserved slots</td><td>Nested data, partitioning, clustering, no cluster to size</td></tr><tr><td>Redshift</td><td>MPP, with serverless option</td><td>Nodes or capacity units</td><td>Sort and distribution keys, AWS integration</td></tr><tr><td>Microsoft Fabric</td><td>SaaS on OneLake</td><td>Shared capacity units</td><td>Lakehouse and warehouse items, Power BI integration</td></tr><tr><td>Databricks SQL</td><td>Lakehouse SQL engine</td><td>SQL warehouses by DBU</td><td>Delta, Photon, Unity Catalog</td></tr><tr><td>ClickHouse, Pinot, Druid</td><td>Real-time OLAP</td><td>Self-hosted or managed clusters</td><td>Very low latency on fresh event data</td></tr></tbody></table></div>
+<h3 id="why-table-formats-exist">Why table formats exist</h3>
+<p>A folder of Parquet files has no transactions, no safe concurrent writes, and slow file listing. A table format adds a metadata layer that tracks exactly which files form each version of a table. That single idea enables:</p>
+<ul><li><p>ACID commits on object storage</p></li><li><p>Time travel and rollback</p></li><li><p>Schema and partition evolution without rewriting data</p></li><li><p>Row-level updates and deletes</p></li><li><p>File-level statistics, so planning skips files without listing folders</p></li></ul>
+<figure data-embed="node/b298c900-e7f3"><figcaption>Iceberg metadata tree · catalog to data files</figcaption></figure>
+<p>Planning reads this tree rather than listing folders. The statistics in each manifest let the engine skip files before opening them.</p>
+<h3 id="comparing-the-formats">Comparing the formats</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 33 (scrolls sideways)"><table><thead><tr><th>Feature</th><th>Apache Iceberg</th><th>Delta Lake</th><th>Apache Hudi</th></tr></thead><tbody><tr><td>Origin</td><td>Netflix</td><td>Databricks</td><td>Uber</td></tr><tr><td>Best fit</td><td>Multi-engine open lakehouse</td><td>Databricks-centered estates</td><td>Heavy upsert and CDC workloads</td></tr><tr><td>Metadata</td><td>Manifest tree with snapshots</td><td>Transaction log with checkpoints</td><td>Timeline</td></tr><tr><td>Partitioning</td><td>Hidden, can evolve</td><td>Partitions, or liquid clustering</td><td>Partitions with a record index</td></tr><tr><td>Row-level changes</td><td>Copy-on-write, merge-on-read, deletion vectors in v3</td><td>Copy-on-write, deletion vectors</td><td>Copy-on-write, merge-on-read</td></tr><tr><td>Interoperability</td><td>Broad engine support</td><td>UniForm exposes Iceberg metadata</td><td>Narrower</td></tr></tbody></table></div>
+<h3 id="where-the-market-stands">Where the market stands</h3>
+<p>Practitioner commentary describes Iceberg as the likely winner of the format contest, with lock-in shifting to the catalog. Many of these sources are vendors, so read them critically.</p>
+<ul><li><p><a href="https://datalakehousehub.com/blog/iceberg-market-2026">Iceberg 1.11</a> shipped in May 2026 and sits in the v3 era of the specification.</p></li><li><p><a href="https://machineherald-io.pages.dev/article/2026-04/09-iceberg-summit-2026-draws-all-major-cloud-vendors-as-v3-adoption-accelerates-across-the-data-lakehouse-ecosystem">Iceberg v3</a> adds deletion vectors, the <code>VARIANT</code> type, row lineage, geospatial types, and nanosecond timestamps.</p></li><li><p><a href="https://datalakehousehub.com/blog/state-of-apache-polaris-july-2026">Apache Polaris</a> became a top-level Apache project in February 2026.</p></li><li><p><a href="https://www.cloudmagazin.com/en/2026/07/01/iceberg-won-the-format-war-now-the-catalog-counts/">UniForm</a> lets a Delta table be read as Iceberg by engines such as Snowflake or Trino.</p></li></ul>
+<p>Study Iceberg&#39;s concepts and be able to use Delta on Databricks. Job postings still favor specific platforms, so check your target employers.</p>
+<h3 id="catalogs">Catalogs</h3>
+<p>The catalog tracks each table&#39;s current metadata pointer and makes commits atomic. It is increasingly also the governance layer.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 34 (scrolls sideways)"><table><thead><tr><th>Catalog</th><th>Backing</th><th>Notes</th></tr></thead><tbody><tr><td>Unity Catalog</td><td>Databricks</td><td>Deep governance, strongest within Databricks</td></tr><tr><td>Apache Polaris</td><td>Apache, from Snowflake and Dremio</td><td>Open implementation of the Iceberg REST specification</td></tr><tr><td>AWS Glue Data Catalog</td><td>AWS</td><td>The AWS default</td></tr><tr><td>Snowflake Horizon, Open Catalog</td><td>Snowflake</td><td>Managed Snowflake options</td></tr><tr><td>Project Nessie</td><td>Open source</td><td>Git-like branches for data</td></tr></tbody></table></div>
+<h3 id="using-iceberg">Using Iceberg</h3>
+<pre tabindex="0"><code class="language-sql">CREATE TABLE lake.sales.orders (
+  order_id   BIGINT,
+  customer_id BIGINT,
+  amount     DECIMAL(12, 2),
+  order_ts   TIMESTAMP
+)
+USING iceberg
+PARTITIONED BY (days(order_ts));   -- hidden partitioning
+
+-- Readers filter on order_ts and never need a separate date column
+SELECT SUM(amount) FROM lake.sales.orders
+WHERE order_ts &gt;= TIMESTAMP &#39;2026-11-01 00:00:00&#39;;
+
+-- Time travel
+SELECT * FROM lake.sales.orders FOR TIMESTAMP AS OF &#39;2026-11-04 00:00:00&#39;;
+
+-- Inspect metadata
+SELECT snapshot_id, operation, summary FROM lake.sales.orders.snapshots;
+
+-- Routine maintenance (Spark procedures)
+CALL lake.system.rewrite_data_files(table =&gt; &#39;sales.orders&#39;);
+CALL lake.system.expire_snapshots(table =&gt; &#39;sales.orders&#39;,
+  older_than =&gt; TIMESTAMP &#39;2026-10-01 00:00:00&#39;);
+CALL lake.system.remove_orphan_files(table =&gt; &#39;sales.orders&#39;);</code></pre>
+<h3 id="copy-on-write-and-merge-on-read">Copy-on-write and merge-on-read</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 35 (scrolls sideways)"><table><thead><tr><th>Strategy</th><th>On write</th><th>On read</th><th>Choose it for</th></tr></thead><tbody><tr><td>Copy-on-write</td><td>Rewrites affected files</td><td>Fast</td><td>Read-heavy tables with few updates</td></tr><tr><td>Merge-on-read</td><td>Writes delete files or vectors</td><td>Merges at query time until compaction</td><td>Frequent updates and CDC</td></tr></tbody></table></div>
+<h3 id="table-maintenance-checklist">Table maintenance checklist</h3>
+<ul><li><p>Compact small files</p></li><li><p>Expire old snapshots, balancing time travel needs against storage</p></li><li><p>Remove orphan files left by failed writes</p></li><li><p>Rewrite manifests when planning slows</p></li><li><p>Sort or cluster data based on real query patterns</p></li></ul>
+<p>If nobody owns these tasks, a lakehouse slowly gets slower and more expensive. This is a good point to raise in system design interviews.</p>
+<h3 id="medallion-layers-in-practice">Medallion layers in practice</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 36 (scrolls sideways)"><table><thead><tr><th>Layer</th><th>Contents</th><th>Rules</th></tr></thead><tbody><tr><td>Bronze</td><td>Raw source data plus load metadata</td><td>Append only, minimal changes, kept for replay</td></tr><tr><td>Silver</td><td>Cleaned, typed, deduplicated, conformed</td><td>Business keys enforced, quality tests applied</td></tr><tr><td>Gold</td><td>Stars, aggregates, wide tables, metrics</td><td>Built for consumers, with owners and SLOs</td></tr></tbody></table></div>
+<h3 id="drills-6">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Use a Snowflake or BigQuery free tier to compare bytes scanned across clustered and unclustered tables</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Run Spark with Iceberg locally: create, update, roll back, evolve a partition, and compact a table</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Follow one commit by reading the metadata JSON, manifest list, and manifests</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Query the same Iceberg table from Spark and DuckDB</p></li></ul>
+<p><strong>You know this part when</strong> you can explain how Iceberg guarantees an atomic commit on object storage, and when you would choose a warehouse instead of a lakehouse.</p>
+<h2 id="part-10-ingestion-cdc-and-transformation-with-dbt">Part 10: Ingestion, CDC, and transformation with dbt</h2>
+<p>Good ingestion captures every change exactly enough to rebuild the truth, and dbt turns SQL transformations into tested, version-controlled software. Your CI/CD discipline transfers directly to dbt, which is why this part should move quickly.</p>
+<h3 id="ingestion-patterns">Ingestion patterns</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 37 (scrolls sideways)"><table><thead><tr><th>Pattern</th><th>How it works</th><th>Captures deletes?</th><th>Use it when</th></tr></thead><tbody><tr><td>Full snapshot</td><td>Reload everything each run</td><td>Yes, by comparison</td><td>Small tables, or no reliable change column</td></tr><tr><td>High watermark</td><td>Pull rows where <code>updated_at</code> exceeds the last value</td><td>No</td><td>The source reliably maintains the timestamp</td></tr><tr><td>Log-based CDC</td><td>Read the database&#39;s transaction log</td><td>Yes</td><td>Large, busy OLTP sources</td></tr><tr><td>Event stream</td><td>Applications publish to Kafka</td><td>By design</td><td>Event-driven systems</td></tr><tr><td>API polling</td><td>Paginated extraction</td><td>Rarely</td><td>SaaS sources</td></tr><tr><td>File drop</td><td>Watch cloud storage for files</td><td>Depends</td><td>Partners and legacy exports</td></tr></tbody></table></div>
+<h3 id="change-data-capture">Change data capture</h3>
+<p>Log-based CDC reads the same log the database uses for recovery, so it sees every insert, update, and delete with little load on the source. On SQL Server, this means native CDC tables, which you can try on a personal Developer edition install. On Postgres, it means logical replication.</p>
+<p>A typical flow is: database log, then Debezium on Kafka Connect, then Kafka, then a sink that merges into an Iceberg or Delta table.</p>
+<pre tabindex="0"><code class="language-json">{
+  &quot;before&quot;: { &quot;id&quot;: 42, &quot;status&quot;: &quot;pending&quot; },
+  &quot;after&quot;:  { &quot;id&quot;: 42, &quot;status&quot;: &quot;shipped&quot; },
+  &quot;op&quot;: &quot;u&quot;,
+  &quot;source&quot;: { &quot;table&quot;: &quot;orders&quot;, &quot;lsn&quot;: 2483612 },
+  &quot;ts_ms&quot;: 1793901600000
+}</code></pre>
+<p>CDC traps worth knowing:</p>
+<ul><li><p>The initial snapshot must line up with the log position.</p></li><li><p>Apply changes in order per key, using the log sequence number and not wall-clock time.</p></li><li><p>Handle deletes explicitly, often as soft-delete tombstones.</p></li><li><p>Schema changes in the source can stop the pipeline. Plan for them.</p></li><li><p>Replication slots on Postgres can fill the disk if a consumer stops reading.</p></li></ul>
+<h3 id="build-or-buy">Build or buy</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 38 (scrolls sideways)"><table><thead><tr><th>Option</th><th>Type</th><th>Choose it when</th><th>Trade-off</th></tr></thead><tbody><tr><td>Fivetran</td><td>Managed SaaS</td><td>Speed matters and budget exists</td><td>Usage-based cost can grow quickly</td></tr><tr><td>Airbyte</td><td>Open source or cloud</td><td>You want many connectors and more control</td><td>You may operate it yourself</td></tr><tr><td>dlt</td><td>Python library</td><td>You prefer code and own the runtime</td><td>You write and run the code</td></tr><tr><td>Azure Data Factory, Fabric pipelines</td><td>Managed Microsoft service</td><td>You are on Azure</td><td>Low-code habits can hinder testing</td></tr><tr><td>Debezium</td><td>Open-source CDC</td><td>You need database CDC with Kafka</td><td>Significant operations work</td></tr><tr><td>Custom code</td><td>Your own service</td><td>A source is unusual or high value</td><td>You own every failure</td></tr></tbody></table></div>
+<h3 id="schema-drift-policy">Schema drift policy</h3>
+<p>Decide in advance how each change is handled, and write it down.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 39 (scrolls sideways)"><table><thead><tr><th>Change</th><th>Usual policy</th></tr></thead><tbody><tr><td>New column</td><td>Allow and alert</td></tr><tr><td>Removed column</td><td>Keep it as NULL, and alert the owner</td></tr><tr><td>Type widened</td><td>Allow</td></tr><tr><td>Type narrowed or changed</td><td>Stop, and quarantine</td></tr><tr><td>Renamed column</td><td>Treat as a removal plus an addition, then negotiate with the producer</td></tr></tbody></table></div>
+<h3 id="dbt-fundamentals">dbt fundamentals</h3>
+<p>dbt compiles templated SQL, works out dependencies, and runs the models in your warehouse. It brings software practices to SQL: version control, tests, documentation, modularity, and CI.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 40 (scrolls sideways)"><table><thead><tr><th>Concept</th><th>Purpose</th></tr></thead><tbody><tr><td><code>source()</code></td><td>Declares raw tables, with freshness checks</td></tr><tr><td><code>ref()</code></td><td>Links models and builds the dependency graph</td></tr><tr><td>Materializations</td><td>View, table, incremental, ephemeral, materialized view</td></tr><tr><td>Tests</td><td>Data tests, unit tests, custom checks, model contracts</td></tr><tr><td>Snapshots</td><td>SCD type 2 tracking of changing sources</td></tr><tr><td>Macros</td><td>Reusable Jinja and SQL</td></tr><tr><td>Packages</td><td>Shared code, such as <code>dbt_utils</code></td></tr><tr><td>Exposures</td><td>Declares downstream dashboards and uses</td></tr><tr><td>Semantic layer</td><td>Defines metrics once</td></tr></tbody></table></div>
+<h3 id="standard-project-layout">Standard project layout</h3>
+<pre tabindex="0"><code class="language-text">models/
+  staging/         # one-to-one with sources: rename, cast, light cleaning
+    stg_orders.sql
+  intermediate/    # reusable business logic
+    int_order_items_joined.sql
+  marts/           # consumer-facing facts and dimensions
+    fct_orders.sql
+    dim_customers.sql</code></pre>
+<h3 id="an-incremental-model">An incremental model</h3>
+<pre tabindex="0"><code class="language-sql">{{ config(
+    materialized=&#39;incremental&#39;,
+    unique_key=&#39;order_id&#39;,
+    incremental_strategy=&#39;merge&#39;,
+    on_schema_change=&#39;append_new_columns&#39;
+) }}
+
+SELECT
+    order_id,
+    customer_id,
+    amount,
+    updated_at
+FROM {{ ref(&#39;stg_orders&#39;) }}
+
+{% if is_incremental() %}
+  -- A small lookback window catches late-arriving rows
+  WHERE updated_at &gt; (
+    SELECT DATEADD(hour, -3, MAX(updated_at)) FROM {{ this }}
+  )
+{% endif %}</code></pre>
+<pre tabindex="0"><code class="language-yaml">models:
+  - name: fct_orders
+    description: One row per order.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests:
+          - relationships:
+              to: ref(&#39;dim_customers&#39;)
+              field: customer_id</code></pre>
+<h3 id="incremental-strategies">Incremental strategies</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 41 (scrolls sideways)"><table><thead><tr><th>Strategy</th><th>Behavior</th><th>Best for</th></tr></thead><tbody><tr><td>Append</td><td>Adds rows only</td><td>Immutable events, with deduplication handled elsewhere</td></tr><tr><td>Merge</td><td>Upserts on a key</td><td>Mutable records, smaller changes</td></tr><tr><td>Delete and insert</td><td>Deletes matching keys, then inserts</td><td>Some warehouses, when merge is slow</td></tr><tr><td>Insert overwrite</td><td>Replaces whole partitions</td><td>Large partitioned facts, with the safest backfills</td></tr><tr><td>Microbatch</td><td>Runs time windows separately</td><td>Very large event tables</td></tr></tbody></table></div>
+<h3 id="ci-for-dbt">CI for dbt</h3>
+<p>This looks like your Azure DevOps YAML work with a data twist. Build and test only what changed, using production metadata to find it:</p>
+<pre tabindex="0"><code class="language-bash">dbt build --select state:modified+ --defer --state ./prod-artifacts</code></pre>
+<p>Good practice adds: a temporary per-pull-request schema, SQL linting with SQLFluff, and a data diff that compares output against production.</p>
+<h3 id="what-changed-in-the-dbt-ecosystem">What changed in the dbt ecosystem</h3>
+<ul><li><p><a href="https://kestra.io/resources/data/fivetran-dbt-merger-fusion-engine">Fivetran and dbt Labs completed an all-stock merger</a> on June 1, 2026. George Fraser is CEO and Tristan Handy is president.</p></li><li><p><a href="https://yespress.io/dbt-labs">dbt Core v2.0 (alpha)</a> is built on the Rust-based Fusion runtime under Apache 2.0, and proprietary Fusion capabilities extend it.</p></li><li><p><a href="https://datadriven.io/blog/dbt-core-v2-rust-engine-30x-faster-new-migration-risks">Upgrade caution:</a> v2 can read v1 manifests, but v1 cannot read v2 manifests, and adapter support varies. Check its status before adopting it.</p></li><li><p>The same combined company now also owns <a href="https://datadriven.io/blog/fivetran-and-dbt-labs-merge-what-data-engineers-should-know">SQLMesh</a>, the main alternative transformation tool. Expect interview questions on tool consolidation and lock-in.</p></li></ul>
+<p>The core dbt concepts in this part carry across these versions. Learn them on whichever release your target employers use.</p>
+<h3 id="drills-7">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Build a dbt project on DuckDB with staging, intermediate, and mart layers</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Add tests and a snapshot, and write one unit test</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Convert a model to incremental, simulate late data, and verify a backfill</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Set up Slim CI on a pull request in GitHub Actions or Azure Pipelines</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Run Debezium against Postgres in Docker and stream changes to Kafka</p></li></ul>
+<p><strong>You know this part when</strong> you can defend an incremental strategy for a given table and explain what your pipeline does on a delete, a late row, and a schema change.</p>
+<h2 id="part-11-orchestration">Part 11: Orchestration</h2>
+<p>An orchestrator decides what runs, when, in what order, and what happens on failure; it should coordinate work rather than do the heavy lifting itself. Airflow is still the safest tool to learn first. In the <a href="https://joereis.github.io/practical_data_data_eng_survey">2026 survey</a>, 24.4% used a managed cloud service such as Composer or MWAA, 22.9% self-managed Airflow, and 6.2% Dagster, while 20.5% had no real orchestration.</p>
+<h3 id="core-concepts-1">Core concepts</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 42 (scrolls sideways)"><table><thead><tr><th>Concept</th><th>Meaning</th></tr></thead><tbody><tr><td>DAG</td><td>A directed acyclic graph of tasks and their dependencies</td></tr><tr><td>Schedule</td><td>A cron expression, timetable, or data-driven trigger</td></tr><tr><td>Logical date, data interval</td><td>The period a run is responsible for, not the time it runs</td></tr><tr><td>Catchup</td><td>Automatically creating runs for missed past intervals</td></tr><tr><td>Backfill</td><td>Deliberately running past intervals</td></tr><tr><td>Sensor, deferrable operator</td><td>Waiting for an external condition without holding a worker</td></tr><tr><td>Retry policy</td><td>Attempts, delay, and exponential backoff</td></tr><tr><td>Pools, concurrency limits</td><td>Protecting shared resources</td></tr><tr><td>Assets</td><td>Scheduling on data being updated, rather than on a clock</td></tr></tbody></table></div>
+<p>The logical date is the concept that trips up newcomers. A daily run for November 5 typically starts just after midnight on November 6, once that day&#39;s data is complete. Build every query from the data interval so a rerun behaves the same a year later.</p>
+<h3 id="airflow-3">Airflow 3</h3>
+<p><a href="https://versionlog.com/apache-airflow/3/">Airflow 3.0</a> arrived in April 2025, and <a href="https://www.getorchestra.io/guides/airflow-version">3.3.2</a> was the current patch as of September 2026. Tutorials written for Airflow 2 can mislead you on these points:</p>
+<ul><li><p><strong>Task SDK:</strong> DAG code now imports from <code>airflow.sdk</code>.</p></li><li><p><strong>No direct metadata database access from tasks:</strong> use the API. Older calls such as <code>DagRun.find</code> break.</p></li><li><p><strong>Assets:</strong> Airflow 2&#39;s datasets were renamed and expanded for data-aware scheduling.</p></li><li><p><strong>DAG versioning:</strong> run history stays tied to the DAG code that ran it.</p></li><li><p><strong>Backfills:</strong> these are now managed by the scheduler and can be started from the UI.</p></li><li><p><strong>Remote execution:</strong> tasks can run away from the core deployment, which helps in regulated environments.</p></li></ul>
+<p>Two more Airflow 3 changes surfaced while building Project 1. A plain cron string gives a run whose logical date is its trigger time, so use <code>CronDataIntervalTimetable</code> when a run should process the period that just ended. A DAG with <code>depends_on_past=True</code> must also set a reprocess behavior when you create a backfill.</p>
+<h3 id="a-well-behaved-dag">A well-behaved DAG</h3>
+<pre tabindex="0"><code class="language-python">from datetime import datetime, timedelta
+
+from airflow.sdk import dag, task
+from airflow.timetables.interval import CronDataIntervalTimetable
+
+@dag(
+    # A plain cron string runs at the interval&#39;s start by default in Airflow 3.
+    schedule=CronDataIntervalTimetable(&#39;0 3 * * *&#39;, timezone=&#39;UTC&#39;),
+    start_date=datetime(2026, 11, 1),
+    catchup=False,
+    max_active_runs=1,
+    default_args={
+        &#39;retries&#39;: 3,
+        &#39;retry_delay&#39;: timedelta(minutes=5),
+        &#39;retry_exponential_backoff&#39;: True,
+    },
+    tags=[&#39;orders&#39;, &#39;team-data&#39;],
+)
+def orders_daily():
+
+    @task
+    def extract(data_interval_start=None) -&gt; str:
+        day = data_interval_start.strftime(&#39;%Y-%m-%d&#39;)
+        # The path is derived from the interval, so a rerun overwrites it.
+        return load_to_bronze(day)
+
+    @task
+    def transform(path: str) -&gt; None:
+        submit_spark_job(path)    # Compute runs elsewhere and Airflow only waits.
+
+    @task
+    def validate(data_interval_start=None) -&gt; None:
+        day = data_interval_start.strftime(&#39;%Y-%m-%d&#39;)
+        assert row_count(&#39;silver.orders&#39;, day) &gt; 0
+
+    transform(extract()) &gt;&gt; validate()
+
+orders_daily()</code></pre>
+<h3 id="rules-for-reliable-dags">Rules for reliable DAGs</h3>
+<ol><li><p>Keep tasks idempotent and atomic.</p></li><li><p>Do no heavy work or network calls at the top level of a DAG file, because the parser runs it constantly.</p></li><li><p>Pass file paths or IDs in XCom, never the data itself.</p></li><li><p>Run heavy compute elsewhere: Spark, the warehouse, or a Kubernetes pod.</p></li><li><p>Use deferrable sensors so waiting does not consume worker slots.</p></li><li><p>Keep secrets in a backend such as Azure Key Vault.</p></li><li><p>Parametrize by data interval, and never call <code>now()</code> in business logic.</p></li><li><p>Test DAG import in CI, and alert on failures and missed SLAs.</p></li></ol>
+<h3 id="orchestrators-compared">Orchestrators compared</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 43 (scrolls sideways)"><table><thead><tr><th>Tool</th><th>Model</th><th>Choose it when</th><th>Trade-off</th></tr></thead><tbody><tr><td>Apache Airflow</td><td>Task-centered, Python DAGs</td><td>You want the most jobs and the largest community</td><td>Operational weight, older design</td></tr><tr><td>Dagster</td><td>Asset-centered, strong local testing</td><td>Greenfield teams that value developer experience</td><td>Smaller market share, more common at smaller companies per the survey</td></tr><tr><td>Prefect</td><td>Pythonic flows, dynamic workflows</td><td>You want light, dynamic Python flows</td><td>Less common in enterprises</td></tr><tr><td>Azure Data Factory, Fabric pipelines</td><td>Visual, managed</td><td>You are all-in on Microsoft</td><td>Harder to test and diff</td></tr><tr><td>Databricks Lakeflow Jobs</td><td>Platform-native</td><td>Work runs mostly in Databricks</td><td>Platform tie-in</td></tr><tr><td>dbt scheduling</td><td>Transformations only</td><td>A small warehouse-only stack</td><td>Cannot coordinate wider work</td></tr><tr><td>Cron</td><td>Timed scripts</td><td>One simple job</td><td>No dependencies, retries, or visibility</td></tr></tbody></table></div>
+<h3 id="drills-8">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Run Airflow 3 with the official Docker Compose file</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Build a DAG that runs extract, dbt, and a quality check</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Backfill 30 days and prove the results match a fresh run</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Fail a task and clear only that task</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Trigger a downstream DAG with an asset</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Rebuild the same pipeline in Dagster and write up the differences</p></li></ul>
+<p><strong>You know this part when</strong> you can explain the data interval, run a safe backfill, and say why tasks must not hold data in the orchestrator.</p>
+<h2 id="part-12-data-quality-observability-and-testing">Part 12: Data quality, observability, and testing</h2>
+<p>A pipeline can succeed on every run and still publish wrong numbers, so test the data as well as the code. The <a href="https://joereis.github.io/practical_data_data_eng_survey">2026 survey</a> found 26.2% of teams name firefighting among their top time sinks. Your incident work and statistics background give you an advantage here.</p>
+<h3 id="quality-dimensions">Quality dimensions</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 44 (scrolls sideways)"><table><thead><tr><th>Dimension</th><th>Question</th><th>Example test</th></tr></thead><tbody><tr><td>Freshness</td><td>Is it recent enough?</td><td>Newest record under 2 hours old</td></tr><tr><td>Volume</td><td>Is the amount plausible?</td><td>Rows within expected range for this weekday</td></tr><tr><td>Completeness</td><td>Are values present?</td><td><code>email</code> is NULL under 1% of the time</td></tr><tr><td>Uniqueness</td><td>Is the grain honored?</td><td><code>order_id</code> has no duplicates</td></tr><tr><td>Validity</td><td>Do values fit the rules?</td><td>Status is in the allowed set</td></tr><tr><td>Referential integrity</td><td>Do keys resolve?</td><td>Each <code>customer_id</code> exists in the dimension</td></tr><tr><td>Consistency</td><td>Do systems agree?</td><td>Warehouse totals reconcile to the ledger</td></tr><tr><td>Distribution</td><td>Has the shape changed?</td><td>Average order value within a normal band</td></tr><tr><td>Accuracy</td><td>Does it match reality?</td><td>Sample audits against a trusted source</td></tr></tbody></table></div>
+<h3 id="the-testing-pyramid-for-data">The testing pyramid for data</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 45 (scrolls sideways)"><table><thead><tr><th>Level</th><th>Tests</th><th>When it runs</th><th>Tools</th></tr></thead><tbody><tr><td>Unit</td><td>Transformation logic on small fixtures</td><td>On each commit</td><td><code>pytest</code>, <code>chispa</code>, dbt unit tests</td></tr><tr><td>Integration</td><td>A whole pipeline against sample data</td><td>On pull requests</td><td>Docker, DuckDB, temporary schemas</td></tr><tr><td>Data contract</td><td>Schema and semantics at the boundary</td><td>On producer change and at ingestion</td><td>JSON Schema, Protobuf, Schema Registry</td></tr><tr><td>Data tests</td><td>Assertions on real outputs</td><td>During each run</td><td>dbt tests, Great Expectations, Soda</td></tr><tr><td>Reconciliation</td><td>Source and target totals agree</td><td>After each load</td><td>Custom SQL, data-diff tools</td></tr><tr><td>Monitoring</td><td>Trends and anomalies over time</td><td>Continuously</td><td>Elementary, Monte Carlo, custom checks</td></tr></tbody></table></div>
+<h3 id="write-audit-publish">Write-audit-publish</h3>
+<p>This pattern stops bad data from reaching consumers. Write to a hidden location, test it, and expose it only when it passes.</p>
+<pre tabindex="0"><code class="language-sql">-- Iceberg with a branch (Spark)
+ALTER TABLE lake.sales.orders CREATE BRANCH audit_20261105;
+
+INSERT INTO lake.sales.orders.branch_audit_20261105
+SELECT * FROM staged_orders;
+
+-- Run checks against the branch. Fail the pipeline on any violation.
+SELECT order_id, COUNT(*)
+FROM lake.sales.orders.branch_audit_20261105
+GROUP BY order_id HAVING COUNT(*) &gt; 1;
+
+-- Publish atomically after the checks pass
+CALL lake.system.fast_forward(&#39;sales.orders&#39;, &#39;main&#39;, &#39;audit_20261105&#39;);</code></pre>
+<h3 id="statistical-checks-you-can-build">Statistical checks you can build</h3>
+<p>Static thresholds create noise. Use a rolling baseline that respects day-of-week patterns:</p>
+<pre tabindex="0"><code class="language-sql">WITH daily AS (
+  SELECT load_date, COUNT(*) AS row_count
+  FROM fct_orders
+  GROUP BY load_date
+),
+scored AS (
+  SELECT load_date, row_count,
+         AVG(row_count) OVER w AS baseline,
+         STDDEV(row_count) OVER w AS sd
+  FROM daily
+  WINDOW w AS (
+    PARTITION BY DAYOFWEEK(load_date)
+    ORDER BY load_date
+    ROWS BETWEEN 8 PRECEDING AND 1 PRECEDING
+  )
+)
+SELECT load_date, row_count, baseline,
+       (row_count - baseline) / NULLIF(sd, 0) AS z_score
+FROM scored
+WHERE ABS((row_count - baseline) / NULLIF(sd, 0)) &gt; 3;</code></pre>
+<p>A z-score is sensitive to outliers. Median and median absolute deviation are more robust, which is an easy point to raise given your degree.</p>
+<h3 id="data-contracts">Data contracts</h3>
+<p>A contract moves quality upstream by making the producer accountable for what they publish.</p>
+<pre tabindex="0"><code class="language-yaml">dataset: orders.v2
+owner: checkout-team
+slo:
+  freshness: 15m
+  availability: 99.9%
+schema:
+  - name: order_id
+    type: string
+    required: true
+    unique: true
+  - name: amount
+    type: decimal(12,2)
+    required: true
+    checks: [ &#39;&gt;= 0&#39; ]
+  - name: email
+    type: string
+    classification: pii
+compatibility: backward</code></pre>
+<p>Enforce contracts in the producer&#39;s CI so a breaking change fails their build. Otherwise, it fails your pipeline at 3 a.m. instead.</p>
+<h3 id="observability">Observability</h3>
+<p>Cover five signals: freshness, volume, schema, distribution, and lineage. Add pipeline metrics such as duration, cost, and failure rate. Your Splunk and Prometheus skills apply, but the targets are datasets as well as services.</p>
+<p>OpenLineage is the open standard for collecting lineage events from Spark, Airflow, dbt, and Flink. Lineage turns &quot;this dashboard is wrong&quot; into a list of upstream suspects.</p>
+<h3 id="running-a-data-incident">Running a data incident</h3>
+<ol><li><p><strong>Detect:</strong> an alert fires, ideally before a stakeholder notices.</p></li><li><p><strong>Assess:</strong> identify which tables and consumers are affected, using lineage.</p></li><li><p><strong>Contain:</strong> pause publishing, or label the data stale.</p></li><li><p><strong>Communicate:</strong> tell consumers what is wrong and when you expect a fix.</p></li><li><p><strong>Fix:</strong> repair the root cause and backfill the affected periods.</p></li><li><p><strong>Learn:</strong> write a blameless review and add the test that would have caught it.</p></li></ol>
+<p>Your Access-based report that classified each missed score by cause is real incident analytics. Use it as an interview example.</p>
+<h3 id="avoiding-alert-fatigue">Avoiding alert fatigue</h3>
+<ul><li><p>Attach an owner and a runbook to every alert.</p></li><li><p>Separate blocking tests from warning tests.</p></li><li><p>Alert on symptoms consumers feel, such as late or wrong gold tables.</p></li><li><p>Review noisy tests monthly, and fix or delete them.</p></li></ul>
+<h3 id="drills-9">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Add at least 15 meaningful dbt tests to a project, including one custom generic test</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Implement write-audit-publish with Iceberg branches</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Build the z-score monitor above and inject an anomaly to confirm it fires</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Capture lineage from a Spark job or Airflow DAG with OpenLineage and Marquez</p></li></ul>
+<p><strong>You know this part when</strong> you can explain how you would learn that a table is wrong before its consumers do.</p>
+<h2 id="part-13-governance-security-and-compliance">Part 13: Governance, security, and compliance</h2>
+<p>Governance decides who may use which data, for what purpose, and how you prove it. Few career changers can speak to this credibly, and your banking and security background lets you. Note that this part is general education, not legal advice.</p>
+<h3 id="the-governance-building-blocks">The governance building blocks</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 46 (scrolls sideways)"><table><thead><tr><th>Capability</th><th>What it does</th><th>Example tools</th></tr></thead><tbody><tr><td>Catalog</td><td>Finds data, with its owner and meaning</td><td>Unity Catalog, Purview, DataHub, OpenMetadata</td></tr><tr><td>Lineage</td><td>Traces data from source to report</td><td>OpenLineage, Unity Catalog, dbt docs</td></tr><tr><td>Classification</td><td>Tags PII and other sensitive fields</td><td>Purview, Macie, custom scanners</td></tr><tr><td>Access control</td><td>Decides who can see what</td><td>RBAC, ABAC, row filters, column masks</td></tr><tr><td>Audit</td><td>Records who accessed what, and when</td><td>Platform audit logs</td></tr><tr><td>Retention</td><td>Keeps data for the right period</td><td>Lifecycle policies, table maintenance</td></tr><tr><td>Stewardship</td><td>Assigns human responsibility</td><td>Owners and data stewards</td></tr></tbody></table></div>
+<h3 id="access-control-patterns">Access control patterns</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 47 (scrolls sideways)"><table><thead><tr><th>Model</th><th>How it decides</th><th>Good for</th></tr></thead><tbody><tr><td>RBAC</td><td>The user&#39;s role</td><td>Simple, coarse access</td></tr><tr><td>ABAC</td><td>Tags on users and data</td><td>Scale; one policy covers many tables</td></tr><tr><td>Row-level security</td><td>Filters rows per user</td><td>Regional or tenant separation</td></tr><tr><td>Column masking</td><td>Hides or transforms sensitive columns</td><td>PII for analysts</td></tr><tr><td>Purpose-based</td><td>The declared reason for access</td><td>Mature privacy programs</td></tr></tbody></table></div>
+<pre tabindex="0"><code class="language-sql">-- Databricks Unity Catalog style examples
+CREATE FUNCTION mask_ssn(ssn STRING)
+RETURN CASE WHEN is_account_group_member(&#39;pii_readers&#39;)
+            THEN ssn
+            ELSE CONCAT(&#39;***-**-&#39;, RIGHT(ssn, 4)) END;
+
+ALTER TABLE silver.customers
+  ALTER COLUMN ssn SET MASK mask_ssn;
+
+CREATE FUNCTION region_filter(region STRING)
+RETURN is_account_group_member(&#39;global_readers&#39;)
+    OR is_account_group_member(CONCAT(&#39;region_&#39;, region));
+
+ALTER TABLE silver.customers
+  SET ROW FILTER region_filter ON (region);</code></pre>
+<h3 id="protecting-sensitive-data">Protecting sensitive data</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 48 (scrolls sideways)"><table><thead><tr><th>Technique</th><th>How it works</th><th>Reversible?</th><th>Keeps joins working?</th></tr></thead><tbody><tr><td>Encryption</td><td>Mathematically scrambles data, with a key</td><td>Yes, with the key</td><td>No, unless deterministic</td></tr><tr><td>Tokenization</td><td>Swaps the value for a token, with a secure vault</td><td>Yes, through the vault</td><td>Yes</td></tr><tr><td>Keyed hashing (HMAC)</td><td>One-way hash with a secret key</td><td>No</td><td>Yes</td></tr><tr><td>Masking</td><td>Displays a partial or fake value</td><td>Depends</td><td>Not usually</td></tr><tr><td>Differential privacy</td><td>Adds calibrated noise to aggregates</td><td>No</td><td>No; for statistics only</td></tr></tbody></table></div>
+<p>Plain hashing of low-entropy values such as SSNs is weak, because an attacker can hash every possible value. Use a keyed hash or tokenization.</p>
+<h3 id="security-baseline">Security baseline</h3>
+<ul><li><p>Use managed identities and short-lived credentials, not stored keys</p></li><li><p>Keep secrets in Key Vault or HashiCorp Vault, away from code and notebooks</p></li><li><p>Keep platforms on private networks with private endpoints</p></li><li><p>Encrypt in transit and at rest, using customer-managed keys where required</p></li><li><p>Grant least privilege, and review access regularly</p></li><li><p>Scan pipelines and containers. Your SonarQube and Checkmarx habits apply</p></li><li><p>Keep sensitive data out of logs, error messages, and test fixtures</p></li></ul>
+<p>Your point about admin endpoints applies here too: hiding a dashboard does not protect the table behind it. Enforce access at the data layer.</p>
+<h3 id="regulations-to-recognize">Regulations to recognize</h3>
+<p>You need to know what each one demands of a pipeline, and when to ask your legal team.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 49 (scrolls sideways)"><table><thead><tr><th>Rule</th><th>Scope</th><th>Pipeline implications</th></tr></thead><tbody><tr><td>GDPR</td><td>EU personal data</td><td>Right to erasure, lawful basis, data minimization</td></tr><tr><td>CCPA, CPRA</td><td>California consumers</td><td>Rights to know, delete, and limit sensitive data use</td></tr><tr><td>HIPAA</td><td>US health information</td><td>Access controls, audit trails, de-identification</td></tr><tr><td>PCI DSS</td><td>Payment card data</td><td>Scope reduction, encryption, tokenization</td></tr><tr><td>GLBA</td><td>US financial institutions</td><td>Safeguarding customer financial information</td></tr><tr><td>SOX</td><td>US public company financial reporting</td><td>Change control, reconciliation, audit evidence</td></tr><tr><td>BCBS 239</td><td>Large banks&#39; risk data</td><td>Accuracy, lineage, timeliness of risk reporting</td></tr></tbody></table></div>
+<h3 id="deleting-data-from-immutable-storage">Deleting data from immutable storage</h3>
+<p>This is a classic design question: how do you honor an erasure request in a lake built on immutable files?</p>
+<ol><li><p>Keep a mapping that shows which tables hold each person&#39;s data.</p></li><li><p>Delete with <code>DELETE</code> or <code>MERGE</code> on a table format.</p></li><li><p>Rewrite the affected files, since a delete alone may leave the old data in earlier snapshots.</p></li><li><p>Expire the old snapshots and remove the orphan files.</p></li><li><p>Handle bronze too. <strong>Crypto-shredding</strong> helps here: encrypt per subject and destroy the key.</p></li><li><p>Remember backups, Kafka topics, and downstream copies.</p></li><li><p>Log evidence of completion without retaining the data itself.</p></li></ol>
+<h3 id="data-mesh">Data mesh</h3>
+<p>Data mesh gives domain teams ownership of their data as products, backed by a shared self-service platform and federated governance. In the <a href="https://joereis.github.io/practical_data_data_eng_survey">2026 survey</a>, 16.2% aligned with it overall and 27% at companies above 10,000 employees. It addresses an organizational problem, so it rarely suits small teams.</p>
+<h3 id="drills-10">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Add row filters and column masks to a table, then test as two different users</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Tag PII columns in dbt metadata and generate a report from it</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Design and test an erasure workflow across bronze, silver, and gold</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Rehearse how you would explain SOX-style change control in a data pipeline</p></li></ul>
+<p><strong>You know this part when</strong> you can design access for a table with PII, and explain how an erasure request actually removes data from a lakehouse.</p>
+<h2 id="part-14-cloud-platforms-azure-first-then-aws-and-gcp">Part 14: Cloud platforms: Azure first, then AWS and GCP</h2>
+<p>Learn one cloud deeply, and map the rest by analogy. Azure is the sensible primary for you given your AZ-104 and AZ-305 study, though AWS remains common in postings, so read target job descriptions before investing further.</p>
+<h3 id="service-map">Service map</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 50 (scrolls sideways)"><table><thead><tr><th>Need</th><th>Azure</th><th>AWS</th><th>GCP</th></tr></thead><tbody><tr><td>Object storage</td><td>ADLS Gen2, OneLake in Fabric</td><td>S3, S3 Tables</td><td>Cloud Storage</td></tr><tr><td>Warehouse</td><td>Fabric Warehouse, Synapse</td><td>Redshift</td><td>BigQuery</td></tr><tr><td>Managed Spark</td><td>Databricks, Fabric Spark</td><td>EMR, Glue, Databricks</td><td>Dataproc, Databricks</td></tr><tr><td>Ingestion and ETL</td><td>Data Factory, Fabric pipelines</td><td>Glue, DMS, AppFlow</td><td>Dataflow, Datastream</td></tr><tr><td>Event streaming</td><td>Event Hubs (Kafka-compatible), Eventstream</td><td>Kinesis, MSK</td><td>Pub/Sub, Managed Kafka</td></tr><tr><td>Stream processing</td><td>Stream Analytics, Fabric Real-Time Intelligence</td><td>Managed Service for Apache Flink</td><td>Dataflow</td></tr><tr><td>Managed orchestration</td><td>Data Factory, managed Airflow options</td><td>MWAA, Step Functions</td><td>Cloud Composer</td></tr><tr><td>Catalog and governance</td><td>Purview, Unity Catalog</td><td>Glue Catalog, Lake Formation</td><td>Dataplex</td></tr><tr><td>Identity</td><td>Entra ID, managed identities</td><td>IAM roles</td><td>IAM service accounts</td></tr><tr><td>Secrets</td><td>Key Vault</td><td>Secrets Manager</td><td>Secret Manager</td></tr><tr><td>Containers</td><td>AKS, Container Apps</td><td>EKS, ECS</td><td>GKE, Cloud Run</td></tr><tr><td>Serverless functions</td><td>Azure Functions</td><td>Lambda</td><td>Cloud Functions</td></tr><tr><td>Infrastructure as code</td><td>Bicep, Terraform</td><td>CloudFormation, Terraform</td><td>Terraform</td></tr><tr><td>Monitoring</td><td>Azure Monitor, Log Analytics</td><td>CloudWatch</td><td>Cloud Monitoring</td></tr></tbody></table></div>
+<p>Check current product status on each vendor&#39;s site. Microsoft in particular has been <a href="https://mscertquiz.com/blog/which-microsoft-certification-is-best-for-data-engineer">moving its data platform focus to Fabric</a>.</p>
+<h3 id="an-azure-reference-stack-to-build">An Azure reference stack to build</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 51 (scrolls sideways)"><table><thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead><tbody><tr><td>Storage</td><td>ADLS Gen2 with hierarchical namespace</td><td>Atomic renames, fine-grained access</td></tr><tr><td>Ingestion</td><td>Data Factory or dlt, with Event Hubs for streams</td><td>Quick to set up, and Kafka clients connect directly</td></tr><tr><td>Processing</td><td>Azure Databricks</td><td>The most portable Spark skill set</td></tr><tr><td>Modeling</td><td>dbt on Databricks SQL</td><td>Testable, version-controlled SQL</td></tr><tr><td>Governance</td><td>Unity Catalog, with Purview at enterprise level</td><td>Fine-grained table access</td></tr><tr><td>Orchestration</td><td>Airflow or Lakeflow Jobs</td><td>Airflow is portable across clouds</td></tr><tr><td>Infrastructure</td><td>Terraform through Azure Pipelines</td><td>Uses your CI/CD skills</td></tr><tr><td>Security</td><td>Managed identities, Key Vault, private endpoints</td><td>Connects with AZ-305 material</td></tr></tbody></table></div>
+<h3 id="connecting-your-az-305-study">Connecting your AZ-305 study</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 52 (scrolls sideways)"><table><thead><tr><th>AZ-305 topic</th><th>Data engineering use</th></tr></thead><tbody><tr><td>Storage tiers and redundancy</td><td>Hot, cool, and archive lifecycle rules for lakes</td></tr><tr><td>Identity and governance</td><td>Managed identities and RBAC for pipelines</td></tr><tr><td>Network design</td><td>Private endpoints, and keeping data off the public internet</td></tr><tr><td>Business continuity</td><td>Geo-redundancy and disaster recovery for pipelines and metadata</td></tr><tr><td>Monitoring</td><td>Log Analytics and alerts on pipelines</td></tr></tbody></table></div>
+<h3 id="keep-practice-costs-low">Keep practice costs low</h3>
+<p>The lower-cost path is to do most learning locally with Docker, then use the cloud for short, focused exercises.</p>
+<ul><li><p>Set a budget alert before creating any resource.</p></li><li><p>Put everything in one resource group, and delete it after each session.</p></li><li><p>Use auto-terminating clusters, with the smallest size that works.</p></li><li><p>Prefer Terraform so you can recreate the environment in minutes.</p></li><li><p>Use free tiers and trial credits. Check current terms on each vendor&#39;s site.</p></li></ul>
+<h3 id="drills-11">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Provision ADLS, Databricks, and Key Vault with Terraform, then destroy them</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Read a storage path from Spark using a managed identity, with no account key</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Connect a Kafka client to Event Hubs through its Kafka endpoint</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Rebuild one small pipeline on AWS or GCP and map each piece to the table above</p></li></ul>
+<p><strong>You know this part when</strong> you can sketch a secure pipeline on your primary cloud, and translate it to another cloud using the service map.</p>
+<h2 id="part-15-platform-engineering-and-dataops">Part 15: Platform engineering and DataOps</h2>
+<p>A data platform team builds paved roads so other engineers can ship pipelines safely without asking for help. This is where your software background gives you the clearest edge over analysts moving into the field.</p>
+<h3 id="what-a-data-platform-provides">What a data platform provides</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 53 (scrolls sideways)"><table><thead><tr><th>Capability</th><th>What users get</th><th>Common technology</th></tr></thead><tbody><tr><td>Compute</td><td>Run Spark or SQL on demand</td><td>Kubernetes, Databricks, Snowflake</td></tr><tr><td>Storage</td><td>Governed table creation</td><td>Iceberg, Delta, catalogs</td></tr><tr><td>Orchestration</td><td>Deploy a DAG by merging a pull request</td><td>Airflow, Dagster</td></tr><tr><td>Ingestion</td><td>Add a source through configuration</td><td>dlt, Airbyte, Kafka Connect</td></tr><tr><td>Quality</td><td>Standard checks and alerts</td><td>dbt, OpenLineage, custom tooling</td></tr><tr><td>Access</td><td>Self-service requests with audit trails</td><td>Unity Catalog, Terraform, ticket integrations</td></tr><tr><td>Cost</td><td>Per-team usage reports</td><td>Cost tags, system tables</td></tr><tr><td>Developer experience</td><td>Templates, CLI, local testing</td><td>Cookiecutter, Backstage, internal CLIs</td></tr></tbody></table></div>
+<p>Your Angular fleet tooling and inventory work at Wells Fargo is the same kind of thinking: tools that make a whole group of engineers more consistent. Present it that way.</p>
+<h3 id="infrastructure-as-code">Infrastructure as code</h3>
+<p>Terraform is the portable default. Learn state, modules, plans, and drift detection.</p>
+<pre tabindex="0"><code class="language-hcl">resource &quot;azurerm_storage_account&quot; &quot;lake&quot; {
+  name                     = &quot;stdatalake${var.env}&quot;
+  resource_group_name      = azurerm_resource_group.data.name
+  location                 = var.location
+  account_tier             = &quot;Standard&quot;
+  account_replication_type = &quot;ZRS&quot;
+  is_hns_enabled           = true   # hierarchical namespace
+  min_tls_version          = &quot;TLS1_2&quot;
+
+  blob_properties {
+    delete_retention_policy {
+      days = 30
+    }
+  }
+}
+
+resource &quot;azurerm_storage_container&quot; &quot;bronze&quot; {
+  name               = &quot;bronze&quot;
+  storage_account_id = azurerm_storage_account.lake.id
+}</code></pre>
+<h3 id="kubernetes-for-data-workloads">Kubernetes for data workloads</h3>
+<p>Your OpenShift experience transfers directly. Add the data-specific parts:</p>
+<ul><li><p>Running Spark with the Spark Kubernetes Operator</p></li><li><p>Airflow&#39;s <code>KubernetesExecutor</code> and <code>KubernetesPodOperator</code></p></li><li><p>Scaling with cluster autoscaler and spot node pools, which tolerate retried batch work</p></li><li><p>Isolating teams with namespaces, quotas, and limit ranges</p></li><li><p>Managing stateful services through operators, such as Strimzi for Kafka</p></li></ul>
+<h3 id="cicd-for-data">CI/CD for data</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 54 (scrolls sideways)"><table><thead><tr><th>Stage</th><th>Application CI/CD</th><th>Data CI/CD adds</th></tr></thead><tbody><tr><td>Static checks</td><td>Lint, security scans</td><td>SQLFluff, DAG import checks</td></tr><tr><td>Unit tests</td><td>Code logic</td><td>Transformation logic on fixtures</td></tr><tr><td>Integration</td><td>Service tests</td><td>A temporary schema with sample data</td></tr><tr><td>Pre-merge review</td><td>Code diff</td><td>Data diff against production</td></tr><tr><td>Deploy</td><td>Roll out code</td><td>Migrate schema, then backfill</td></tr><tr><td>Rollback</td><td>Redeploy old version</td><td>Time travel, plus reprocessing the affected data</td></tr></tbody></table></div>
+<p>The key difference is that rolling back code does not roll back data already written. Plan how you will repair data for each deployment.</p>
+<pre tabindex="0"><code class="language-yaml"># Azure Pipelines sketch
+trigger: none
+pr: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - script: pip install uv &amp;&amp; uv sync
+    displayName: Install
+  - script: uv run ruff check . &amp;&amp; uv run pytest
+    displayName: Lint and unit tests
+  - script: uv run sqlfluff lint models/
+    displayName: Lint SQL
+  - script: |
+      uv run dbt build --select state:modified+ \
+        --defer --state ./prod-artifacts --target ci
+    displayName: Build changed models</code></pre>
+<h3 id="safe-schema-changes">Safe schema changes</h3>
+<p>Use expand and contract, the same pattern you would use on a service database.</p>
+<ol><li><p><strong>Expand:</strong> add the new column, and write both old and new.</p></li><li><p><strong>Migrate:</strong> backfill history, and move consumers across.</p></li><li><p><strong>Contract:</strong> remove the old column after confirming nobody reads it.</p></li></ol>
+<p>Your legacy-versus-modernized service toggle used the same thinking. For large models, you can also run old and new versions side by side and compare outputs before switching.</p>
+<h3 id="reliability-for-data-systems">Reliability for data systems</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 55 (scrolls sideways)"><table><thead><tr><th>SLI</th><th>Example SLO</th></tr></thead><tbody><tr><td>Freshness</td><td><code>fct_orders</code> under 2 hours old, 99% of the time</td></tr><tr><td>Completeness</td><td>Rows reconcile to source within 0.1%</td></tr><tr><td>Pipeline success</td><td>99.5% of scheduled runs finish without manual help</td></tr><tr><td>Query performance</td><td>95th-percentile dashboard query under 5 seconds</td></tr></tbody></table></div>
+<p>Also maintain runbooks, a clear on-call process, and error budgets. Review incidents and repair the systemic cause.</p>
+<h3 id="drills-12">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Write Terraform for one complete environment, with a separate dev and prod</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Run Spark on a local <code>kind</code> cluster using the operator</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Build a template that lets someone add a new ingestion by changing only one YAML file</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Set freshness SLOs on three tables and display them on a Grafana dashboard</p></li></ul>
+<p><strong>You know this part when</strong> you can explain how a new team would ship a pipeline on your platform, without opening a ticket, while staying within governance rules.</p>
+<h2 id="part-16-performance-and-cost">Part 16: Performance and cost</h2>
+<p>In data systems, performance and cost are nearly the same problem, because cloud engines charge for data scanned or compute time consumed. Seniors quote the expected bill alongside a design.</p>
+<h3 id="where-the-money-goes">Where the money goes</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 56 (scrolls sideways)"><table><thead><tr><th>Cost driver</th><th>Typical waste</th><th>Remedy</th></tr></thead><tbody><tr><td>Compute</td><td>Warehouses left idle, oversized clusters</td><td>Auto-suspend, autoscaling, right-sizing, spot workers</td></tr><tr><td>Query scans</td><td><code>SELECT *</code>, unpartitioned tables</td><td>Pruning, clustering, column selection</td></tr><tr><td>Storage</td><td>Endless snapshots, duplicate copies</td><td>Lifecycle rules, snapshot expiry</td></tr><tr><td>Data transfer</td><td>Cross-region and cross-cloud movement</td><td>Keep compute close to data</td></tr><tr><td>Object storage requests</td><td>Many small files</td><td>Compaction</td></tr><tr><td>SaaS connectors</td><td>Paying per changed row on noisy tables</td><td>Sync only what is used, and reduce frequency</td></tr><tr><td>Rebuilds</td><td>Full refresh when incremental would do</td><td>Incremental models</td></tr><tr><td>Unused outputs</td><td>Tables and dashboards nobody reads</td><td>Query logs, then a retirement process</td></tr></tbody></table></div>
+<h3 id="a-worked-estimate">A worked estimate</h3>
+<p>This shows the reasoning with illustrative numbers only. Real rates vary by vendor, region, and contract.</p>
+<p><strong>Scenario:</strong> a dashboard query scans a 2 TB table 200 times a day, at an assumed $5 per TB.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 57 (scrolls sideways)"><table><thead><tr><th>Design</th><th>Data scanned per query</th><th>Monthly scanned</th><th>Monthly cost</th></tr></thead><tbody><tr><td>No partitioning</td><td>2 TB</td><td>12,000 TB</td><td>$60,000</td></tr><tr><td>Partitioned by date, one week read (about 2%)</td><td>40 GB</td><td>240 TB</td><td>$1,200</td></tr><tr><td>Add column selection, reading 25% of columns</td><td>10 GB</td><td>60 TB</td><td>$300</td></tr><tr><td>Add a daily aggregate table of 1 GB</td><td>1 GB</td><td>6 TB</td><td>$30</td></tr></tbody></table></div>
+<p>The same query logic drops from $60,000 to $30 a month with layout and modeling work alone. Interviewers remember candidates who reason like this.</p>
+<pre tabindex="0"><code class="language-latex">\text{monthly scan cost} = \text{queries per day} \times 30 \times \text{TB per query} \times \text{price per TB}</code></pre>
+<h3 id="performance-triage">Performance triage</h3>
+<p>Work through these in order. Each step is usually cheaper than the next.</p>
+<ol><li><p><strong>Do less.</strong> Is the query or table still needed? Can it filter earlier?</p></li><li><p><strong>Fix the model.</strong> Check for fan-out, repeated logic, and wrong grain.</p></li><li><p><strong>Fix the layout.</strong> Check partitioning, clustering, sorting, and file sizes.</p></li><li><p><strong>Fix the query.</strong> Check join order, unnecessary <code>DISTINCT</code>, and non-sargable filters.</p></li><li><p><strong>Precompute.</strong> Use aggregates, materialized views, or incremental models.</p></li><li><p><strong>Tune the engine.</strong> Adjust shuffle partitions, memory settings, and join strategies.</p></li><li><p><strong>Buy more compute.</strong> Do this last, and only after measuring.</p></li></ol>
+<h3 id="platform-specific-levers">Platform-specific levers</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 58 (scrolls sideways)"><table><thead><tr><th>Platform</th><th>Main levers</th></tr></thead><tbody><tr><td>Snowflake</td><td>Warehouse size and auto-suspend, multi-cluster limits, clustering keys, result cache, resource monitors</td></tr><tr><td>BigQuery</td><td>Partition and cluster, on-demand vs slot reservations, <code>maximum_bytes_billed</code>, table expiry</td></tr><tr><td>Databricks</td><td>Job compute rather than all-purpose, Photon where it pays off, serverless vs classic, liquid clustering, predictive optimization</td></tr><tr><td>Spark</td><td>Spot instances, dynamic allocation, AQE, file compaction, removing unneeded shuffles</td></tr><tr><td>Kafka</td><td>Retention, compression, partition count, tiered storage</td></tr></tbody></table></div>
+<h3 id="finops-practice">FinOps practice</h3>
+<ul><li><p>Tag every workload by team and pipeline</p></li><li><p>Publish a monthly cost report per team</p></li><li><p>Add cost per run to pipeline monitoring</p></li><li><p>Alert on sudden spending changes</p></li><li><p>Define unit economics, such as cost per 1,000 events or per active customer</p></li><li><p>Set query guards, such as scan limits and timeouts</p></li><li><p>Review the top 20 most expensive queries each month</p></li></ul>
+<h3 id="drills-13">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Find the 10 most expensive queries in a warehouse using its system tables</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Reduce one query&#39;s scan by at least 90% and record the before and after</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Estimate the monthly bill for a design before you build it, then compare with actual</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Compare one job on all-purpose compute and job compute</p></li></ul>
+<p><strong>You know this part when</strong> you can estimate a design&#39;s monthly cost in an interview, and name the three changes that would cut it the most.</p>
+<h2 id="part-17-data-engineering-for-ai-and-ml">Part 17: Data engineering for AI and ML</h2>
+<p>AI systems fail on bad data more often than on bad models, so this is a natural extension of data engineering rather than a separate field. In the <a href="https://joereis.github.io/practical_data_data_eng_survey">2026 survey</a>, AI and LLM integration was the most requested training topic, and 82% used AI tools at least daily. You have an edge here from your RAG and LangChain work.</p>
+<h3 id="classic-ml-data-engineering">Classic ML data engineering</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 59 (scrolls sideways)"><table><thead><tr><th>Concept</th><th>Meaning</th><th>Why it matters</th></tr></thead><tbody><tr><td>Feature pipeline</td><td>Computes model inputs from raw data</td><td>Features must be reproducible</td></tr><tr><td>Feature store</td><td>Shares features for training and serving</td><td>Keeps definitions consistent</td></tr><tr><td>Offline and online stores</td><td>History for training, low-latency lookups for inference</td><td>Two very different access patterns</td></tr><tr><td>Point-in-time correctness</td><td>Uses only what was known at the prediction time</td><td>Prevents data leakage</td></tr><tr><td>Training-serving skew</td><td>Features computed differently in training and production</td><td>A common silent failure</td></tr><tr><td>Dataset versioning</td><td>Ties a model to the exact data used</td><td>Needed for audits and rollback</td></tr><tr><td>Drift monitoring</td><td>Detects when input distributions change</td><td>Your statistics background applies</td></tr></tbody></table></div>
+<p>Point-in-time joins are an interview favorite:</p>
+<pre tabindex="0"><code class="language-sql">-- Label each event with the feature value known at that time.
+SELECT e.event_id, e.user_id, e.event_ts, e.label, f.spend_30d
+FROM training_events e
+LEFT JOIN user_features f
+  ON f.user_id = e.user_id
+ AND f.valid_from &lt;= e.event_ts
+ AND (f.valid_to &gt; e.event_ts OR f.valid_to IS NULL);</code></pre>
+<p>SCD type 2 from Part 4 appears here again. A plain join to the latest feature table would leak future information into training.</p>
+<h3 id="pipelines-for-retrieval-and-llm-applications">Pipelines for retrieval and LLM applications</h3>
+<p>A RAG index is a derived dataset. Treat it with the same discipline as any other table.</p>
+<ol><li><p><strong>Ingest</strong> documents and record the source, version, and permissions.</p></li><li><p><strong>Parse</strong> PDFs, HTML, and other formats. This is usually the hardest step.</p></li><li><p><strong>Clean</strong> by removing boilerplate and detecting personal data.</p></li><li><p><strong>Chunk</strong> the content, keeping metadata and links back to the source.</p></li><li><p><strong>Embed</strong> with a named, versioned model.</p></li><li><p><strong>Index</strong> in a vector store, together with keyword search.</p></li><li><p><strong>Refresh</strong> incrementally using content hashes, and remove deleted documents.</p></li><li><p><strong>Evaluate</strong> retrieval against a labeled test set.</p></li></ol>
+<pre tabindex="0"><code class="language-python">import hashlib
+
+def chunk_id(doc_id: str, position: int, text: str, embed_model: str) -&gt; str:
+    # Stable IDs make upserts idempotent and show which chunks changed.
+    key = f&#39;{doc_id}|{position}|{embed_model}|{text}&#39;
+    return hashlib.sha256(key.encode()).hexdigest()</code></pre>
+<p>Key points that are easy to miss:</p>
+<ul><li><p>Changing the embedding model usually means re-embedding everything, so plan for it and store the version.</p></li><li><p>Access control must follow documents into the index, or the search will leak restricted content.</p></li><li><p>A deleted source document must also be removed from the index.</p></li><li><p>Compare costs for embedding, storage, and queries.</p></li></ul>
+<h3 id="vector-search-options">Vector search options</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 60 (scrolls sideways)"><table><thead><tr><th>Option</th><th>Good fit</th><th>Trade-off</th></tr></thead><tbody><tr><td>pgvector</td><td>Small to medium data, already on Postgres</td><td>Scale and tuning limits</td></tr><tr><td>Warehouse or lakehouse vector search</td><td>Keeps governance in one platform</td><td>Often higher latency</td></tr><tr><td>Purpose-built stores (Pinecone, Qdrant, Weaviate, Milvus)</td><td>Large scale, advanced retrieval</td><td>Another system to run and secure</td></tr><tr><td>Elasticsearch, OpenSearch</td><td>Hybrid keyword and vector search</td><td>Operational weight</td></tr></tbody></table></div>
+<p>Learn the basics of HNSW and IVF indexes, the recall and latency trade-off, and hybrid search with reranking.</p>
+<h3 id="semantic-layers-and-agents">Semantic layers and agents</h3>
+<p>Agents querying a warehouse need definitions of what the data means, not just table names. The survey showed strong interest in semantics, ontologies, and knowledge graphs, with 209 requests, while only 5.4% currently use canonical or semantic models. Expect this area to grow.</p>
+<p>For agent access, combine a governed semantic layer, least-privilege roles, query cost limits, audit logs, and defenses against prompt injection in retrieved data. Your prompt injection knowledge is directly relevant.</p>
+<h3 id="using-ai-in-your-own-work">Using AI in your own work</h3>
+<p>AI tools write SQL quickly, and they also make confident grain and join mistakes. Keep these habits:</p>
+<ul><li><p>Run a grain test and a row-count check on any AI-written query.</p></li><li><p>Ask for tests along with the code.</p></li><li><p>Never paste sensitive or employer data into an unapproved tool.</p></li><li><p>Learn the fundamentals by hand first. Interviews often ban assistants, and you must be able to spot errors.</p></li></ul>
+<h3 id="drills-14">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Build a point-in-time training dataset, and show how a naive join would leak</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Build an incremental RAG pipeline that handles an edited and a deleted document</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Evaluate two chunking strategies using recall on a small labeled set</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Add a quality check that catches an empty or duplicated embedding batch</p></li></ul>
+<p><strong>You know this part when</strong> you can explain training-serving skew and design a RAG index refresh that handles updates, deletions, and permissions.</p>
+<h2 id="part-18-data-system-design">Part 18: Data system design</h2>
+<p>Data system design interviews test whether you can turn a vague need into a pipeline that stays correct under failure, and whether you can justify each trade-off. A clear process matters more than naming the newest tools.</p>
+<figure data-embed="node/fc42fd42-a1c7"><figcaption>reference data platform · sources to serving</figcaption></figure>
+<p>Use this as your default sketch, then remove anything the requirements do not justify. Many companies never need the low-latency path.</p>
+<h3 id="a-seven-step-framework-for-45-minutes">A seven-step framework for 45 minutes</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 61 (scrolls sideways)"><table><thead><tr><th>Step</th><th>Time</th><th>What to do</th></tr></thead><tbody><tr><td>1. Clarify requirements</td><td>5 min</td><td>Consumers, questions they answer, metrics, and accuracy needs</td></tr><tr><td>2. Quantify</td><td>3 min</td><td>Event rate, row size, daily volume, history, query concurrency, latency</td></tr><tr><td>3. Sketch end to end</td><td>7 min</td><td>Sources, ingestion, storage, processing, serving</td></tr><tr><td>4. Model the data</td><td>7 min</td><td>Grain, keys, tables, partitioning, history</td></tr><tr><td>5. Go deep</td><td>13 min</td><td>The hardest part: late data, joins, backfills, or scale</td></tr><tr><td>6. Cover operations</td><td>5 min</td><td>Quality, monitoring, security, recovery, and cost</td></tr><tr><td>7. Summarize trade-offs</td><td>5 min</td><td>What you chose, what you gave up, and what you would change at 10x</td></tr></tbody></table></div>
+<h3 id="questions-to-ask-first">Questions to ask first</h3>
+<ul><li><p>Who uses this, and what decision does it drive?</p></li><li><p>How fresh must it be? What happens if it is an hour late?</p></li><li><p>Must figures be exact, as in finance, or are approximations acceptable?</p></li><li><p>How far back must history go, and must it be reprocessed?</p></li><li><p>Can events arrive late or be duplicated?</p></li><li><p>Is there PII or a compliance requirement?</p></li><li><p>What is the budget, and which platforms already exist?</p></li></ul>
+<h3 id="back-of-envelope-sizing">Back-of-envelope sizing</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 62 (scrolls sideways)"><table><thead><tr><th>Useful fact</th><th>Value</th></tr></thead><tbody><tr><td>Seconds per day</td><td>About 86,400; round to 100,000 for quick estimates</td></tr><tr><td>1 million events per day</td><td>About 12 per second on average; assume peaks 3 to 10 times higher</td></tr><tr><td>1 billion events a day at 1 KB</td><td>About 1 TB a day raw</td></tr><tr><td>Parquet compression</td><td>Often 3 to 10 times smaller than raw JSON, depending on data</td></tr></tbody></table></div>
+<p><strong>Example:</strong> 500 million events a day at 1 KB is 500 GB raw and about 100 GB in Parquet, assuming 5 times compression. That is about 36 TB a year. The average is about 5,800 events a second, so at a peak of 3 times, plan for about 17,000 per second. If one Kafka partition safely handles 5 MB per second, 17 MB per second needs at least 4 partitions, so choose 12 or more to allow for growth and consumer parallelism.</p>
+<h3 id="major-trade-offs">Major trade-offs</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 63 (scrolls sideways)"><table><thead><tr><th>Decision</th><th>Option A</th><th>Option B</th><th>Key question</th></tr></thead><tbody><tr><td>Latency</td><td>Batch</td><td>Streaming</td><td>What does fresher data actually change?</td></tr><tr><td>Transformation</td><td>ELT in a warehouse</td><td>ETL in Spark</td><td>Is the logic expressible in SQL at this scale?</td></tr><tr><td>Storage</td><td>Warehouse</td><td>Lakehouse</td><td>Do several engines need the same data?</td></tr><tr><td>Update strategy</td><td>Copy-on-write</td><td>Merge-on-read</td><td>Are reads or writes more frequent?</td></tr><tr><td>Data model</td><td>Star schema</td><td>One Big Table</td><td>Are consumers varied, or is the use case known?</td></tr><tr><td>Ingestion</td><td>Buy</td><td>Build</td><td>Is the source standard, and does anyone want to run this?</td></tr><tr><td>Consistency</td><td>Exact</td><td>Approximate, such as HyperLogLog</td><td>Is the answer used for finance or a trend?</td></tr><tr><td>Ownership</td><td>Central team</td><td>Federated domains</td><td>How large and complex is the organization?</td></tr></tbody></table></div>
+<h3 id="five-practice-designs">Five practice designs</h3>
+<p><strong>1. Clickstream analytics</strong></p>
+<p>For 500 million events a day with dashboards under 15 minutes old. Collect events through an API into Kafka, using a schema registry. Land raw data in bronze through a sink, process it with Spark or Flink into sessionized silver tables, and serve gold aggregates to BI. Deep dives: bot filtering, late mobile events, sessionization across day boundaries, and compaction.</p>
+<p><strong>2. Change data capture to a lakehouse</strong></p>
+<p>For replicating a busy operational SQL Server into Iceberg or Delta tables. Use log-based CDC through Debezium and Kafka, apply changes in order with <code>MERGE</code>, and retain raw change logs in bronze. Deep dives: the initial snapshot, ordering by log sequence number, deletes, schema changes, and merge-on-read compaction.</p>
+<p><strong>3. Real-time fraud features</strong></p>
+<p>This fits your background well. For scoring transactions in under 100 ms using features such as count of transactions in the past 10 minutes. Flink computes windowed features from Kafka, pushes them to an online store such as Redis, and writes the same features to the lakehouse for training. Deep dives: consistency between online and offline features, state recovery, and fallback behavior when features are stale.</p>
+<p><strong>4. Company-wide metrics platform</strong></p>
+<p>For consistent revenue and active-user figures across teams. Use conformed dimensions, a semantic layer, dbt tests, and certified gold tables with owners. Deep dives: metric versioning, restating history, and handling a changed definition.</p>
+<p><strong>5. Multi-tenant data platform</strong></p>
+<p>For 50 teams sharing infrastructure. Provide templates, a governed catalog, per-team quotas, cost reports, and self-service access. Deep dives: noisy neighbors, permissions, and how a team deploys without tickets.</p>
+<h3 id="what-strong-candidates-do">What strong candidates do</h3>
+<ul><li><p>Ask before designing, and state assumptions out loud.</p></li><li><p>Explain why, and name what each choice gives up.</p></li><li><p>Start simple, then scale the part that actually needs it.</p></li><li><p>Bring up backfills, data quality, and failure handling without being asked.</p></li><li><p>Estimate cost, and suggest a lower-cost alternative.</p></li><li><p>Avoid naming tools as a substitute for reasoning.</p></li></ul>
+<h3 id="drills-15">Drills</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Practice each of the five designs in 45 minutes on a whiteboard, out loud</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Record yourself once, and review how you spent the time</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Read the engineering blogs of two target companies and redraw one architecture</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> For each design, answer: &quot;What breaks first at 10x?&quot;</p></li></ul>
+<p><strong>You know this part when</strong> you can design a pipeline you have never built, while covering late data, backfills, quality, and cost without prompting.</p>
+<h2 id="part-19-interview-preparation">Part 19: Interview preparation</h2>
+<p>Data engineering loops usually test SQL, coding, modeling, system design, and behavior, and modeling is the round most career changers neglect. Formats vary by company, so ask your recruiter for the exact loop.</p>
+<h3 id="a-typical-loop">A typical loop</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 64 (scrolls sideways)"><table><thead><tr><th>Round</th><th>Length</th><th>What it tests</th><th>How to prepare</th></tr></thead><tbody><tr><td>Recruiter screen</td><td>30 min</td><td>Motivation, background, pay range</td><td>Your transition story, in 60 seconds</td></tr><tr><td>Technical screen</td><td>45 to 60 min</td><td>Live SQL, sometimes Python</td><td>Part 2 patterns, spoken aloud</td></tr><tr><td>Coding</td><td>45 to 60 min</td><td>Practical Python, data structures</td><td>Part 3</td></tr><tr><td>Data modeling</td><td>45 to 60 min</td><td>Designing tables for a business process</td><td>Part 4</td></tr><tr><td>System design</td><td>45 to 60 min</td><td>Architecture and trade-offs</td><td>Part 18</td></tr><tr><td>Behavioral</td><td>45 min</td><td>Ownership, conflict, ambiguity</td><td>The stories below</td></tr><tr><td>Domain deep dive</td><td>30 to 60 min</td><td>Spark, Kafka, or platform details</td><td>Parts 7, 8, and 15</td></tr></tbody></table></div>
+<h3 id="your-positioning">Your positioning</h3>
+<p>Do not present yourself as a beginner in data. Your position is a senior engineer who already runs reliable production systems and has specialized in data.</p>
+<p>A model pitch to adapt:</p>
+<blockquote><p>I&#39;m a senior software engineer in banking with more than five years of production experience across more than 50 connected services, including Kafka pipelines and event-driven reliability work. I found the data flow problems were the ones I most enjoyed, so I&#39;ve spent the past several months building lakehouse and streaming projects. I&#39;m looking to bring that production discipline to a data platform team.</p></blockquote>
+<p>Adjust the time frames to match what is true when you use it.</p>
+<h3 id="stories-from-your-experience">Stories from your experience</h3>
+<p>Prepare these in Situation, Task, Action, Result form. Verify the details and confirm what you may share about your employer&#39;s systems.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 65 (scrolls sideways)"><table><thead><tr><th>Story</th><th>Your example</th><th>Data engineering angle</th></tr></thead><tbody><tr><td>Hard production bug</td><td>Missing Pindrop scores traced to Solace at-least-once delivery and MQTT timing</td><td>Delivery semantics, replay, root-cause analysis</td></tr><tr><td>Measurable improvement</td><td>Kafka solution for leads, with 70% lower throughput time</td><td>Event-driven design, partitioning, trade-offs</td></tr><tr><td>Data analysis</td><td>Access report classifying missed scores from Splunk logs</td><td>Turning logs into a dataset, incident analytics</td></tr><tr><td>Pragmatic trade-off</td><td>Replay queue chosen over restructuring, then run for about 6 months</td><td>Short-term and long-term fixes, cost of change</td></tr><tr><td>Safe migration</td><td>Toggle between legacy and modernized services</td><td>Parallel runs, safe cutover, comparing outputs</td></tr><tr><td>Influence</td><td>Pushing for authentication on API controllers</td><td>Enforcing access at the data layer, handling disagreement</td></tr><tr><td>Quality</td><td>Raising test coverage from 0% to 70%</td><td>Bringing a testing culture to pipelines</td></tr><tr><td>Scale</td><td>Merging microservices into a modular monolith</td><td>Knowing when not to add distributed complexity</td></tr></tbody></table></div>
+<h3 id="questions-you-should-answer-quickly">Questions you should answer quickly</h3>
+<p><strong>SQL and modeling</strong></p>
+<ol><li><p>What is the difference between <code>RANK</code>, <code>DENSE_RANK</code>, and <code>ROW_NUMBER</code>?</p></li><li><p>Why might a <code>LEFT JOIN</code> return more rows than the left table?</p></li><li><p>How would you find and remove duplicates?</p></li><li><p>What is grain, and how do you test for it?</p></li><li><p>Compare star schema, Data Vault, and One Big Table.</p></li><li><p>Implement an SCD type 2 update.</p></li><li><p>Why are balances semi-additive?</p></li><li><p>How do you model many-to-many relationships in a star schema?</p></li></ol>
+<p><strong>Pipelines</strong></p>
+<ol start="9"><li><p>Define idempotency, and show how you would make a daily load idempotent.</p></li><li><p>How do you handle late-arriving data?</p></li><li><p>How would you safely backfill a year of data?</p></li><li><p>A pipeline succeeded but the numbers look wrong. What are your steps?</p></li><li><p>What happens when an upstream team renames a column?</p></li><li><p>ETL or ELT: how do you decide?</p></li><li><p>How would you migrate a critical table with no downtime?</p></li></ol>
+<p><strong>Spark</strong></p>
+<ol start="16"><li><p>Explain narrow and wide transformations.</p></li><li><p>What causes a shuffle, and why is it expensive?</p></li><li><p>How do you detect and fix data skew?</p></li><li><p>Compare broadcast and sort-merge joins.</p></li><li><p>Compare <code>repartition</code> and <code>coalesce</code>.</p></li><li><p>Why might a Spark job run out of memory, and how do you find out which part?</p></li><li><p>What does Adaptive Query Execution do?</p></li></ol>
+<p><strong>Streaming</strong></p>
+<ol start="23"><li><p>How do Kafka partitions affect ordering and parallelism?</p></li><li><p>Explain consumer groups and rebalancing.</p></li><li><p>What does exactly once really mean?</p></li><li><p>Compare event time, processing time, and watermarks.</p></li><li><p>What do you do with a poison message?</p></li><li><p>When would you choose Flink rather than Spark Structured Streaming?</p></li></ol>
+<p><strong>Storage and platform</strong></p>
+<ol start="29"><li><p>Why is Parquet fast for analytics?</p></li><li><p>What problem do table formats solve?</p></li><li><p>Compare copy-on-write and merge-on-read.</p></li><li><p>What causes the small-file problem, and how do you fix it?</p></li><li><p>Choose a partition key for an events table and defend it.</p></li><li><p>How do you delete a person&#39;s data from a lakehouse?</p></li><li><p>How would you reduce a warehouse bill by 40%?</p></li><li><p>How do you test a dbt project in CI?</p></li><li><p>Airflow or Dagster, and why?</p></li><li><p>How do you measure the reliability of a dataset?</p></li><li><p>How do you secure PII in a shared lakehouse?</p></li><li><p>How would you make your data AI-ready?</p></li></ol>
+<h3 id="a-model-answer-how-do-you-make-a-pipeline-idempotent">A model answer: &quot;How do you make a pipeline idempotent?&quot;</h3>
+<blockquote><p>Idempotent means a rerun gives the same result as a single run. First, I parametrize each run by its logical date rather than the current time. Then I choose a write strategy that fits the data: partition overwrite for a daily fact table, or a merge on a stable key for a mutable entity. I also dedupe the input, because sources can send duplicates. I&#39;d prove it with a test that runs the load twice and compares the output. On one past incident, a replay mechanism recovered messages, so the receiving side also had to tolerate seeing them twice.</p></blockquote>
+<p>Check the final sentence against what truly happened before using it. Notice the shape of the answer: define it, give the mechanism, give the trade-offs, prove it, and add experience.</p>
+<h3 id="application-strategy">Application strategy</h3>
+<ul><li><p><strong>Target these first:</strong> banks, fintech, insurance, and other regulated companies, plus large enterprises. <a href="https://axialsearch.com/insights/data-engineering-hiring">One analysis of 18,786 US postings</a> found 35% came from organizations with 10,000 or more employees, and mid and senior roles made up about seven in ten.</p></li><li><p><strong>Try an internal move.</strong> A transfer to a data team at your current employer may be the easiest step, and it gives you production experience with your existing systems and context.</p></li><li><p><strong>Look for bridge roles.</strong> Backend roles on data-heavy teams and platform roles can both serve as stepping stones.</p></li><li><p><strong>Tailor your resume.</strong> Move data work to the top, using terms like event streaming, pipelines, reliability, and data quality. List only what you can defend.</p></li><li><p><strong>Show your work.</strong> Link one strong portfolio project with its architecture diagram at the top of your resume.</p></li></ul>
+<h3 id="practice-routine">Practice routine</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Complete three timed SQL problems a week, spoken aloud</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Do one modeling or system design practice session a week, starting in week 13</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Complete at least four mock interviews with a person before real interviews</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Write out your eight stories and rehearse them until they take about two minutes each</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Start applying to low-priority companies around week 18 for practice</p></li></ul>
+<p><strong>You know this part when</strong> you can answer the 40 questions without notes and pass mock interviews in each round.</p>
+<h2 id="part-20-portfolio-projects">Part 20: Portfolio projects</h2>
+<p>Build three projects that show production habits rather than ten tutorial copies; depth is what lets you pass a deep-dive interview. Build them in the order below, and only start Project 4 if time allows.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 66 (scrolls sideways)"><table><thead><tr><th>Project</th><th>Proves</th><th>Stack</th><th>Plan weeks</th><th>Priority</th></tr></thead><tbody><tr><td>1. Warehouse ELT</td><td>SQL, modeling, dbt, orchestration, testing</td><td>Python, dlt, DuckDB or Postgres, dbt, Airflow</td><td>7 to 12</td><td>Required</td></tr><tr><td>2. Azure lakehouse</td><td>Spark, table formats, cloud, Terraform</td><td>Databricks, ADLS, Delta or Iceberg, Unity Catalog, Terraform</td><td>13 to 18</td><td>Required</td></tr><tr><td>3. Streaming CDC</td><td>Kafka, CDC, event time, recovery</td><td>Postgres, Debezium, Kafka, Flink, Iceberg</td><td>19 to 22</td><td>Required</td></tr><tr><td>4. Self-service platform or AI index</td><td>Platform thinking, or AI data</td><td>Kubernetes and Terraform, or an incremental RAG index</td><td>Optional</td><td>Stretch</td></tr></tbody></table></div>
+<h3 id="project-1-warehouse-elt-with-history">Project 1: Warehouse ELT with history</h3>
+<p><strong>Idea:</strong> use a public source that changes over time, such as California open data or NYC Taxi data. Choose something you find interesting enough to continue with for six weeks.</p>
+<p><strong>Required features:</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Incremental ingestion that survives a rerun without duplicates</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Staging, intermediate, and mart dbt layers with a documented star schema</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> One SCD type 2 dimension using a dbt snapshot</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> At least 15 tests and one unit test</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> An Airflow DAG with retries and a 30-day backfill that you have proved works</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> CI that lints, tests, and builds changed models on pull requests</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> A dashboard answering a real question in Metabase or Evidence</p></li></ul>
+<h3 id="project-2-azure-lakehouse">Project 2: Azure lakehouse</h3>
+<p><strong>Idea:</strong> process at least 100 million rows through bronze, silver, and gold layers on Databricks, created entirely with Terraform.</p>
+<p><strong>Required features:</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Infrastructure that can be destroyed and rebuilt from code</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Managed identity access with no stored keys</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> PySpark jobs with unit tests and a documented tuning result, such as a before-and-after skew fix</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Merge, time travel, and maintenance jobs for compaction and snapshots</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Row filters and column masks on a PII-like column</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Write-audit-publish before gold data becomes visible</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> A one-page cost report showing the actual spend</p></li></ul>
+<h3 id="project-3-streaming-cdc">Project 3: Streaming CDC</h3>
+<p><strong>Idea:</strong> stream changes from an operational Postgres database into a queryable lakehouse table. Your own application&#39;s call or event data could make this far more interesting than synthetic data, provided you keep customer data out of a public repository. Otherwise, use a data generator.</p>
+<p><strong>Required features:</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Debezium CDC, with Avro and Schema Registry</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Flink or Spark jobs with event-time windows and watermarks</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> A dead letter topic for bad records</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> A chaos test that kills a worker mid-run and proves no data loss or duplicates</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Schema evolution, with a column added while the stream runs</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Lag and freshness dashboards in Grafana</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Compaction of the streaming output</p></li></ul>
+<h3 id="the-readme-that-gets-you-interviews">The README that gets you interviews</h3>
+<p>A hiring manager should understand the project in two minutes. Include these sections:</p>
+<ol><li><p>The problem, in two sentences</p></li><li><p>An architecture diagram</p></li><li><p>Why you chose each main component, and what you rejected</p></li><li><p>Data model, with the grain of each table</p></li><li><p>Failure scenarios you tested, and their results</p></li><li><p>Measured results: rows, runtime, cost, and tuning improvements</p></li><li><p>What you would change at 100x scale</p></li><li><p>How to run it, with one command</p></li></ol>
+<h3 id="common-portfolio-mistakes">Common portfolio mistakes</h3>
+<ul><li><p>Copying a tutorial without adding your own decisions or failure tests</p></li><li><p>Using every popular tool with no reason for each one</p></li><li><p>Showing no tests, failure handling, or backfill</p></li><li><p>Leaving out what the project cost or how it performed</p></li><li><p>Committing secrets. Scan the repository before making it public</p></li><li><p>Using any employer code or data. Keep your portfolio entirely separate</p></li></ul>
+<p><strong>You know this part when</strong> a stranger can run your project and an interviewer can ask about any line of it without surprising you.</p>
+<h2 id="part-21-certifications">Part 21: Certifications</h2>
+<p>My recommendation is one certification, the Databricks Data Engineer Associate, taken around week 18 after you have real hands-on time. Certifications can help you pass a resume screen, but projects and interviews get you hired.</p>
+<h3 id="your-options">Your options</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 67 (scrolls sideways)"><table><thead><tr><th>Certification</th><th>Platform</th><th>Choose it when</th><th>Status notes</th></tr></thead><tbody><tr><td><a href="https://www.certcrush.app/blog/how-to-pass-databricks-data-engineer-associate-2026">Databricks Data Engineer Associate</a></td><td>Databricks</td><td>Best general choice; Spark and lakehouse skills are portable</td><td>Rewritten May 4, 2026</td></tr><tr><td>Databricks Data Engineer Professional</td><td>Databricks</td><td>You have production Databricks experience</td><td>Assumes a year or more hands-on</td></tr><tr><td><a href="https://mscertquiz.com/blog/which-microsoft-certification-is-best-for-data-engineer">DP-700 Fabric Data Engineer</a></td><td>Microsoft Fabric</td><td>Your target employers use Fabric</td><td>The main Microsoft route</td></tr><tr><td><a href="https://mscertquiz.com/blog/which-microsoft-certification-is-best-for-data-engineer">DP-750 Azure Databricks Data Engineer</a></td><td>Azure Databricks</td><td>You want a Microsoft credential on Databricks</td><td>Confirm availability on Microsoft Learn</td></tr><tr><td>AWS Data Engineer Associate (DEA-C01)</td><td>AWS</td><td>Your target employers use AWS</td><td>Check the current exam guide</td></tr><tr><td>Google Professional Data Engineer</td><td>GCP</td><td>Your target employers use GCP</td><td>Check the current exam guide</td></tr><tr><td><a href="https://book.st-hakky.com/en/data-platform/databricks-certification-guide">SnowPro Core (COF-C03)</a></td><td>Snowflake</td><td>Your target employers use Snowflake</td><td>COF-C02 materials are outdated</td></tr><tr><td>Confluent Developer (CCDAK)</td><td>Kafka</td><td>You are aiming for streaming roles</td><td>Check current terms</td></tr><tr><td>dbt and Airflow vendor certifications</td><td>dbt, Airflow</td><td>You want a low-stakes way to check your knowledge</td><td>Check current status after the merger</td></tr></tbody></table></div>
+<p><strong>Avoid DP-203.</strong> The Azure Data Engineer Associate <a href="https://learn.microsoft.com/en-us/answers/a/12650003">retired on March 31, 2025</a>, yet old guides still recommend it.</p>
+<h3 id="what-about-az-305">What about AZ-305?</h3>
+<p>AZ-305 helps with platform and architect roles, but no data engineering hiring manager will treat it as proof of data skills. Pause it during weeks 1 to 18, unless you need it for another goal or are close to the exam. If you have already done most of the work, finish it first and then begin the plan.</p>
+<h3 id="databricks-associate-what-to-expect">Databricks Associate: what to expect</h3>
+<p>These <a href="https://www.certcrush.app/blog/how-to-pass-databricks-data-engineer-associate-2026">exam details</a> come from a third-party summary of the official guide, so confirm them on the Databricks site before booking.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 68 (scrolls sideways)"><table><thead><tr><th>Detail</th><th>Value</th></tr></thead><tbody><tr><td>Format</td><td>45 scored multiple-choice questions, plus unscored items</td></tr><tr><td>Time</td><td>90 minutes</td></tr><tr><td>Fee</td><td>USD 200, plus taxes</td></tr><tr><td>Validity</td><td>2 years; recertify by retaking the exam</td></tr><tr><td>Recommended experience</td><td>6 months of hands-on Databricks work</td></tr><tr><td>Pass mark</td><td>Not published. Aim for 80% on quality practice exams</td></tr></tbody></table></div>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 69 (scrolls sideways)"><table><thead><tr><th>Exam section</th><th>Weight</th></tr></thead><tbody><tr><td>Data Transformation and Modeling</td><td>22%</td></tr><tr><td>Data Ingestion and Loading</td><td>21%</td></tr><tr><td>Working with Lakeflow Jobs</td><td>16%</td></tr><tr><td>Governance and Security</td><td>15%</td></tr><tr><td>Implementing CI/CD</td><td>10%</td></tr><tr><td>Troubleshooting, Monitoring and Optimization</td><td>10%</td></tr><tr><td>Databricks Intelligence Platform</td><td>6%</td></tr></tbody></table></div>
+<p>Databricks has renamed several products, and older courses use the old names:</p>
+<ul><li><p>Delta Live Tables is now Lakeflow Spark Declarative Pipelines.</p></li><li><p>Workflows is now Lakeflow Jobs.</p></li><li><p>Databricks Asset Bundles are now Declarative Automation Bundles.</p></li></ul>
+<p><strong>Decision rule:</strong> take a platform certification only when target job postings name that platform. If 10 postings you want all say Snowflake, change your plan to match.</p>
+<h2 id="part-22-26-week-study-plan">Part 22: 26-week study plan</h2>
+<p>The plan takes about 260 hours over 26 weeks, starting November 9, 2026, and each phase ends with a gate you must pass before moving on. I assumed 10 hours a week alongside your full-time job; tell me if that is wrong and I can rescale it.</p>
+<figure data-embed="node/b797bf16-51cd"><figcaption>study roadmap · 5 phases, 5 gates, not to scale</figcaption></figure>
+<p>Do not start a new phase until its gate is met. A short slip now costs less than arriving at interviews with weak fundamentals.</p>
+<h3 id="suggested-weekly-rhythm">Suggested weekly rhythm</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 70 (scrolls sideways)"><table><thead><tr><th>Session</th><th>Time</th><th>Focus</th></tr></thead><tbody><tr><td>Two weeknights</td><td>1.5 hours each</td><td>Reading, then SQL or coding practice</td></tr><tr><td>One weeknight</td><td>1 hour</td><td>Timed SQL or interview practice</td></tr><tr><td>Saturday</td><td>4 hours</td><td>Project work</td></tr><tr><td>Sunday</td><td>2 hours</td><td>Project work, plus a written summary of what you learned</td></tr></tbody></table></div>
+<p>Keep a learning log. Writing a short explanation each week builds your interview answers and shows you where your understanding is thin.</p>
+<h3 id="phase-1-core-skills-weeks-1-to-6">Phase 1: Core skills (weeks 1 to 6)</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 1 (Nov 9):</strong> Set up WSL2, Docker, and uv. Read Part 1. SQL joins, NULLs, and aggregation</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 2 (Nov 16):</strong> SQL window functions and CTEs. Python, using the C# mapping</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 3 (Nov 23, Thanksgiving, lighter):</strong> SQL patterns 1 to 8. Python generators and context managers</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 4 (Nov 30):</strong> Python testing, typing, and packaging. Build the extractor</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 5 (Dec 7):</strong> Modeling: grain, stars, and fact types. Read the <em>Toolkit</em>, chapters 1 to 3</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 6 (Dec 14):</strong> SCD types, Data Vault, and One Big Table. Model three business processes</p></li></ul>
+<p><strong>Gate 1:</strong> 40 SQL problems solved, a tested extractor written, and three star schemas defended aloud.</p>
+<h3 id="phase-2-pipelines-weeks-7-to-12">Phase 2: Pipelines (weeks 7 to 12)</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 7 (Dec 21, holidays, lighter):</strong> Part 5 storage and Parquet experiments</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 8 (Dec 28, holidays, lighter):</strong> Start Project 1 with ingestion into DuckDB or Postgres</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 9 (Jan 4):</strong> dbt fundamentals, with staging and marts</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 10 (Jan 11):</strong> dbt incremental models, snapshots, and tests</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 11 (Jan 18):</strong> Airflow 3: DAGs, intervals, and a 30-day backfill</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 12 (Jan 25):</strong> Data quality, CI, a dashboard, and the Project 1 README</p></li></ul>
+<p><strong>Gate 2:</strong> Project 1 is public, and rerunning any day produces identical results.</p>
+<h3 id="phase-3-scale-weeks-13-to-18">Phase 3: Scale (weeks 13 to 18)</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 13 (Feb 1):</strong> Part 6 distributed systems and Spark architecture</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 14 (Feb 8):</strong> Spark joins, the Spark UI, and fixing a skewed job</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 15 (Feb 15):</strong> Warehouses, Iceberg, and Delta. Start weekly modeling or design practice</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 16 (Feb 22):</strong> Azure and Terraform. Start Project 2</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 17 (Mar 1):</strong> Governance and cost. Add row filters, masks, and write-audit-publish</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 18 (Mar 8):</strong> Finish Project 2. Sit the Databricks Associate if practice scores reach 80%. Begin practice applications</p></li></ul>
+<p><strong>Gate 3:</strong> Project 2 can be rebuilt from Terraform, you can diagnose a slow Spark job from the UI, and the exam is passed or booked.</p>
+<h3 id="phase-4-streaming-and-platform-weeks-19-to-22">Phase 4: Streaming and platform (weeks 19 to 22)</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 19 (Mar 15):</strong> Kafka internals, in KRaft mode, with safe consumers</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 20 (Mar 22):</strong> Flink, event time, watermarks, and state</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 21 (Mar 29):</strong> Debezium CDC into a lakehouse table. Project 3 core</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 22 (Apr 5):</strong> Chaos test and dashboards. Kubernetes and platform concepts</p></li></ul>
+<p><strong>Gate 4:</strong> Project 3 survives a killed worker with no loss or duplicates, and you can explain why.</p>
+<h3 id="phase-5-get-hired-weeks-23-to-26">Phase 5: Get hired (weeks 23 to 26)</h3>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 23 (Apr 12):</strong> System designs 1 and 2. Part 17 AI data. Rewrite your resume</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 24 (Apr 19):</strong> System designs 3 to 5. Your first two mock interviews</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 25 (Apr 26):</strong> Two more mock interviews. Rehearse your stories and the 40 questions</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> <strong>Week 26 (May 3):</strong> Apply to target companies and raise internal transfers</p></li></ul>
+<p><strong>Gate 5:</strong> You pass mock interviews in SQL, modeling, and system design.</p>
+<h3 id="if-you-fall-behind">If you fall behind</h3>
+<p>The plan has little slack, so decide ahead of time what gives way. Cut in this order:</p>
+<ol><li><p>Project 4 and any optional drills</p></li><li><p>Flink depth, keeping only the concepts plus Spark Structured Streaming</p></li><li><p>The certification, if hands-on skills and projects are strong</p></li><li><p>Multi-cloud practice</p></li><li><p>Kubernetes hands-on work, keeping the concepts</p></li></ol>
+<p>Never cut SQL, modeling, Project 1, or mock interviews. At 5 hours a week, the plan takes about a year, so consider targeting analytics-heavy or Python-heavy roles first.</p>
+<h3 id="budget-and-risks">Budget and risks</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 71 (scrolls sideways)"><table><thead><tr><th>Item</th><th>Estimate</th><th>Note</th></tr></thead><tbody><tr><td>Local tools</td><td>$0</td><td>Docker, DuckDB, Spark, Kafka, Airflow, and dbt Core are free to run</td></tr><tr><td>Books</td><td>$150 to $300</td><td>Rough estimate. Check libraries and subscriptions first</td></tr><tr><td>Cloud practice</td><td>Cap at $50 a month</td><td>Your own limit, set with a budget alert</td></tr><tr><td>Exam</td><td>$200</td><td>Plus taxes; a retake costs the full fee again</td></tr></tbody></table></div>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 72 (scrolls sideways)"><table><thead><tr><th>Risk</th><th>Effect</th><th>How to reduce it</th></tr></thead><tbody><tr><td>Tutorial loop, reading without building</td><td>Weak projects and interviews</td><td>Follow the gates. Spend at least half your hours building</td></tr><tr><td>Competing side projects</td><td>The plan slips by months</td><td>Decide now what pauses until May, and protect the Saturday block</td></tr><tr><td>Tool chasing</td><td>Shallow knowledge</td><td>Stick to this stack unless target postings say otherwise</td></tr><tr><td>Cloud bill surprise</td><td>Unexpected cost</td><td>Budget alerts, auto-termination, and Terraform destroy after each session</td></tr><tr><td>Weak market timing</td><td>Slower job search</td><td>Pursue internal moves and bridge roles too</td></tr><tr><td>Title mismatch</td><td>Offers may come at a lower level at first</td><td>Decide your minimum level and pay before interviewing</td></tr></tbody></table></div>
+<h2 id="part-23-resources">Part 23: Resources</h2>
+<p>Three books and hands-on projects will carry you most of the way: <em>Fundamentals of Data Engineering</em>, <em>The Data Warehouse Toolkit</em>, and <em>Designing Data-Intensive Applications</em>. Treat the rest as references to use when a topic needs more depth.</p>
+<h3 id="books">Books</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 73 (scrolls sideways)"><table><thead><tr><th>Book</th><th>Authors</th><th>Use it for</th><th>When</th></tr></thead><tbody><tr><td><em>Fundamentals of Data Engineering</em></td><td>Reis, Housley</td><td>The whole field and its vocabulary</td><td>Weeks 1 to 6, one chapter a week</td></tr><tr><td><em>The Data Warehouse Toolkit</em> (3rd ed.)</td><td>Kimball, Ross</td><td>Dimensional modeling</td><td>Weeks 5 and 6</td></tr><tr><td><em>Designing Data-Intensive Applications</em></td><td>Kleppmann</td><td>Distributed systems and storage</td><td>Weeks 7 to 14. Get the latest edition</td></tr><tr><td><em>Learning Spark</em> (2nd ed.)</td><td>Damji et al.</td><td>Spark practice</td><td>Weeks 13 and 14</td></tr><tr><td><em>Kafka: The Definitive Guide</em></td><td>Narkhede et al. and later editors</td><td>Kafka internals. Use the newest edition, since ZooKeeper content is outdated</td><td>Week 19</td></tr><tr><td><em>Streaming Systems</em></td><td>Akidau, Chernyak, Lax</td><td>Windows, watermarks, event time</td><td>Week 20</td></tr><tr><td><em>Apache Iceberg: The Definitive Guide</em></td><td>Shiran, Hughes, Merced</td><td>Lakehouse internals</td><td>Week 15</td></tr><tr><td><em>Data Quality Fundamentals</em></td><td>Moses, Gavish, Vorwerck</td><td>Observability</td><td>Week 12</td></tr><tr><td><em>Python for Data Analysis</em></td><td>McKinney</td><td>pandas reference</td><td>As needed</td></tr></tbody></table></div>
+<h3 id="free-courses-and-hands-on-learning">Free courses and hands-on learning</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 74 (scrolls sideways)"><table><thead><tr><th>Resource</th><th>Good for</th></tr></thead><tbody><tr><td><a href="https://github.com/DataTalksClub/data-engineering-zoomcamp">DataTalksClub Data Engineering Zoomcamp</a></td><td>A free project-based course across the whole stack</td></tr><tr><td><a href="https://www.startdataengineering.com/">Start Data Engineering</a></td><td>Practical pipeline patterns with code</td></tr><tr><td><a href="https://learn.getdbt.com/">dbt Learn</a></td><td>dbt fundamentals</td></tr><tr><td><a href="https://www.databricks.com/learn/training">Databricks Academy</a></td><td>Platform and certification preparation</td></tr><tr><td><a href="https://academy.astronomer.io/">Astronomer Academy</a></td><td>Airflow</td></tr><tr><td><a href="https://developer.confluent.io/">Confluent Developer</a></td><td>Kafka and Flink courses</td></tr></tbody></table></div>
+<h3 id="practice-sites">Practice sites</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 75 (scrolls sideways)"><table><thead><tr><th>Site</th><th>Use it for</th></tr></thead><tbody><tr><td><a href="https://datalemur.com/">DataLemur</a></td><td>SQL interview questions</td></tr><tr><td><a href="https://www.stratascratch.com/">StrataScratch</a></td><td>SQL and Python from real interviews</td></tr><tr><td><a href="https://leetcode.com/studyplan/top-sql-50/">LeetCode</a></td><td>The Top SQL 50 and coding problems</td></tr><tr><td><a href="https://exercism.org/tracks/python">Exercism Python</a></td><td>Idiomatic Python practice, with mentoring</td></tr></tbody></table></div>
+<h3 id="official-documentation">Official documentation</h3>
+<p>Go to these first when a detail matters, because blogs date quickly.</p>
+<ul><li><p><a href="https://spark.apache.org/docs/latest/">Apache Spark</a></p></li><li><p><a href="https://kafka.apache.org/documentation/">Apache Kafka</a></p></li><li><p><a href="https://nightlies.apache.org/flink/flink-docs-stable/">Apache Flink</a></p></li><li><p><a href="https://airflow.apache.org/docs/">Apache Airflow</a></p></li><li><p><a href="https://docs.getdbt.com/">dbt</a></p></li><li><p><a href="https://iceberg.apache.org/docs/latest/">Apache Iceberg</a></p></li><li><p><a href="https://docs.delta.io/">Delta Lake</a></p></li><li><p><a href="https://duckdb.org/docs/">DuckDB</a></p></li><li><p><a href="https://learn.microsoft.com/azure/databricks/">Azure Databricks</a></p></li><li><p><a href="https://developer.hashicorp.com/terraform/docs">Terraform</a></p></li></ul>
+<h3 id="staying-current">Staying current</h3>
+<p>Spend no more than 30 minutes a week on news until after you are hired. Good sources include Data Engineering Weekly, Joe Reis&#39;s Practical Data community, the Seattle Data Guy, and engineering blogs from Netflix, Uber, Airbnb, LinkedIn, and Databricks.</p>
+<h3 id="practice-datasets">Practice datasets</h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 76 (scrolls sideways)"><table><thead><tr><th>Dataset</th><th>Good for</th></tr></thead><tbody><tr><td>NYC Taxi trip records</td><td>Spark scale and partitioning</td></tr><tr><td>TPC-H and TPC-DS generators in DuckDB</td><td>Star schemas and benchmarks</td></tr><tr><td>GitHub Archive</td><td>Semi-structured event data</td></tr><tr><td>Wikimedia recent changes stream</td><td>Live streaming input</td></tr><tr><td>California open data</td><td>Local, interesting data for Project 1</td></tr></tbody></table></div>
+<h2 id="appendix-a-self-assessment-checklist">Appendix A: Self-assessment checklist</h2>
+<p>Rate yourself at the end of each phase. Tick an item only if you could do it in an interview without notes.</p>
+<p><strong>SQL and Python</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Solve window-function, gaps-and-islands, and sessionization problems</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Find and fix a join fan-out</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Write idempotent loads with <code>MERGE</code> and partition overwrite</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Write typed, tested, memory-efficient Python</p></li></ul>
+<p><strong>Modeling and transformation</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Design a star schema from a business description</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Implement SCD type 2 by hand and with dbt</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Choose among star schema, Data Vault, and One Big Table, with reasons</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Build incremental dbt models that handle late data</p></li></ul>
+<p><strong>Processing and storage</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain Parquet&#39;s internals and how they speed up queries</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Choose partitioning and clustering for a query pattern</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Diagnose skew, shuffle, and memory problems in the Spark UI</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain Iceberg commits, snapshots, and maintenance</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Compare copy-on-write and merge-on-read</p></li></ul>
+<p><strong>Streaming</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain Kafka partitions, replication, and consumer groups</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Describe effectively-once processing from end to end</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Explain event time, watermarks, and late data</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Design a CDC pipeline, including its failure cases</p></li></ul>
+<p><strong>Operations and leadership</strong></p>
+<ul><li data-checked="false"><p><span aria-hidden="true">☐</span> Run a safe backfill with Airflow</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Implement write-audit-publish and meaningful data tests</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Design access controls for PII, and an erasure process</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Estimate a pipeline&#39;s monthly cost</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Provision a data environment with Terraform</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Define SLOs for a dataset</p></li><li data-checked="false"><p><span aria-hidden="true">☐</span> Present one project and its trade-offs clearly in 10 minutes</p></li></ul>
+<h2 id="appendix-b-glossary">Appendix B: Glossary</h2>
+<p>Terms already defined in Part 1 are not repeated here.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Table 77 (scrolls sideways)"><table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td>ABAC</td><td>Attribute-based access control: policies based on tags on users and data</td></tr><tr><td>AQE</td><td>Adaptive Query Execution: Spark re-optimizes while a job runs</td></tr><tr><td>Arrow</td><td>A standard columnar in-memory data format</td></tr><tr><td>Broadcast join</td><td>Copying a small table to every worker to avoid a shuffle</td></tr><tr><td>Catalog</td><td>A service that tracks tables and their current metadata</td></tr><tr><td>CDC</td><td>Change data capture: recording row changes from a source</td></tr><tr><td>Compaction</td><td>Merging small files into larger ones</td></tr><tr><td>Conformed dimension</td><td>A dimension shared consistently across fact tables</td></tr><tr><td>Copy-on-write</td><td>Rewriting files when rows change</td></tr><tr><td>Crypto-shredding</td><td>Destroying a key to make encrypted data unreadable</td></tr><tr><td>DAG</td><td>Directed acyclic graph: tasks and their dependencies</td></tr><tr><td>Data Vault</td><td>A modeling method using hubs, links, and satellites</td></tr><tr><td>Deletion vector</td><td>A marker of deleted rows, avoiding a file rewrite</td></tr><tr><td>Dead letter queue</td><td>A place for messages that cannot be processed</td></tr><tr><td>Fan-out</td><td>Row multiplication caused by a join on a non-unique key</td></tr><tr><td>Grain</td><td>What one row in a table represents</td></tr><tr><td>HNSW</td><td>A graph-based index for approximate vector search</td></tr><tr><td>ISR</td><td>In-sync replicas in Kafka</td></tr><tr><td>KRaft</td><td>Kafka&#39;s built-in consensus and metadata system</td></tr><tr><td>Manifest</td><td>Metadata file listing data files and their statistics</td></tr><tr><td>Merge-on-read</td><td>Recording changes separately and combining them at query time</td></tr><tr><td>MPP</td><td>Massively parallel processing: a query is split across many nodes</td></tr><tr><td>MVCC</td><td>Multi-version concurrency control</td></tr><tr><td>OBT</td><td>One Big Table: a wide, denormalized table</td></tr><tr><td>OpenLineage</td><td>An open standard for collecting lineage</td></tr><tr><td>Point-in-time join</td><td>A join using only values known at an event&#39;s time</td></tr><tr><td>Predicate pushdown</td><td>Applying filters at the storage layer to read less data</td></tr><tr><td>Reverse ETL</td><td>Syncing warehouse data back to operational tools</td></tr><tr><td>RBAC</td><td>Role-based access control</td></tr><tr><td>SCD</td><td>Slowly changing dimension: a way to track attribute changes</td></tr><tr><td>Semantic layer</td><td>A central definition of business metrics above tables</td></tr><tr><td>Share group</td><td>Queue-style cooperative consumption in Kafka</td></tr><tr><td>Shuffle</td><td>Moving data between workers, grouped by key</td></tr><tr><td>Skew</td><td>Uneven data distribution across partitions</td></tr><tr><td>Snapshot</td><td>A table&#39;s complete state at a point in time</td></tr><tr><td>Surrogate key</td><td>A generated key with no business meaning</td></tr><tr><td>Time travel</td><td>Querying an earlier version of a table</td></tr><tr><td>UniForm</td><td>Delta feature that exposes Iceberg-readable metadata</td></tr><tr><td>WAL</td><td>Write-ahead log</td></tr><tr><td>WAP</td><td>Write-audit-publish: test data before exposing it</td></tr><tr><td>Z-ordering</td><td>Sorting data across several columns to improve file skipping</td></tr></tbody></table></div>
+<h2 id="sources">Sources</h2>
+<p>Versions and market facts were checked on November 5, 2026. Several sources are vendors or third-party sites rather than the official project pages, and I read a few only as search excerpts. Treat them as pointers, and confirm exam or version details at the source.</p>
+<ul><li><p><a href="https://joereis.github.io/practical_data_data_eng_survey">2026 State of Data Engineering Survey</a>, Practical Data Community</p></li><li><p><a href="https://spark.apache.org/releases/spark-release-4-2-0.html">Apache Spark 4.2.0 release notes</a> and <a href="https://spark.apache.org/versioning-policy.md">versioning policy</a></p></li><li><p><a href="https://axonops.com/docs/data-platforms/kafka/">Kafka documentation overview</a>, AxonOps, and <a href="https://mungomash.com/software/kafka/versions/">Kafka version history</a></p></li><li><p><a href="https://aiven.io/docs/products/kafka/diskless/get-started">Aiven Diskless Topics documentation</a></p></li><li><p><a href="https://datalakehousehub.com/blog/iceberg-market-2026">The Apache Iceberg Market in the Middle of 2026</a> and <a href="https://datalakehousehub.com/blog/state-of-apache-polaris-july-2026">The State of Apache Polaris in July 2026</a>, written by a Dremio employee</p></li><li><p><a href="https://machineherald-io.pages.dev/article/2026-04/09-iceberg-summit-2026-draws-all-major-cloud-vendors-as-v3-adoption-accelerates-across-the-data-lakehouse-ecosystem">Iceberg Summit 2026 coverage</a></p></li><li><p><a href="https://www.cloudmagazin.com/en/2026/07/01/iceberg-won-the-format-war-now-the-catalog-counts/">Iceberg won the format war</a>, Cloudmagazin</p></li><li><p><a href="https://kestra.io/resources/data/fivetran-dbt-merger-fusion-engine">Fivetran and dbt merger analysis</a>, Kestra</p></li><li><p><a href="https://yespress.io/dbt-labs">dbt Labs profile</a>, YesPress</p></li><li><p><a href="https://datadriven.io/blog/dbt-core-v2-rust-engine-30x-faster-new-migration-risks">dbt Core v2 migration risks</a> and <a href="https://datadriven.io/blog/fivetran-and-dbt-labs-merge-what-data-engineers-should-know">merger notes</a>, DataDriven</p></li><li><p><a href="https://www.getorchestra.io/guides/airflow-version">Airflow release guide</a>, Orchestra, and <a href="https://versionlog.com/apache-airflow/3/">Airflow 3 version log</a></p></li><li><p><a href="https://mscertquiz.com/blog/which-microsoft-certification-is-best-for-data-engineer">Microsoft data engineering certification path</a>, MSCertQuiz</p></li><li><p><a href="https://learn.microsoft.com/en-us/answers/a/12650003">DP-203 retirement answer</a>, Microsoft Learn</p></li><li><p><a href="https://www.certcrush.app/blog/how-to-pass-databricks-data-engineer-associate-2026">Databricks Data Engineer Associate study plan</a>, CertCrush</p></li><li><p><a href="https://book.st-hakky.com/en/data-platform/databricks-certification-guide">Databricks certification guide</a>, including the SnowPro comparison</p></li><li><p><a href="https://axialsearch.com/insights/data-engineering-hiring">How to Hire Data Engineers in 2026</a>, Axial Search</p></li></ul>
+
+  </article>
+</main>
+<footer class="wrap">West Sacramento, California · <a href="mailto:aaronadlerjaden@gmail.com">aaronadlerjaden@gmail.com</a> · <a href="accessibility.html">Accessibility</a></footer>
+</body>
+</html>
