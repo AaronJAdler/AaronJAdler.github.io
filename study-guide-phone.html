@@ -227,10 +227,17 @@ function bindTasks(root) {
     box.addEventListener("change", () => {
       store.change(s => { if (box.checked) s.done[box.dataset.task] = true; else delete s.done[box.dataset.task]; });
       root.querySelectorAll(`input[data-task="${box.dataset.task}"]`).forEach(b => { b.checked = box.checked; });
+      updateDrillSummary();
       const counter = document.getElementById("part-count");
       if (counter) counter.textContent = counter.dataset.part ? partCountText(counter.dataset.part) : "";
     });
   });
+}
+function updateDrillSummary() {
+  const total = DATA.tasks.length, done = doneCount(DATA.tasks);
+  const num = document.getElementById("drill-done"), bar = document.getElementById("drill-bar");
+  if (num) num.textContent = done;
+  if (bar) { bar.setAttribute("aria-valuenow", done); bar.firstElementChild.style.width = `${total ? (done / total * 100).toFixed(1) : 0}%`; }
 }
 function partCountText(id) {
   const list = TASKS_BY_PART[id] || [];
@@ -313,10 +320,10 @@ function renderToday() {
       ${planCardHTML()}
       <div class="card stack">
         <div class="row" style="justify-content:space-between">
-          <div><div class="eyebrow">Drills and milestones</div><div class="big">${done}<span class="muted" style="font-size:20px"> / ${total}</span></div></div>
+          <div><div class="eyebrow">Drills and milestones</div><div class="big"><span id="drill-done">${done}</span><span class="muted" style="font-size:20px"> / ${total}</span></div></div>
           <a class="btn" href="#progress">See all</a>
         </div>
-        <div class="bar" role="progressbar" aria-label="Study progress" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}"><span style="width:${total ? (done / total * 100).toFixed(1) : 0}%"></span></div>
+        <div class="bar" id="drill-bar" role="progressbar" aria-label="Study progress" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}"><span style="width:${total ? (done / total * 100).toFixed(1) : 0}%"></span></div>
       </div>
       <div class="row">
         ${last ? `<a class="btn primary" href="#${last.id}">Continue: ${esc(last.label || last.short)}</a>` : `<a class="btn primary" href="#start-here">Start reading</a>`}
