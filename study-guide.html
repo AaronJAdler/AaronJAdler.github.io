@@ -35,6 +35,8 @@
 <h2 id="how-to-use-this-guide">How to use this guide</h2>
 <p>Work through the parts in the order set by the 26-week plan in Part 22, not necessarily top to bottom. Each part gives the concepts, working examples, drills, and a &quot;you know this part when&quot; test. Move on when you pass the test, not when you finish reading.</p>
 <div class="table-scroll" tabindex="0" role="region" aria-label="Table 1 (scrolls sideways)"><table><thead><tr><th>Priority</th><th>Parts</th><th>Depth needed</th></tr></thead><tbody><tr><td>1. Gets you hired</td><td>SQL (2), Python (3), Data modeling (4), Spark (7), Warehouses and lakehouses (9), dbt (10), Orchestration (11), System design (18), Interviews (19), Portfolio (20)</td><td>Be able to do it unaided and explain the trade-offs</td></tr><tr><td>2. Makes you senior</td><td>Storage internals (5), Distributed systems (6), Streaming (8), Data quality (12), Cloud (14), Platform (15), Cost (16)</td><td>Be able to design with it and debug it</td></tr><tr><td>3. Differentiates you</td><td>Governance (13), AI data (17), Certifications (21)</td><td>Know the landscape and one deep example</td></tr></tbody></table></div>
+<h3 id="your-progress">Your progress and gaps</h3>
+<div id="progress-tracker"><p>Your progress and the resume gap check load here. They need JavaScript and the same browser you use for the phone version.</p></div>
 <h3 id="the-main-gap">The main gap</h3>
 <p>The main gap is mindset. Application work optimizes for one request at a time, while data work optimizes for correctness across billions of rows and years of history.</p>
 <h3 id="what-the-field-looks-like">What the field looks like</h3>
@@ -1071,5 +1073,18 @@ def chunk_id(doc_id: str, position: int, text: str, embed_model: str) -&gt; str:
   </article>
 </main>
 <footer class="wrap">West Sacramento, California · <a href="mailto:aaronadlerjaden@gmail.com">aaronadlerjaden@gmail.com</a> · <a href="accessibility.html">Accessibility</a></footer>
+<script src="study-tracker.js"></script>
+<script>
+(function () {
+  var slot = document.getElementById("progress-tracker");
+  if (!slot || !window.StudyTracker) return;
+  fetch("study-tracker-data.json").then(function (r) { return r.json(); }).then(function (d) {
+    var anchor = {};
+    d.parts.forEach(function (p) { anchor[p.id] = p.anchor; });
+    slot.innerHTML = "";
+    StudyTracker.mount(slot, { parts: d.parts, tasks: d.tasks, cards: d.cards, guideUrl: "study-guide.html", partHref: function (id) { return "#" + (anchor[id] || id); } });
+  }).catch(function () { slot.textContent = "The tracker could not load. Reload the page, or use the phone version."; });
+})();
+</script>
 </body>
 </html>
