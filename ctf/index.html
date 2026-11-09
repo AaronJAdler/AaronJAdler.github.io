@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Play the CTF · Aaron Adler</title>
 <meta name="description" content="A local-first capture-the-flag training game. Run the vulnerable target on your own machine, connect it here, find the flag, and land on the leaderboard.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:8071 https:; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <link rel="stylesheet" href="../style.css">
 <style>
   .steps { display: grid; gap: 16px; }
@@ -67,14 +69,29 @@
   <div class="steps">
     <section class="step" id="step-run">
       <h3><span class="n">1</span>Start the game on your machine</h3>
-      <p>You need <a href="https://docs.docker.com/get-started/get-docker/">Docker</a> (Docker Desktop on
-        Mac or Windows). Then, in a terminal:</p>
+      <p>You need <a href="https://docs.docker.com/get-started/get-docker/">Docker</a> 28 or newer (Docker
+        Desktop on Mac or Windows; on Linux, older Docker Engine versions could expose "localhost-only"
+        ports to your network). Then, in a terminal:</p>
       <pre id="cmd">curl -fsSL https://aaronjadler.github.io/ctf/docker-compose.yml -o cyberguard-ctf.yml
 docker compose -f cyberguard-ctf.yml up</pre>
       <div class="row">
         <button class="button" type="button" id="copy-cmd">Copy commands</button>
         <a class="button" href="docker-compose.yml" download="cyberguard-ctf.yml">Download the compose file</a>
       </div>
+      <p class="note"><b>Read the file before you run it.</b> It's short. It should only start two
+        containers from <code>ghcr.io/aaronjadler/</code>, both read-only with every capability dropped,
+        ports bound to <code>127.0.0.1</code>, and no folders from your computer mounted. If it asks for
+        anything else, don't run it.</p>
+      <details class="note">
+        <summary>Verify the images (optional)</summary>
+        <p>Each image is signed by the build workflow that made it. With
+          <a href="https://docs.sigstore.dev/cosign/system_config/installation/">cosign</a>:</p>
+        <pre>cosign verify ghcr.io/aaronjadler/cyberguard-agent:latest \
+  --certificate-identity-regexp '^https://github.com/AaronJAdler/cyberguard/\.github/workflows/images\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com</pre>
+        <p>Run it again with <code>cyberguard-target</code>. The compose file pins each image by digest,
+          so what you verify is what runs.</p>
+      </details>
       <p class="note">Stop it with <code>Ctrl+C</code>, and remove everything with
         <code>docker compose -f cyberguard-ctf.yml down -v</code>.</p>
     </section>
@@ -93,6 +110,12 @@ docker compose -f cyberguard-ctf.yml up</pre>
       <h3><span class="n">3</span>Pick a name for the leaderboard</h3>
       <div id="player-form">
         <p>3–20 letters, digits, <code>_</code> or <code>-</code>. Don't use your real name; the board is public.</p>
+        <p class="note"><b>What gets sent while you play:</b> your handle, a random player id, which
+          challenge you started, which challenge URLs you requested and the technique the sensor matched
+          (for example <code>idor</code>), and your flag submissions. Nothing else on your machine is read.
+          This is used for the leaderboard and to see how people solve each challenge. Want nothing sent?
+          Run the stack without <code>CLOUD_URL</code> for practice mode.</p>
+        <p class="row note"><label><input type="checkbox" id="consent"> I understand what's sent and want to play online.</label></p>
         <div class="row">
           <label for="handle" hidden>Handle</label>
           <input type="text" id="handle" maxlength="20" autocomplete="nickname" placeholder="handle">

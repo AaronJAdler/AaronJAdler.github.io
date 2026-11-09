@@ -139,6 +139,10 @@
   }
   $("register").addEventListener("click", function () {
     var handle = $("handle").value.trim();
+    if (!$("consent").checked) {
+      setStatus($("player-status"), "Tick the box to confirm what's sent, or play in practice mode.", "err");
+      return;
+    }
     if (!/^[A-Za-z0-9_-]{3,20}$/.test(handle)) {
       setStatus($("player-status"), "Use 3–20 letters, digits, _ or -.", "err");
       return;

@@ -1,0 +1,23 @@
+name: compose-policy
+
+# Players run ctf/docker-compose.yml with Docker (effectively root on their
+# machine). Block any change that weakens its sandbox. Same check as the
+# cyberguard repo's scripts/check_compose_policy.py; keep the copies in sync.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml==6.0.3
+      - run: python scripts/check_compose_policy.py ctf/docker-compose.yml

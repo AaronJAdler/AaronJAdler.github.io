@@ -13,3 +13,7 @@ wildfire risk, and the CAL FIRE 2021 dashboard. Plain HTML and CSS, served by Gi
   `ctf/docker-compose.yml` locally (images on GHCR) and this page connects to it on 127.0.0.1.
   `ctf/config.js` holds the cloud API URL; empty means practice mode. Keep `ctf/docker-compose.yml`
   in sync with `play/docker-compose.yml` in cyberguard.
+- `.github/workflows/compose-policy.yml` blocks any change to `ctf/docker-compose.yml` that weakens the
+  sandbox (privileged, host mounts, non-loopback ports, foreign images…). The checker in `scripts/` is a
+  copy of cyberguard's. On release, replace `ctf/docker-compose.yml` with the digest-pinned
+  `pinned-compose` artifact from cyberguard's images workflow.
