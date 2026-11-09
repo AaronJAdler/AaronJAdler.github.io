@@ -1,11 +1,12 @@
-# cyberguard CTF — player stack. Start it, then open the lobby:
+# cyberguard CTF — player stack. Start it, then open the game in your browser:
 #   docker compose -f cyberguard-ctf.yml up
-#   https://aaronjadler.github.io/ctf/
+#   http://127.0.0.1:8071
 #
 # Safety: the intentionally-vulnerable target sits on an internal-only network
-# with no route anywhere, read-only, no capabilities, synthetic data. Only the
-# agent can reach out (to the CTF cloud API), and both of its ports are bound
-# to 127.0.0.1, so nothing here is reachable from your network.
+# with no route anywhere, read-only, no capabilities, synthetic data. The agent
+# makes no outbound calls unless you choose to share a session (and SHARE_URL is
+# set), and both of its ports are bound to 127.0.0.1, so nothing here is
+# reachable from your network.
 name: cyberguard-ctf
 
 x-hardened: &hardened
@@ -31,17 +32,18 @@ services:
     <<: *hardened
     image: ghcr.io/aaronjadler/cyberguard-agent:latest
     environment:
-      # Leave CLOUD_URL empty for practice mode: nothing leaves your machine.
-      CLOUD_URL: ${CLOUD_URL-}
+      # Empty = session sharing is off and nothing ever leaves your machine.
+      SHARE_URL: ${SHARE_URL-}
       TARGET_URL: http://target:8070
       SESSION_FILE: /ctf-session/session.json
-      ALLOWED_ORIGINS: https://aaronjadler.github.io
+      STATE_DIR: /agent-state
     ports:
       - "127.0.0.1:8070:8070"   # the challenge
-      - "127.0.0.1:8071:8071"   # lobby control
+      - "127.0.0.1:8071:8071"   # the game UI: open http://127.0.0.1:8071
     volumes:
       - ctf-session:/ctf-session
-    networks: [isolated, egress]
+      - agent-state:/agent-state   # your handle + login token; the target never sees it
+    networks: [isolated, egress]   # egress is needed to publish the 127.0.0.1 ports
     depends_on: [target]
 
 networks:
@@ -51,3 +53,4 @@ networks:
 
 volumes:
   ctf-session: {}
+  agent-state: {}

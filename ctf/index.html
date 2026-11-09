@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Play the CTF · Aaron Adler</title>
-<meta name="description" content="A local-first capture-the-flag training game. Run the vulnerable target on your own machine, connect it here, find the flag, and land on the leaderboard.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:8071 https:; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="description" content="A purple-team training game that runs entirely on your own machine: break into a sealed practice environment, then see how it was detected and fixed.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <link rel="stylesheet" href="../style.css">
 <style>
@@ -53,18 +53,13 @@
 <main class="wrap">
   <section class="map-intro">
     <h1>Play the CTF</h1>
-    <p>A capture-the-flag training game you run on your own machine. Each challenge is a small,
-      deliberately vulnerable web app with synthetic data. Find the flag hidden in it, submit it here,
-      and the sensor in front of the app records which techniques you used to get there.</p>
-    <p class="note">The vulnerable app runs in Docker on an internal-only network with no route
-      anywhere, and only listens on <code>127.0.0.1</code>. This page talks to it from your browser;
-      nothing on your machine is reachable from outside.</p>
+    <p>A capture-the-flag training game that runs entirely on your own machine. Break into a small,
+      deliberately vulnerable app with synthetic data, then see your attack from the defender's side: what
+      the sensor logged, which technique it matched, and how the hole gets closed.</p>
+    <p class="note">No account, no leaderboard, nothing to sign up for. The game's own page runs on
+      <code>127.0.0.1</code>, and the vulnerable app sits on a sealed Docker network with no route out.
+      Nothing you do is sent anywhere unless you choose to share a session.</p>
   </section>
-
-  <div id="practice-banner" class="banner" hidden>
-    <b>Practice mode.</b> The leaderboard isn't live yet, so flags are checked by your local stack and
-    nothing is sent anywhere. Everything else works the same.
-  </div>
 
   <div class="steps">
     <section class="step" id="step-run">
@@ -75,7 +70,6 @@
       <pre id="cmd">curl -fsSL https://aaronjadler.github.io/ctf/docker-compose.yml -o cyberguard-ctf.yml
 docker compose -f cyberguard-ctf.yml up</pre>
       <div class="row">
-        <button class="button" type="button" id="copy-cmd">Copy commands</button>
         <a class="button" href="docker-compose.yml" download="cyberguard-ctf.yml">Download the compose file</a>
       </div>
       <p class="note"><b>Read the file before you run it.</b> It's short. It should only start two
@@ -96,76 +90,31 @@ docker compose -f cyberguard-ctf.yml up</pre>
         <code>docker compose -f cyberguard-ctf.yml down -v</code>.</p>
     </section>
 
-    <section class="step" id="step-connect">
-      <h3><span class="n">2</span>Connect this page to it</h3>
-      <p>Your browser may ask to let this site connect to apps on your device. Allow it: that's how
-        this page reaches the game running on <code>127.0.0.1</code>.</p>
-      <div class="row">
-        <button class="button primary" type="button" id="connect">Connect</button>
-        <span class="status" id="connect-status" role="status">Not connected.</span>
-      </div>
+    <section class="step">
+      <h3><span class="n">2</span>Open the game</h3>
+      <p>When the terminal says it's ready, open <b><code>http://127.0.0.1:8071</code></b> in your browser.
+        That page is served by the game on your machine; you pick a challenge, play, and submit flags there.</p>
     </section>
 
-    <section class="step" id="step-player">
-      <h3><span class="n">3</span>Pick a name for the leaderboard</h3>
-      <div id="player-form">
-        <p>3–20 letters, digits, <code>_</code> or <code>-</code>. Don't use your real name; the board is public.</p>
-        <p class="note"><b>What gets sent while you play:</b> your handle, a random player id, which
-          challenge you started, which challenge URLs you requested and the technique the sensor matched
-          (for example <code>idor</code>), and your flag submissions. Nothing else on your machine is read.
-          This is used for the leaderboard and to see how people solve each challenge. Want nothing sent?
-          Run the stack without <code>CLOUD_URL</code> for practice mode.</p>
-        <p class="row note"><label><input type="checkbox" id="consent"> I understand what's sent and want to play online.</label></p>
-        <div class="row">
-          <label for="handle" hidden>Handle</label>
-          <input type="text" id="handle" maxlength="20" autocomplete="nickname" placeholder="handle">
-          <button class="button" type="button" id="register">Join</button>
-        </div>
-      </div>
-      <p class="status" id="player-status" role="status"></p>
-    </section>
-
-    <section class="step" id="step-play">
-      <h3><span class="n">4</span>Choose a challenge</h3>
-      <div id="challenges"><p class="status">Loading challenges…</p></div>
-      <p class="status" id="play-status" role="status"></p>
-    </section>
-
-    <section class="step" id="step-flag">
-      <h3><span class="n">5</span>Submit your flag</h3>
-      <p>Flags look like <code>FLAG{…}</code> and are unique to you.</p>
-      <div class="row">
-        <label for="flag" hidden>Flag</label>
-        <input type="text" id="flag" autocomplete="off" spellcheck="false" placeholder="FLAG{...}">
-        <button class="button primary" type="button" id="submit-flag" disabled>Submit</button>
-      </div>
-      <p class="status" id="flag-status" role="status"></p>
+    <section class="step">
+      <h3><span class="n">3</span>Your session stays with you</h3>
+      <p>The game keeps a journal of what you, the sensor and the game's agents did, on your machine only.
+        You can read it, download it or clear it from the game page. If sharing is enabled, you can choose to
+        send one session to help tune the defender; you'll see exactly what would be sent first.</p>
     </section>
   </div>
 
-  <section id="board-section" hidden>
-    <h2>Leaderboard</h2>
-    <div class="experience" style="padding:8px 20px">
-      <table>
-        <thead><tr><th>#</th><th>Player</th><th class="num">Solved</th><th class="num">Points</th></tr></thead>
-        <tbody id="board"><tr><td colspan="4" class="status">No solves yet.</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
   <h2>How it works</h2>
   <div class="layers">
-    <div><b>Target</b><span>The vulnerable app. Internal network only, read-only, synthetic data.</span></div>
-    <div><b>Sensor</b><span>Detection rules tag each request with the technique it used (IDOR, SQLi, XSS…).</span></div>
-    <div><b>Agent</b><span>Bridges this page and the target on 127.0.0.1, and batches telemetry.</span></div>
-    <div><b>Cloud API</b><span>Receive-only. Issues your per-player flag and ranks validated solves.</span></div>
+    <div><b>Range</b><span>The vulnerable app. Internal network only, read-only, synthetic data.</span></div>
+    <div><b>Sensor</b><span>Detection rules tag each request with the technique it used (IDOR, SSRF, SQLi…).</span></div>
+    <div><b>Agent</b><span>Serves the game page on 127.0.0.1, proxies you into the range, keeps the journal.</span></div>
+    <div><b>Coming next</b><span>An Acme Cloud campaign: each break-in shows the detection, the fix and a re-test.</span></div>
   </div>
 </main>
 
 <footer class="wrap">For training only. Please don't expose the game to a network. ·
   <a href="../">Back to projects</a></footer>
 
-<script src="config.js"></script>
-<script src="lobby.js"></script>
 </body>
 </html>
