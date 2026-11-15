@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aaron Adler · Software and Data Engineering</title>
-<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Enterprise systems, integration and data engineering projects: CDC streaming, lakehouses, a live California wildfire risk feed, and K-12 attendance reporting.">
+<meta name="description" content="Aaron Adler, senior software engineer in West Sacramento, CA. Enterprise systems, integration and data engineering projects: CDC streaming, lakehouses, a live California wildfire risk feed, a self-service data platform, data quality monitoring, and K-12 attendance reporting.">
 <link rel="stylesheet" href="style.css">
 <script>try{var d=JSON.parse(localStorage.getItem("aja-display")||"{}");for(var k in d)if(d[k])document.documentElement.setAttribute("data-"+k,d[k])}catch(e){}</script>
 <link rel="stylesheet" href="settings.css">
@@ -99,6 +99,45 @@
         <a href="wildfire-history.html">Dashboard<span class="sr-only"> for California Wildfire ELT</span></a>
         <a href="wildfire-history.html#proof">Test results<span class="sr-only"> for California Wildfire ELT</span></a>
         <a href="https://github.com/AaronJAdler/ca-wildfire-elt">Code<span class="sr-only"> for California Wildfire ELT</span></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>Self-Service Data Platform</h3>
+      <p>A team adds a dataset by writing one YAML spec with a data contract. The platform generates
+        the Airflow DAG, quarantines rows that break the contract, stops breaking contract changes in
+        CI, emits OpenLineage events and reports cost per team. Built on real CAL FIRE data and run
+        under a real Airflow 3 scheduler.</p>
+      <div class="tags"><span>Airflow 3</span><span>Data contracts</span><span>OpenLineage</span><span>DuckDB</span></div>
+      <div class="actions">
+        <a href="https://github.com/AaronJAdler/self-service-data-platform/blob/main/docs/catalog.md">Data catalogue<span class="sr-only"> for Self-Service Data Platform</span></a>
+        <a href="https://github.com/AaronJAdler/self-service-data-platform">Code<span class="sr-only"> for Self-Service Data Platform</span></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>Data Quality Monitor</h3>
+      <p>Freshness, volume, schema, null-rate and drift monitors with alert routing, backtested on 90
+        real days of CAL FIRE's incident feed. It finds the feed's real outage and its one bad
+        coordinate, and reports which of 2,198 injected defects it catches and which it misses.</p>
+      <div class="tags"><span>Python</span><span>Statistics</span><span>DuckDB</span><span>Alerting</span></div>
+      <div class="actions">
+        <a href="https://github.com/AaronJAdler/data-quality-monitor/blob/main/docs/backtest.md">Backtest results<span class="sr-only"> for Data Quality Monitor</span></a>
+        <a href="https://github.com/AaronJAdler/data-quality-monitor">Code<span class="sr-only"> for Data Quality Monitor</span></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="badge">Synthetic data</div>
+      <h3>Call Analytics RAG Pipeline</h3>
+      <p>Turns call transcripts into a search index a retrieval-augmented application can use safely:
+        personal information is redacted before anything is stored, updates are incremental, every
+        search is confined to one tenant, and an erased call is physically removed. Scored against an
+        answer key on 600 synthetic calls.</p>
+      <div class="tags"><span>Python</span><span>LanceDB</span><span>PII redaction</span><span>Retrieval evaluation</span></div>
+      <div class="actions">
+        <a href="https://github.com/AaronJAdler/call-analytics-rag-pipeline/blob/main/docs/eval.md">Evaluation<span class="sr-only"> for Call Analytics RAG Pipeline</span></a>
+        <a href="https://github.com/AaronJAdler/call-analytics-rag-pipeline">Code<span class="sr-only"> for Call Analytics RAG Pipeline</span></a>
       </div>
     </article>
   </div>
